@@ -85,51 +85,62 @@ const Game3D = (() => {
     const sizer = new THREE.Group(); sizer.scale.set(K, K, K); body.add(sizer);
     const inner = new THREE.Group(); inner.position.y = 0.08; sizer.add(inner);
     const col = L.c || "#004aad", bm = mat(col, { roughness: 0.42 });
-    const s = new THREE.Shape();
-    s.moveTo(-0.62, 0.94); s.absarc(0, 0.94, 0.62, Math.PI, 0, true); s.lineTo(0.62, 0.12); s.quadraticCurveTo(0.62, 0, 0.5, 0); s.lineTo(0.32, 0);
-    s.quadraticCurveTo(0.3, 0.32, 0, 0.34); s.quadraticCurveTo(-0.3, 0.32, -0.32, 0); s.lineTo(-0.5, 0); s.quadraticCurveTo(-0.62, 0, -0.62, 0.12); s.lineTo(-0.62, 0.94);
-    const bodyGeo = geo("bribody", () => { const g2 = new THREE.ExtrudeGeometry(s, { depth: 0.6, bevelEnabled: true, bevelThickness: 0.12, bevelSize: 0.08, bevelSegments: 6, curveSegments: 40 }); g2.translate(0, 0, -0.3); return g2; });
-    addMesh(inner, bodyGeo, bm, 0, 0, 0, 1, 1, 1, C);
-    const F = 0.425, white = mat("#ffffff", { roughness: 0.3 }), dark = mat("#0b1a3a", { roughness: 0.3 });
-    const flat = (m, x, y, z, sx, sy, sz, p) => addMesh(p || inner, UNIT_SPHERE(), m, x, y, z, sx, sy, sz);
-    const arc = (r, t, m, x, y, z, p, rz) => { const a = addMesh(p || inner, geo("arc" + r + t, () => new THREE.TorusGeometry(r, t, 8, 28, Math.PI)), m, x, y, z); if (rz) a.rotation.z = rz; return a; };
+    const dk = (() => { const n = parseInt(col.slice(1), 16), f = (v) => Math.round(v * 0.72); return "#" + ((1 << 24) | (f(n >> 16) << 16) | (f((n >> 8) & 255) << 8) | f(n & 255)).toString(16).slice(1); })();
+    // 펭귄처럼 둥근 몸통: 옆에서 보면 달걀형 (회전체 + 앞뒤로 살짝 납작)
+    const PROF = [[0.16, 0], [0.165, 0.2], [0.18, 0.36], [0.22, 0.48], [0.3, 0.57], [0.42, 0.63], [0.6, 0.655], [0.78, 0.65]];
+    for (let i = 1; i <= 14; i++) { const t = (i / 14) * Math.PI / 2; PROF.push([0.92 + 0.645 * Math.sin(t), 0.645 * Math.cos(t)]); }
+    PROF.splice(8, 0, [0.9, 0.646]);
+    const ZS = 0.84;
+    const rAt = (y) => { if (y <= PROF[0][0]) return PROF[0][1]; for (let i = 1; i < PROF.length; i++) { const [y1, r1] = PROF[i], [y0, r0] = PROF[i - 1]; if (y <= y1) return r0 + (r1 - r0) * (y - y0) / (y1 - y0); } return 0; };
+    const zAt = (x, y) => ZS * Math.sqrt(Math.max(0, rAt(y) ** 2 - x * x));
+    const bodyGeo = geo("bribody-peng", () => new THREE.LatheGeometry(PROF.map(([y, r]) => new THREE.Vector2(r, y)), 48));
+    addMesh(inner, bodyGeo, bm, 0, 0, 0, 1, 1, ZS, C);
+    // 다리(아래 아치 사이) + 펭귄 발
+    [-1, 1].forEach((sd) => {
+      sph(inner, 0.17, 0.17, 0.15, bm, 0.27 * sd, 0.15, 0.0, C);
+      sph(inner, 0.12, 0.045, 0.19, mat(dk, { roughness: 0.5 }), 0.27 * sd, 0.03, 0.1, C);
+    });
+    const white = mat("#ffffff", { roughness: 0.3 }), dark = mat("#0b1a3a", { roughness: 0.3 });
+    const onFace = (m, x, y) => { m.rotation.y = Math.atan2(x, Math.max(0.05, zAt(x, y))) ; return m; };
+    const flat = (m, x, y, d, sx, sy, sz, p) => onFace(addMesh(p || inner, UNIT_SPHERE(), m, x, y, zAt(x, y) + d, sx, sy, sz), x, y);
+    const arc = (r, t, m, x, y, d, p, rz) => { const a = addMesh(p || inner, geo("arc" + r + t, () => new THREE.TorusGeometry(r, t, 8, 28, Math.PI)), m, x, y, zAt(x, y) + d); onFace(a, x, y); if (rz) a.rotation.z = rz; return a; };
     const eo = new THREE.Group(), es = new THREE.Group(); inner.add(eo); inner.add(es); es.visible = false;
     const k = L.eyes === "sparkle" ? 1.15 : L.eyes === "calm" ? 0.85 : 1;
     [-1, 1].forEach((sd) => {
       const ex = 0.2 * sd, wink = L.eyes === "wink" && sd === 1;
-      if (L.eyes === "smile" || wink) arc(0.1, 0.028, white, ex, 0.88, F + 0.01, eo);
-      else { flat(white, ex, 0.92, F, 0.12 * k, 0.14 * k, 0.03, eo); flat(dark, ex + 0.02, 0.89, F + 0.02, 0.07 * k, 0.07 * k, 0.02, eo); flat(white, ex + 0.05, 0.93, F + 0.035, 0.026, 0.026, 0.01, eo); }
-      arc(0.1, 0.028, white, ex, 0.88, F + 0.01, es);
+      if (L.eyes === "smile" || wink) arc(0.1, 0.028, white, ex, 0.88, 0.0, eo);
+      else { flat(white, ex, 0.92, -0.005, 0.12 * k, 0.14 * k, 0.03, eo); flat(dark, ex + 0.02, 0.89, 0.015, 0.07 * k, 0.07 * k, 0.02, eo); flat(white, ex + 0.05, 0.93, 0.03, 0.026, 0.026, 0.01, eo); }
+      arc(0.1, 0.028, white, ex, 0.88, 0.0, es);
     });
-    if (L.cheek !== "none") [-1, 1].forEach((sd) => flat(mat(L.cheek || "#ff8fab", { roughness: 0.6, transparent: true, opacity: 0.85 }), 0.36 * sd, 0.7, F - 0.003, 0.09, 0.055, 0.02));
-    if (L.mouth === "open") addMesh(inner, geo("brimouth", () => new THREE.CircleGeometry(0.1, 24, Math.PI, Math.PI)), mat("#0b1a3a", { side: THREE.DoubleSide }), 0, 0.72, F + 0.006);
-    else if (L.mouth === "cat") { arc(0.045, 0.016, white, -0.045, 0.71, F + 0.01, inner, Math.PI); arc(0.045, 0.016, white, 0.045, 0.71, F + 0.01, inner, Math.PI); }
-    else if (L.mouth === "o") flat(dark, 0, 0.67, F + 0.005, 0.05, 0.06, 0.02);
-    else arc(0.09, 0.02, white, 0, 0.71, F + 0.01, inner, Math.PI);
+    if (L.cheek !== "none") [-1, 1].forEach((sd) => flat(mat(L.cheek || "#ff8fab", { roughness: 0.6, transparent: true, opacity: 0.85 }), 0.36 * sd, 0.7, -0.008, 0.09, 0.055, 0.02));
+    if (L.mouth === "open") addMesh(inner, geo("brimouth", () => new THREE.CircleGeometry(0.1, 24, Math.PI, Math.PI)), mat("#0b1a3a", { side: THREE.DoubleSide }), 0, 0.72, zAt(0, 0.72) + 0.006);
+    else if (L.mouth === "cat") { arc(0.045, 0.016, white, -0.045, 0.71, 0.0, inner, Math.PI); arc(0.045, 0.016, white, 0.045, 0.71, 0.0, inner, Math.PI); }
+    else if (L.mouth === "o") flat(dark, 0, 0.67, -0.005, 0.05, 0.06, 0.02);
+    else arc(0.09, 0.02, white, 0, 0.71, 0.0, inner, Math.PI);
+    // 날개 같은 팔 (납작한 지느러미)
     const arm = (sd) => {
-      const p = new THREE.Group(); p.position.set(0.58 * sd, 0.66, 0); inner.add(p);
-      addMesh(p, geo("briarm", () => new THREE.CylinderGeometry(0.075, 0.075, 0.34, 16)), bm, 0, -0.17, 0, 1, 1, 1, C);
-      sph(p, 0.08, 0.08, 0.08, bm, 0, -0.34, 0, C); sph(p, 0.076, 0.076, 0.076, bm, 0, 0, 0, C);
-      const hand = new THREE.Group(); hand.position.y = -0.34; p.add(hand); return { p, hand };
+      const p = new THREE.Group(); p.position.set((rAt(0.7) - 0.02) * sd, 0.7, 0); inner.add(p);
+      sph(p, 0.075, 0.22, 0.13, bm, 0.02 * sd, -0.17, 0, C);
+      const hand = new THREE.Group(); hand.position.y = -0.36; p.add(hand); return { p, hand };
     };
     const aL = arm(-1), aR = arm(1);
     const acc = (c, o) => mat(c, { roughness: 0.5, ...(o || {}) }); let dot = null;
     if (L.top === "dot" || L.top === "ribbon" || !L.top) dot = sph(inner, 0.11, 0.11, 0.11, acc("#ffb400", { emissive: "#7a4a00", emissiveIntensity: 0.3 }), 0, 1.82, 0);
-    if (L.top === "ribbon") { [-1, 1].forEach((sd) => { const c = addMesh(inner, geo("bricone", () => new THREE.ConeGeometry(0.09, 0.2, 16)), acc("#ff8fab"), 0.42 + sd * 0.1, 1.43, 0); c.rotation.z = sd * Math.PI / 2; }); sph(inner, 0.05, 0.05, 0.05, "#ff6f91", 0.42, 1.43, 0); }
-    if (L.top === "sprout") { cyl(inner, 0.015, 0.16, "#2b8a6e", 0, 1.58, 0); [-1, 1].forEach((sd) => { flat(acc("#3fb37f"), 0.09 * sd, 1.76, 0, 0.1, 0.04, 0.06).rotation.z = -0.5 * sd; }); }
-    if (L.top === "cap") { const d = addMesh(inner, geo("bricap", () => new THREE.SphereGeometry(0.68, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2)), acc("#0b1a3a"), 0, 0.97, 0, 1, 0.95, 0.74, C); box(inner, 0.72, 0.04, 0.42, "#0b1a3a", 0, 0.98, 0.6).rotation.x = 0.12; sph(inner, 0.05, 0.05, 0.05, "#ffb400", 0, 1.62, 0); }
-    if (L.top === "crown") { addMesh(inner, geo("bricrown", () => new THREE.CylinderGeometry(0.26, 0.3, 0.2, 10, 1, true)), acc("#ffc83d", { side: THREE.DoubleSide, metalness: 0.4 }), 0, 1.66, 0); for (let i = 0; i < 5; i++) { const a = i / 5 * Math.PI * 2; addMesh(inner, geo("bricone2", () => new THREE.ConeGeometry(0.05, 0.14, 10)), acc("#ffc83d", { metalness: 0.4 }), Math.sin(a) * 0.26, 1.83, Math.cos(a) * 0.26); } }
-    if (L.face === "glasses") { [-1, 1].forEach((sd) => addMesh(inner, geo("briglass", () => new THREE.TorusGeometry(0.15, 0.02, 8, 32)), dark, 0.2 * sd, 0.92, F + 0.03)); }
-    if (L.face === "sunglasses") { [-1, 1].forEach((sd) => flat(dark, 0.2 * sd, 0.92, F + 0.04, 0.15, 0.12, 0.03)); }
-    if (L.face === "star") flat(acc("#ffd54d"), 0.4, 0.58, F + 0.01, 0.06, 0.06, 0.02);
-    if (L.neck === "tie" || L.neck === undefined) { const t = new THREE.Shape(); t.moveTo(-0.06, 0); t.lineTo(0.06, 0); t.lineTo(0.08, -0.06); t.lineTo(0, -0.3); t.lineTo(-0.08, -0.06); t.lineTo(-0.06, 0); addMesh(inner, geo("britie", () => new THREE.ExtrudeGeometry(t, { depth: 0.03, bevelEnabled: false })), acc("#ffb400"), 0, 0.54, F - 0.005); }
-    if (L.neck === "badge") { box(inner, 0.22, 0.28, 0.025, "#ffffff", 0, 0.12, F + 0.02); box(inner, 0.14, 0.04, 0.01, "#004aad", 0, 0.32, F + 0.035); }
-    if (L.neck === "bowtie") { [-1, 1].forEach((sd) => { const c = addMesh(inner, geo("bricone3", () => new THREE.ConeGeometry(0.08, 0.16, 16)), acc("#ff6f91"), 0.08 * sd, 0.52, F + 0.04); c.rotation.z = -sd * Math.PI / 2; }); }
-    if (L.neck === "scarf") { const sc = addMesh(inner, geo("briscarf", () => new THREE.TorusGeometry(0.62, 0.08, 12, 48)), acc("#ff6f61"), 0, 0.58, 0); sc.rotation.x = Math.PI / 2; sc.scale.set(1.06, 0.8, 1); }
-    if (L.ear === "headset") { addMesh(inner, geo("brihs", () => new THREE.TorusGeometry(0.73, 0.04, 8, 40, Math.PI)), dark, 0, 0.94, 0); [-1, 1].forEach((sd) => { const c = cyl(inner, 0.12, 0.1, "#0b1a3a", 0.74 * sd, 0.89, 0); c.rotation.z = Math.PI / 2; }); }
-    if (L.ear === "earmuff") { addMesh(inner, geo("briem", () => new THREE.TorusGeometry(0.73, 0.035, 8, 40, Math.PI)), acc("#ff8fab"), 0, 0.94, 0); [-1, 1].forEach((sd) => sph(inner, 0.15, 0.15, 0.15, "#ffffff", 0.74 * sd, 0.94, 0)); }
+    if (L.top === "ribbon") { [-1, 1].forEach((sd) => { const c = addMesh(inner, geo("bricone", () => new THREE.ConeGeometry(0.09, 0.2, 16)), acc("#ff8fab"), 0.38 + sd * 0.1, 1.36, 0); c.rotation.z = sd * Math.PI / 2; }); sph(inner, 0.05, 0.05, 0.05, "#ff6f91", 0.38, 1.36, 0); }
+    if (L.top === "sprout") { cyl(inner, 0.015, 0.16, "#2b8a6e", 0, 1.56, 0); [-1, 1].forEach((sd) => { flat(acc("#3fb37f"), 0.09 * sd, 1.76, 0, 0.1, 0.04, 0.06).rotation.z = -0.5 * sd; }); }
+    if (L.top === "cap") { addMesh(inner, geo("bricap", () => new THREE.SphereGeometry(0.68, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2)), acc("#0b1a3a"), 0, 0.95, 0, 1, 0.93, 0.86, C); box(inner, 0.72, 0.04, 0.42, "#0b1a3a", 0, 0.96, 0.62).rotation.x = 0.12; sph(inner, 0.05, 0.05, 0.05, "#ffb400", 0, 1.59, 0); }
+    if (L.top === "crown") { addMesh(inner, geo("bricrown", () => new THREE.CylinderGeometry(0.26, 0.3, 0.2, 10, 1, true)), acc("#ffc83d", { side: THREE.DoubleSide, metalness: 0.4 }), 0, 1.6, 0); for (let i = 0; i < 5; i++) { const a = i / 5 * Math.PI * 2; addMesh(inner, geo("bricone2", () => new THREE.ConeGeometry(0.05, 0.14, 10)), acc("#ffc83d", { metalness: 0.4 }), Math.sin(a) * 0.26, 1.77, Math.cos(a) * 0.26); } }
+    if (L.face === "glasses") { [-1, 1].forEach((sd) => onFace(addMesh(inner, geo("briglass", () => new THREE.TorusGeometry(0.15, 0.02, 8, 32)), dark, 0.2 * sd, 0.92, zAt(0.2, 0.92) + 0.03), 0.2 * sd, 0.92)); }
+    if (L.face === "sunglasses") { [-1, 1].forEach((sd) => flat(dark, 0.2 * sd, 0.92, 0.03, 0.15, 0.12, 0.03)); }
+    if (L.face === "star") flat(acc("#ffd54d"), 0.4, 0.58, 0.0, 0.06, 0.06, 0.02);
+    if (L.neck === "tie" || L.neck === undefined) { const t = new THREE.Shape(); t.moveTo(-0.06, 0); t.lineTo(0.06, 0); t.lineTo(0.08, -0.06); t.lineTo(0, -0.3); t.lineTo(-0.08, -0.06); t.lineTo(-0.06, 0); const tie = addMesh(inner, geo("britie", () => new THREE.ExtrudeGeometry(t, { depth: 0.03, bevelEnabled: false })), acc("#ffb400"), 0, 0.56, zAt(0, 0.56) - 0.012); tie.rotation.x = 0.22; }
+    if (L.neck === "badge") { box(inner, 0.22, 0.28, 0.025, "#ffffff", 0, 0.24, zAt(0, 0.38) + 0.01); box(inner, 0.14, 0.04, 0.01, "#004aad", 0, 0.44, zAt(0, 0.45) + 0.025); }
+    if (L.neck === "bowtie") { [-1, 1].forEach((sd) => { const c = addMesh(inner, geo("bricone3", () => new THREE.ConeGeometry(0.08, 0.16, 16)), acc("#ff6f91"), 0.08 * sd, 0.52, zAt(0, 0.52) + 0.03); c.rotation.z = -sd * Math.PI / 2; }); }
+    if (L.neck === "scarf") { const sc = addMesh(inner, geo("briscarf", () => new THREE.TorusGeometry(0.62, 0.08, 12, 48)), acc("#ff6f61"), 0, 0.58, 0); sc.rotation.x = Math.PI / 2; sc.scale.set(1.08, 0.92, 1); }
+    if (L.ear === "headset") { addMesh(inner, geo("brihs", () => new THREE.TorusGeometry(0.66, 0.04, 8, 40, Math.PI)), dark, 0, 0.94, 0); [-1, 1].forEach((sd) => { const c = cyl(inner, 0.12, 0.1, "#0b1a3a", 0.66 * sd, 0.89, 0); c.rotation.z = Math.PI / 2; }); }
+    if (L.ear === "earmuff") { addMesh(inner, geo("briem", () => new THREE.TorusGeometry(0.66, 0.035, 8, 40, Math.PI)), acc("#ff8fab"), 0, 0.94, 0); [-1, 1].forEach((sd) => sph(inner, 0.15, 0.15, 0.15, "#ffffff", 0.67 * sd, 0.94, 0)); }
     const phone = box(aR.hand, 0.07, 0.15, 0.03, "#1c2333", 0, -0.1, 0.09); phone.visible = false;
-    const paper = box(inner, 0.36, 0.46, 0.012, "#ffffff", 0, 0.28, 0.68); paper.visible = false; box(paper, 0.6, 0.04, 0.5, "#e05555", 0, 0.1, 0.6);
+    const paper = box(inner, 0.36, 0.46, 0.012, "#ffffff", 0, 0.28, 0.7); paper.visible = false; box(paper, 0.6, 0.04, 0.5, "#e05555", 0, 0.1, 0.6);
     const D = () => new THREE.Group();
     const hips = D(), head = D(), elL = D(), elR = D(), legL = D(), legR = D(), knL = D(), knR = D();
     hips.position.y = 0.82; root.add(hips, head, elL, elR, legL, legR, knL, knR);
