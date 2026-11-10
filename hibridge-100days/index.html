@@ -80,12 +80,44 @@ main{padding-block:28px 64px}
 @media (max-width:420px){.grid4{grid-template-columns:minmax(0,1fr)}}
 
 /* home */
-.hero{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:40px;align-items:center;padding-block:12px 8px}
-@media (max-width:820px){.hero{grid-template-columns:minmax(0,1fr)}}
-.hero .copy{display:grid;gap:18px}
-.role-card{display:grid;gap:10px;align-content:start}
-.role-card h3{font-size:17px}
-.role-card ul{margin:0;padding-left:18px;color:var(--ink-2);font-size:14px}
+/* hero: game title screen */
+.hx{position:relative;overflow:hidden;border-radius:24px;background:linear-gradient(135deg,#00245c 0%,#004aad 58%,#2f6fd6 100%);color:#fff;padding:clamp(28px,5vw,56px);display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:32px;align-items:center}
+@media (max-width:820px){.hx{grid-template-columns:minmax(0,1fr)}}
+.hx .big{position:absolute;right:-.06em;bottom:-.28em;font-size:clamp(180px,30vw,360px);font-weight:800;line-height:1;color:rgba(255,255,255,.06);letter-spacing:-.06em;pointer-events:none;user-select:none}
+.hx-copy{position:relative;display:grid;gap:20px}
+.hx h1{font-size:clamp(38px,6.4vw,66px);line-height:1.1;font-weight:800;letter-spacing:-.035em}
+.hx h1 em{font-style:normal;color:var(--amber)}
+.hx-copy > p{color:#d6e2f7;font-size:17px;max-width:30em}
+.btn.start{background:var(--amber);border-color:var(--amber);color:var(--ink);padding:15px 28px;font-size:17px;border-radius:14px;box-shadow:0 12px 28px -12px rgba(255,180,0,.9)}
+.btn.start:hover{background:#ffc533}
+.hx-stage{position:relative;display:grid;justify-items:center}
+.hx-stage::before{display:none;content:"";position:absolute;top:50%;left:50%;width:250px;height:250px;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.95) 0 52%,rgba(255,255,255,.25) 53%,rgba(255,255,255,0) 70%)}
+.hx-me{position:relative;z-index:1;width:min(100%,240px);aspect-ratio:1;border-radius:50%;overflow:hidden;display:grid;place-items:center;border:6px solid rgba(255,255,255,.92);box-shadow:0 24px 50px -20px rgba(0,10,40,.7);animation:float 3.6s ease-in-out infinite}
+.hx-me svg{display:block;margin-top:10px}
+.hx-guide{position:absolute;z-index:2;left:calc(50% - 170px);bottom:-10px;width:96px;height:96px;display:grid;place-items:center;background:#fff;border-radius:50%;box-shadow:0 14px 30px -14px rgba(0,10,40,.6);animation:float 3s ease-in-out infinite reverse}
+@media (max-width:420px){.hx-guide{left:0}}
+@keyframes float{50%{transform:translateY(-8px)}}
+
+/* feature cards */
+.feats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+@media (max-width:900px){.feats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:520px){.feats{grid-template-columns:minmax(0,1fr)}}
+.feat{display:flex;flex-direction:column;gap:8px;padding:22px;border:1px solid var(--line);border-radius:20px;background:var(--bg);text-decoration:none;color:inherit;transition:transform .2s,box-shadow .2s,border-color .2s}
+.feat:hover{transform:translateY(-3px);box-shadow:0 18px 40px -24px rgba(0,48,122,.5);border-color:var(--blue-line)}
+.feat.hot{background:var(--blue);border-color:var(--blue);color:#fff}
+.feat .fi{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;background:var(--blue-soft);color:var(--blue);margin-bottom:6px;overflow:hidden}
+.feat .fi svg{width:24px;height:24px}
+.feat .fi.br svg,.feat .fi.pt svg{width:100%;height:100%;display:block}
+.feat.hot .fi{background:#fff}
+.feat .who{font-size:12px;font-weight:700;color:var(--blue)}
+.feat.hot .who{color:var(--amber)}
+.feat h3{font-size:19px;letter-spacing:-.015em}
+.feat p{font-size:14px;color:var(--ink-2)}
+.feat.hot p{color:#d6e2f7}
+.feat .go{margin-top:auto;padding-top:8px;font-weight:700;font-size:14px;color:var(--blue)}
+.feat.hot .go{color:#fff}
+.feat .go::after{content:"→";display:inline-block;margin-left:6px;transition:transform .2s}
+.feat:hover .go::after{transform:translateX(4px)}
 .cycle{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
 .cycle > div{padding:18px;display:grid;gap:6px;border-right:1px solid var(--line);position:relative}
 .cycle > div:last-child{border-right:0}
@@ -161,6 +193,57 @@ main{padding-block:28px 64px}
 .dist .track i{display:block;height:100%;background:var(--blue-line)}
 .dist .r.me .track i{background:var(--blue)}
 .dist .r.me b{color:var(--blue)}
+/* embedded office game */
+.game.wide.world{max-width:1040px}
+.gframe-wrap{display:grid;gap:10px;max-width:1040px;margin:0 auto;width:100%}
+.gframe-bar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.gframe{display:block;width:100%;aspect-ratio:16/9;min-height:480px;border:0;border-radius:16px;background:#1b2033;box-shadow:0 24px 50px -30px rgba(0,30,80,.6)}
+@media (max-width:640px){.gframe{aspect-ratio:auto;height:78vh;min-height:0}}
+/* character creator */
+.game.wide{max-width:1000px}
+.cc{display:grid;grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr);border-radius:24px;overflow:hidden;background:#0d1a38;color:#fff;box-shadow:0 30px 60px -34px rgba(0,30,80,.7)}
+@media (max-width:780px){.cc{grid-template-columns:minmax(0,1fr)}}
+.cc-stage{position:relative;display:grid;place-items:center;align-content:center;gap:10px;padding:56px 24px 28px;background:radial-gradient(ellipse 60% 55% at 50% 40%,#f3f7ff 0%,#c4d6f7 38%,#3a62b4 72%,#0d1f4d 100%);min-height:440px;overflow:hidden}
+.cc-stage::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,rgba(255,255,255,.035) 0 1px,transparent 1px 44px),repeating-linear-gradient(0deg,rgba(255,255,255,.035) 0 1px,transparent 1px 44px);mask-image:linear-gradient(to bottom,transparent,#000 60%)}
+.cc-stage::after{content:"";position:absolute;left:50%;bottom:96px;width:62%;height:34px;transform:translateX(-50%);border-radius:50%;background:radial-gradient(closest-side,rgba(11,26,58,.28),rgba(11,26,58,0));pointer-events:none}
+.cc-label{position:absolute;top:18px;left:20px;font-size:11px;letter-spacing:.24em;font-weight:800;color:rgba(255,255,255,.7)}
+.cc-dice{position:absolute;top:12px;right:14px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:#fff;border-radius:999px;padding:7px 14px;font-size:13px;font-weight:700;z-index:2}
+.cc-dice:hover{background:rgba(255,255,255,.16)}
+.cc-fig{position:relative;z-index:1;display:grid;place-items:center;animation:enter .35s ease both}
+.cc-fig svg{display:block;max-width:100%;height:auto}
+.cc-plate{position:relative;z-index:1;display:grid;justify-items:center;gap:2px;background:rgba(5,14,36,.55);border:1px solid rgba(255,255,255,.18);backdrop-filter:blur(6px);border-radius:14px;padding:10px 22px;margin-top:4px}
+.cc-plate{grid-auto-flow:column;align-items:center;gap:12px!important;justify-items:start!important;transition:box-shadow .2s}
+.cc-plate.hl{box-shadow:0 0 0 2px var(--amber)}
+.cc-pf{width:52px;height:52px;border-radius:50%;overflow:hidden;display:block;border:2px solid #fff;flex:none;transition:background .2s}
+.cc-pf svg{display:block}
+.cc-pt{display:grid;gap:2px}
+.cc-plate b{font-size:20px;letter-spacing:-.01em}
+.cc-plate span{font-size:12px;color:#b9c8e6}
+.cc-panel{padding:24px;display:grid;gap:18px;align-content:start;background:#0f1d3d}
+.cc-title{font-size:22px;margin-top:4px;letter-spacing:-.02em}
+.cc-tabs{display:flex;gap:4px;background:rgba(255,255,255,.06);padding:4px;border-radius:12px}
+.cc-tabs button{flex:1;border:0;background:none;color:#a9b8d8;padding:9px 6px;border-radius:9px;font-weight:700;font-size:14px}
+.cc-tabs button[aria-pressed="true"]{background:#fff;color:#0d1a38}
+.cc-body{display:grid;gap:16px;min-height:236px;align-content:start}
+.cc-sec{display:grid;gap:10px}
+.cc-sec h4{margin:0;font-size:12px;color:#a9b8d8;letter-spacing:.04em;font-weight:700}
+.cc-opts{display:grid;grid-template-columns:repeat(auto-fill,minmax(70px,1fr));gap:8px}
+.cc-opts button{border:2px solid transparent;background:rgba(255,255,255,.06);border-radius:14px;padding:8px 4px 7px;display:grid;gap:5px;justify-items:center;color:#cfdbf3;font-size:12px;transition:background .15s,border-color .15s}
+.cc-opts button:hover{background:rgba(255,255,255,.11)}
+.cc-opts .th{width:54px;height:54px;border-radius:50%;overflow:hidden;display:block;padding:4px}
+.cc-opts .th svg{display:block}
+.cc-opts button[aria-pressed="true"]{border-color:var(--amber);background:rgba(255,180,0,.12);color:#fff;font-weight:700}
+.cc-sw{display:flex;flex-wrap:wrap;gap:10px}
+.cc-sw button{width:36px;height:36px;border-radius:50%;border:3px solid #0f1d3d;box-shadow:0 0 0 1px rgba(255,255,255,.22);transition:transform .15s}
+.cc-sw button:hover{transform:scale(1.08)}
+.cc-sw button[aria-pressed="true"]{box-shadow:0 0 0 2px var(--amber);transform:scale(1.08)}
+.cc-foot{display:grid;gap:12px;border-top:1px solid rgba(255,255,255,.1);padding-top:18px}
+.cc label.f,.cc .f{color:#a9b8d8}
+.cc input[type=text]{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.16);color:#fff}
+.cc input[type=text]::placeholder{color:#7f8fb3}
+.cc input:focus{border-color:var(--amber);box-shadow:0 0 0 3px rgba(255,180,0,.2)}
+.cc .parts button{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12);color:#cfdbf3}
+.cc .parts button[aria-pressed="true"]{background:rgba(255,180,0,.14);border-color:var(--amber);color:#fff}
 .avatars{display:flex;gap:10px;flex-wrap:wrap}
 .avatars{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}
 @media (max-width:520px){.avatars{grid-template-columns:repeat(3,minmax(0,1fr))}}
@@ -191,27 +274,137 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--blue);bo
 .ending.fail{background:var(--ink)}
 
 /* community */
-.comm{display:grid;grid-template-columns:220px minmax(0,1fr);gap:24px;align-items:start}
-@media (max-width:760px){.comm{grid-template-columns:minmax(0,1fr)}}
-.chans{display:grid;gap:4px}
-@media (max-width:760px){.chans{grid-auto-flow:column;grid-auto-columns:max-content;overflow-x:auto}}
-.chans button{text-align:left;border:0;background:none;border-radius:10px;padding:10px 12px;display:grid;gap:1px}
-.chans button b{font-size:14px}
-.chans button span{font-size:12px;color:var(--ink-3)}
-.chans button[aria-pressed="true"]{background:var(--blue-soft)}
-.chans button[aria-pressed="true"] b{color:var(--blue)}
-.posts{display:grid;gap:14px}
-.post{border:1px solid var(--line);border-radius:var(--r);padding:18px;display:grid;gap:10px}
-.post .meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:13px}
-.post .meta b{font-size:14px}
-.post .ref{font-size:13px;background:var(--bg-soft);border-radius:8px;padding:8px 10px;color:var(--ink-2)}
-.replies{display:grid;gap:8px;border-top:1px dashed var(--line);padding-top:10px}
-.reply{font-size:14px;display:grid;gap:2px}
-.reply .meta{font-size:12px}
-.reply-form{display:flex;gap:8px}
-.reply-form input{flex:1;min-width:0;padding:8px 10px;font-size:14px}
-.composer{display:grid;gap:10px}
-
+.cm-hero{position:relative;overflow:hidden;border-radius:22px;background:linear-gradient(135deg,#00245c 0%,#004aad 60%,#2f6fd6 100%);color:#fff;padding:clamp(22px,4vw,34px);display:flex;align-items:center;justify-content:space-between;gap:20px}
+.cm-hero h1{font-size:clamp(26px,4vw,34px);font-weight:800;letter-spacing:-.02em}
+.cm-hero p{color:#d6e2f7;margin-top:6px;max-width:34em}
+.cm-stats{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.cm-stats span{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);border-radius:999px;padding:5px 12px;font-size:13px;color:#d6e2f7}
+.cm-stats b{color:#fff;font-size:15px;margin-right:2px}
+.cm-stats .warn{background:rgba(255,180,0,.18);border-color:rgba(255,180,0,.55)}
+.cm-stats .warn b{color:var(--amber)}
+.cm-hero-bri{flex:none;width:118px;height:118px;border-radius:50%;background:#fff;display:grid;place-items:center;box-shadow:0 16px 30px -16px rgba(0,10,40,.6)}
+@media (max-width:560px){.cm-hero-bri{display:none}}
+.cm-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+@media (max-width:720px){.cm-tabs{grid-template-columns:minmax(0,1fr)}}
+.cm-tabs button{display:flex;align-items:center;gap:12px;text-align:left;border:1.5px solid var(--line);background:var(--bg);border-radius:16px;padding:14px 16px;transition:border-color .15s,background .15s,box-shadow .15s}
+.cm-tabs button:hover{border-color:var(--blue-line);background:var(--bg-soft)}
+.cm-tabs button[aria-pressed="true"]{border-color:var(--blue);background:var(--blue-soft);box-shadow:0 10px 24px -18px rgba(0,48,122,.6)}
+.cm-ic{flex:none;width:42px;height:42px;border-radius:12px;background:var(--bg-soft);display:grid;place-items:center;font-size:22px}
+.cm-tabs button[aria-pressed="true"] .cm-ic{background:#fff}
+.cm-tx{display:grid;min-width:0;flex:1}
+.cm-tx b{font-size:15px}
+.cm-tx small{font-size:12px;color:var(--ink-3)}
+.cm-tabs button[aria-pressed="true"] .cm-tx b{color:var(--blue)}
+.cm-badge{flex:none;font-size:12px;font-weight:700;background:var(--bg-soft);color:var(--ink-2);border-radius:999px;padding:2px 9px;font-variant-numeric:tabular-nums}
+.cm-badge.warn{background:var(--amber-soft);color:#8a5a00}
+.cm-feed{display:grid;gap:14px;max-width:820px;width:100%;margin:0 auto}
+.cm-compose{display:flex;gap:12px;align-items:flex-start;border:1.5px solid var(--blue-line);background:var(--bg);border-radius:18px;padding:16px;box-shadow:0 12px 30px -24px rgba(0,48,122,.55)}
+.cm-compose > .av{width:40px;height:40px}
+.cm-compose-body{flex:1;min-width:0;display:grid;gap:10px}
+.cm-compose textarea{border:0;background:var(--bg-soft);border-radius:12px;min-height:64px;padding:12px 14px;font-size:15px}
+.cm-compose textarea:focus{box-shadow:0 0 0 3px var(--blue-soft);background:#fff;outline:1px solid var(--blue)}
+.cm-compose-foot{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.cm-compose-foot .btn{margin-left:auto}
+.cm-toggle{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--ink-2);cursor:pointer}
+.cm-toggle input{position:absolute;opacity:0;width:1px;height:1px}
+.cm-toggle span{width:34px;height:20px;border-radius:999px;background:var(--line);position:relative;transition:background .15s}
+.cm-toggle span::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform .15s}
+.cm-toggle input:checked + span{background:var(--blue)}
+.cm-toggle input:checked + span::after{transform:translateX(14px)}
+.cm-toggle input:focus-visible + span{outline:2px solid var(--blue);outline-offset:2px}
+.cm-post{border:1px solid var(--line);border-radius:18px;background:var(--bg);padding:18px 18px 14px;display:grid;gap:10px;transition:box-shadow .15s}
+.cm-post:hover{box-shadow:0 14px 30px -26px rgba(0,48,122,.6)}
+.cm-post header{display:flex;align-items:center;gap:10px}
+.cm-who{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap;min-width:0}
+.cm-who b{font-size:15px}
+.cm-who small{font-size:12px;color:var(--ink-3)}
+.cm-when{margin-left:auto;font-size:12px;color:var(--ink-3);white-space:nowrap}
+.cm-st{flex:none;font-size:12px;font-weight:700;border-radius:999px;padding:2px 9px}
+.cm-st.wait{background:var(--amber-soft);color:#8a5a00}
+.cm-st.done{background:var(--good-soft);color:var(--good)}
+.cm-ref{justify-self:start;display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;background:var(--blue-soft);color:var(--blue);border-radius:8px;padding:4px 10px}
+.cm-text{font-size:15.5px;line-height:1.7}
+.cm-thread{display:grid;gap:8px;padding-left:14px;border-left:2px solid var(--blue-line)}
+.cm-reply{display:flex;gap:8px;align-items:flex-start}
+.cm-bubble{background:var(--bg-soft);border-radius:4px 14px 14px 14px;padding:8px 12px;font-size:14px;min-width:0}
+.cm-reply.is-sr .cm-bubble{background:var(--blue-soft)}
+.cm-rmeta{display:flex;gap:6px;align-items:center;margin-bottom:2px;font-size:13px}
+.cm-rmeta small{color:var(--ink-3);font-size:12px}
+.cm-post footer{display:flex;gap:8px;align-items:center;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:10px}
+.cm-replyform{flex:1;display:flex;gap:6px;min-width:200px}
+.cm-replyform input{flex:1;min-width:0;border-radius:999px;padding:8px 14px;font-size:14px;background:var(--bg-soft);border-color:transparent}
+.cm-replyform input:focus{background:#fff}
+.cm-empty{text-align:center;border:1.5px dashed var(--line);border-radius:18px;padding:34px 16px;font-size:30px}
+.cm-empty p{font-size:14px;color:var(--ink-3);margin-top:6px}
+/* peer chat room */
+.chat-room{max-width:960px;width:100%;margin:0 auto;border:1.5px solid var(--blue-line);border-radius:20px;overflow:hidden;background:#fff;display:grid;grid-template-columns:250px minmax(0,1fr);height:min(660px,74vh);box-shadow:0 18px 40px -30px rgba(0,48,122,.6)}
+.chat-main{display:grid;grid-template-rows:auto minmax(0,1fr) auto;min-height:0;min-width:0}
+.chat-side{border-right:1px solid var(--line);background:var(--bg-soft);overflow-y:auto;display:flex;flex-direction:column;gap:2px;padding:8px}
+.chat-side-h{font-size:12px;font-weight:700;color:var(--ink-3);padding:8px 10px 4px;letter-spacing:.04em}
+.chat-it{display:flex;align-items:center;gap:10px;text-align:left;border:0;background:none;border-radius:12px;padding:9px 10px;min-width:0}
+.chat-it:hover{background:#fff}
+.chat-it[aria-pressed="true"]{background:#fff;box-shadow:0 0 0 1.5px var(--blue) inset}
+.chat-it .av.sm{width:38px;height:38px;flex:none}
+.chat-it-av{flex:none;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-size:18px;background:var(--blue-soft)}
+.chat-it-tx{display:grid;min-width:0}
+.chat-it-tx b{font-size:14px}
+.chat-it-tx b small{font-weight:500;font-size:11px;color:var(--ink-3);margin-left:2px}
+.chat-it-tx > span{font-size:12px;color:var(--ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chat-it[aria-pressed="true"] .chat-it-tx b{color:var(--blue)}
+.cmsg-bub.typing{display:flex;gap:4px;padding:12px 14px}
+.cmsg-bub.typing i{width:7px;height:7px;border-radius:50%;background:#9aa3b5;animation:tdot 1s infinite ease-in-out}
+.cmsg-bub.typing i:nth-child(2){animation-delay:.15s}.cmsg-bub.typing i:nth-child(3){animation-delay:.3s}
+@keyframes tdot{0%,60%,100%{transform:translateY(0);opacity:.5}30%{transform:translateY(-4px);opacity:1}}
+@media (max-width:720px){.chat-room{grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);height:78vh}
+  .chat-side{flex-direction:row;overflow-x:auto;overflow-y:hidden;border-right:0;border-bottom:1px solid var(--line);padding:6px}
+  .chat-side-h{display:none}.chat-it{flex:none;max-width:170px}}
+.chat-head{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);background:#fff}
+.chat-title{display:grid;min-width:0;flex:1}
+.chat-title b{font-size:15px}.chat-title small{font-size:12px;color:var(--ink-3)}
+.chat-faces{display:flex}.chat-faces .av{width:28px;height:28px;margin-left:-8px;border:2px solid #fff}
+.chat-log{overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:6px;background:linear-gradient(#f4f7fd,#eef3fc);overscroll-behavior:contain}
+.chat-day{display:flex;justify-content:center;margin:8px 0 4px}
+.chat-day span{font-size:11px;color:var(--ink-3);background:rgba(255,255,255,.85);border-radius:999px;padding:2px 10px}
+.cmsg{display:flex;gap:8px;align-items:flex-start;max-width:86%}
+.cmsg.cont{margin-top:-2px}
+.cmsg .av.sm{width:34px;height:34px;flex:none}
+.cmsg-sp{flex:none;width:34px}
+.cmsg-col{display:grid;gap:3px;min-width:0}
+.cmsg-nm{font-size:12px;font-weight:700;color:var(--ink-2)}
+.cmsg-nm small{font-weight:400;color:var(--ink-3);margin-left:2px}
+.cmsg-row{display:flex;align-items:flex-end;gap:6px}
+.cmsg-bub{background:#fff;border-radius:4px 16px 16px 16px;padding:9px 13px;font-size:14.5px;line-height:1.55;box-shadow:0 1px 2px rgba(0,30,80,.08);min-width:0;overflow-wrap:anywhere}
+.cmsg.cont .cmsg-bub{border-radius:16px}
+.cmsg-tm{flex:none;font-size:11px;color:var(--ink-3);white-space:nowrap}
+.cmsg.me{align-self:flex-end;flex-direction:row-reverse}
+.cmsg.me .cmsg-row{flex-direction:row-reverse}
+.cmsg.me .cmsg-bub{background:var(--blue);color:#fff;border-radius:16px 4px 16px 16px}
+.cmsg.me.cont .cmsg-bub{border-radius:16px}
+.chat-input{display:flex;align-items:center;gap:10px;padding:10px 12px;border-top:1px solid var(--line);background:#fff}
+.chat-input .av.sm{width:32px;height:32px;flex:none}
+.chat-input input{flex:1;min-width:0;border-radius:999px;background:var(--bg-soft);border-color:transparent;padding:10px 16px}
+.chat-input input:focus{background:#fff}
+@media (max-width:560px){.cmsg{max-width:94%}.chat-faces{display:none}}
+/* profile popover in the peer room */
+.chat-room{position:relative}
+.cmsg-avbtn,.cmsg-nmbtn,.chat-faces button{border:0;background:none;padding:0;cursor:pointer;border-radius:50%}
+.cmsg-avbtn{flex:none;display:block;transition:transform .15s}
+.cmsg-avbtn:hover{transform:scale(1.08)}
+.cmsg-nmbtn{border-radius:4px;font:inherit;font-weight:700;color:inherit}
+.cmsg-nmbtn:hover{color:var(--blue);text-decoration:underline}
+.chat-faces button{display:block;margin-left:-8px}
+.chat-faces button .av{margin-left:0}
+.prof-pop{position:absolute;z-index:5;width:236px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px;display:grid;gap:10px;box-shadow:0 18px 40px -16px rgba(0,30,80,.45);animation:profIn .16s ease both}
+@keyframes profIn{from{opacity:0;transform:translateY(4px) scale(.97)}}
+.prof-x{position:absolute;top:8px;right:8px;border:0;background:none;color:var(--ink-3);font-size:13px;width:24px;height:24px;border-radius:50%}
+.prof-x:hover{background:var(--bg-soft)}
+.prof-top{display:flex;align-items:center;gap:10px}
+.prof-top .av{width:52px;height:52px}
+.prof-top b{display:block;font-size:16px}
+.prof-top small{font-size:12px;color:var(--ink-3)}
+.prof-bio{font-size:13px;color:var(--ink-2);background:var(--bg-soft);border-radius:10px;padding:8px 10px}
+.prof-go{width:100%}
+.prof-meta{font-size:11px;color:var(--ink-3);text-align:center}
 /* register */
 .reg{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:28px;align-items:start}
 @media (max-width:860px){.reg{grid-template-columns:minmax(0,1fr)}}
@@ -224,6 +417,138 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--blue);bo
 .map i{color:var(--blue);font-style:normal}
 .badges{display:flex;gap:8px;flex-wrap:wrap}
 
+/* slim inner-page header */
+.cm-hero{background:var(--bg-soft);color:var(--ink);border:1px solid var(--line);border-radius:18px;padding:18px 22px;box-shadow:none}
+.cm-hero h1{font-size:clamp(22px,3vw,26px);color:var(--ink)}
+.cm-hero p{color:var(--ink-2);font-size:14px;margin-top:2px}
+.cm-stats{margin-top:12px}
+.cm-stats span{background:#fff;border-color:var(--line);color:var(--ink-2);font-size:12.5px;padding:4px 11px;display:inline-flex;align-items:center;gap:4px}
+.cm-stats b{color:var(--ink);font-size:14px}
+.cm-stats .warn{background:var(--amber-soft);border-color:#f3d48a}
+.cm-stats .warn b{color:#8a5a00}
+.cm-hero-bri{width:74px;height:74px;box-shadow:none;border:1px solid var(--line)}
+.cm-hero-bri svg{width:58px;height:auto}
+.rg-faces .pimg{width:48px;height:48px;margin-left:-12px;border-color:#fff;box-shadow:none}
+/* icons */
+.ui{width:1.1em;height:1.1em;vertical-align:-.18em;flex:none}
+.cm-ic .ui,.rg-ic .ui,.chat-it-av .ui,.hd-tips li span .ui{width:20px;height:20px;color:var(--blue)}
+.cm-tabs button[aria-pressed="true"] .cm-ic .ui{color:var(--blue)}
+.cm-empty .ui{width:30px;height:30px;color:var(--ink-3)}
+.rg-card-h p .ui{color:var(--amber);width:14px;height:14px;vertical-align:-2px}
+/* home band */
+.hb-band{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px;background:var(--bg-soft);border-radius:22px;padding:clamp(20px,3vw,28px)}
+@media (max-width:860px){.hb-band{grid-template-columns:minmax(0,1fr)}}
+.hb-about{display:grid;gap:14px;align-content:start}
+.hb-about-h{display:flex;gap:16px;align-items:center}
+.hb-bri{flex:none;width:96px;height:96px;border-radius:50%;background:#fff;display:grid;place-items:center}
+.hb-facts{display:flex;flex-wrap:wrap;gap:6px}
+.hb-facts span{background:#fff;border:1px solid var(--line);border-radius:999px;padding:4px 11px;font-size:12.5px;color:var(--ink-2)}
+.hb-cycle{display:grid;gap:12px;align-content:start}
+.hb-cycle ol{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;counter-reset:none}
+@media (max-width:520px){.hb-cycle ol{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.hb-cycle li{background:#fff;border-radius:14px;padding:12px;display:grid;gap:2px;position:relative}
+.hb-cycle li b{width:28px;height:28px;border-radius:50%;background:var(--blue);color:#fff;display:grid;place-items:center;font-size:14px;margin-bottom:4px}
+.hb-cycle li span{font-weight:700;font-size:14px}
+.hb-cycle li small{font-size:12px;color:var(--ink-3)}
+/* register */
+.rg-hero .rg-faces{display:flex;flex:none}
+.rg-faces .pimg{width:64px;height:64px;border-radius:50%;overflow:hidden;border:3px solid rgba(255,255,255,.9);margin-left:-14px;box-shadow:0 10px 20px -12px rgba(0,10,40,.6);display:block}
+.rg-faces .pimg svg{display:block}
+@media (max-width:640px){.rg-hero .rg-faces{display:none}}
+.rg{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:22px;align-items:start}
+@media (max-width:900px){.rg{grid-template-columns:minmax(0,1fr)}}
+.rg-form{display:grid;gap:14px}
+.rg-card{border:1px solid var(--line);border-radius:18px;background:var(--bg);padding:18px;display:grid;gap:12px;transition:border-color .2s,box-shadow .2s}
+.rg-card:focus-within{border-color:var(--blue);box-shadow:0 0 0 4px var(--blue-soft)}
+.rg-card-h{display:flex;gap:12px;align-items:flex-start}
+.rg-card-h h3{font-size:16px;letter-spacing:-.01em;line-height:1.4}
+.rg-card-h h3 em{font-style:normal;font-size:11px;font-weight:700;color:var(--warn);background:var(--warn-soft);border-radius:999px;padding:1px 7px;margin-left:4px;vertical-align:2px}
+.rg-card-h h3 em.opt{color:var(--ink-3);background:var(--bg-soft)}
+.rg-card-h p{font-size:13px;color:var(--ink-3);margin-top:2px}
+.rg-ic{flex:none;width:36px;height:36px;border-radius:10px;background:var(--blue-soft);display:grid;place-items:center;font-size:18px}
+.rg-num{flex:none;width:32px;height:32px;border-radius:50%;background:var(--blue);color:#fff;display:grid;place-items:center;font-weight:800;font-size:15px}
+.rg-ok{margin-left:auto;flex:none;width:24px;height:24px;border-radius:50%;background:var(--good);color:#fff;display:grid;place-items:center;font-size:12px;font-weight:800;opacity:0;transform:scale(.6);transition:opacity .2s,transform .2s}
+.rg-q.done .rg-ok{opacity:1;transform:none}
+.rg-q.done{border-color:#bfe3cf}
+.rg-q textarea{min-height:92px;font-size:15px;background:var(--bg-soft);border-color:transparent}
+.rg-q textarea:focus{background:#fff}
+.rg-count{justify-self:end;font-size:11px;color:var(--ink-3);font-variant-numeric:tabular-nums;margin-top:-6px}
+.rg-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:2px}
+.rg-chip{position:relative;cursor:pointer}
+.rg-chip input{position:absolute;opacity:0;width:1px;height:1px}
+.rg-chip span{display:inline-block;border:1.5px solid var(--line);border-radius:999px;padding:6px 13px;font-size:13px;font-weight:500;color:var(--ink-2);background:#fff;transition:all .15s}
+.rg-chip:hover span{border-color:var(--blue-line)}
+.rg-chip input:checked + span{background:var(--blue);border-color:var(--blue);color:#fff;font-weight:700}
+.rg-chip input:focus-visible + span{outline:2px solid var(--blue);outline-offset:2px}
+.rg-submit{position:sticky;bottom:12px;z-index:3;display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:rgba(255,255,255,.94);backdrop-filter:blur(8px);border:1px solid var(--blue-line);border-radius:16px;padding:12px 14px;box-shadow:0 16px 30px -22px rgba(0,48,122,.6)}
+.rg-submit .small{flex:1;min-width:160px;color:var(--ink-2)}
+.rg-submit .small b{color:var(--warn)}
+.rg-steps{position:relative;display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:12px 14px 18px;border:1px solid var(--line);border-radius:16px;background:var(--bg)}
+.rg-step{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--ink-3);padding:4px 10px 4px 4px;border-radius:999px;background:var(--bg-soft);transition:background .2s,color .2s}
+.rg-step i{width:20px;height:20px;border-radius:50%;background:#fff;border:1.5px solid var(--line);display:grid;place-items:center;font-style:normal;font-size:11px;font-weight:800;color:#fff}
+.rg-step.on{background:var(--blue-soft);color:var(--blue);font-weight:700}
+.rg-step.on i{background:var(--blue);border-color:var(--blue)}
+.rg-pct{margin-left:auto;font-size:13px;color:var(--ink-2)}
+.rg-pct b{color:var(--blue);font-size:16px;font-variant-numeric:tabular-nums}
+.rg-bar{position:absolute;left:14px;right:14px;bottom:8px;height:4px;border-radius:99px;background:var(--bg-soft);overflow:hidden}
+.rg-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--blue),#3d8bff);border-radius:99px;transition:width .35s ease}
+.rg-sample{border:0;background:none;padding:4px 2px;font-size:12px;color:var(--ink-3);text-decoration:underline;text-underline-offset:3px}
+.rg-sample:hover{color:var(--blue)}
+.rg-side{display:grid;gap:12px}
+.rg-pvd{border:1px solid var(--line);border-radius:16px;background:#fff;overflow:hidden}
+.rg-pvd summary{list-style:none;cursor:pointer;display:grid;gap:2px;padding:12px 40px 12px 14px;position:relative}
+.rg-pvd summary::-webkit-details-marker{display:none}
+.rg-pvd summary span{font-weight:700;font-size:14px}
+.rg-pvd summary small{font-size:12px;color:var(--ink-3)}
+.rg-pvd summary::after{content:"";position:absolute;right:18px;top:50%;width:8px;height:8px;border-right:2px solid var(--ink-3);border-bottom:2px solid var(--ink-3);transform:translateY(-70%) rotate(45deg);transition:transform .2s}
+.rg-pvd[open] summary::after{transform:translateY(-30%) rotate(-135deg)}
+.rg-pvd summary:hover{background:var(--bg-soft)}
+.pv-tabs{display:flex;gap:6px;padding:0 12px 10px;flex-wrap:wrap}
+.pv-tabs button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:5px 12px;font-size:12px;color:var(--ink-2)}
+.pv-tabs button[aria-pressed="true"]{background:var(--blue);border-color:var(--blue);color:#fff;font-weight:700}
+.pvg{position:relative;margin:0 12px 12px;border-radius:12px;overflow:hidden;aspect-ratio:4/3;background:linear-gradient(#e8eef8 0 56%,#d9cdb8 56%);border:3px solid #1b2033;font-size:12px}
+.pvg-hud{position:absolute;left:6px;right:6px;top:6px;display:flex;align-items:center;gap:6px;background:rgba(255,253,246,.95);border-radius:7px;padding:2px 7px;font-size:10px}
+.pvg-me{width:16px;height:16px;border-radius:6px;overflow:hidden;background:var(--blue-soft);display:block}
+.pvg-me svg{display:block}
+.pvg-bars{display:flex;gap:4px;flex:1}
+.pvg-bars i{flex:1;height:4px;border-radius:9px;background:#3b6fd8}
+.pvg-bars i:nth-child(2){background:#d8578a}.pvg-bars i:nth-child(3){background:#2f9e6b}.pvg-bars i:nth-child(4){background:#e8a33d}
+.pvg-day{background:var(--blue);color:#fff;border-radius:5px;padding:0 5px;font-weight:700;font-size:10px}
+.pvg-scene span{position:absolute;display:block}
+.pvg-win{left:10%;top:18%;width:20%;height:20%;background:#cfe3ff;border:3px solid #fff;border-radius:3px}
+.pvg-win.r{left:auto;right:10%}
+.pvg-desk{left:0;right:0;top:50%;height:6%;background:#c49a6c}
+.pvg-bri{left:30%;top:17%}
+.pvg-bri svg{display:block;width:42px;height:auto}
+.pvg-bri em{position:absolute;top:-12px;right:-14px;font-style:normal;background:#fff;border-radius:9px;padding:0 5px;font-size:13px;box-shadow:0 3px 8px -3px rgba(0,0,0,.35)}
+.pvg-npc{left:62%;top:26%}
+.pvg-npc .av{width:30px;height:30px}
+.pvg-dlg{position:absolute;left:6px;right:6px;bottom:6px;background:rgba(255,253,246,.97);border-radius:9px;padding:6px 8px;display:none;box-shadow:0 8px 18px -10px rgba(0,0,0,.5)}
+.pvg[data-tab="card"] .pvg-card{display:flex;gap:8px}
+.pvg[data-tab="fb"] .pvg-fb{display:grid;gap:4px;align-content:start}
+.pvg-spk{flex:none;width:44px;display:grid;justify-items:center;gap:2px;text-align:center}
+.pvg-spk .av{width:24px;height:24px}
+.pvg-spk b{font-size:10px;line-height:1.2;overflow-wrap:anywhere}
+.pvg-body{flex:1;min-width:0;display:grid;gap:3px}
+.pvg-head{display:flex;gap:6px;align-items:center}
+.pvg-head .chip{font-size:10px;padding:0 7px}
+.pvg-head small{font-size:10px;color:var(--ink-3)}
+.pvg-body p{font-size:11.5px;line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pvg-ch{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}
+.pvg-ch span{display:flex;align-items:center;gap:6px;height:16px;border:1px solid var(--line);border-radius:5px;background:#fff;padding:0 4px}
+.pvg-ch span::after{content:"";flex:1;height:4px;border-radius:9px;background:#e3e8f0;margin-right:15%}
+.pvg-ch b{width:12px;height:12px;border-radius:3px;background:var(--blue);color:#fff;font-size:8px;display:grid;place-items:center}
+.pvg-fbh{font-weight:800;font-size:11px}
+.pvg-sr{display:flex;gap:6px;align-items:flex-start;background:#fff;border-radius:7px;padding:5px 7px}
+.pvg-sr .av{width:22px;height:22px;flex:none}
+.pvg-sr small{font-size:10px;color:var(--ink-3)}
+.pvg-sr p{font-size:11px;line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pvg-sr .why{color:var(--blue);font-weight:600}
+.pvg-tip{font-size:10.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:#0f1d3d;color:#dfe8f6;border-radius:6px;padding:5px 8px}
+.rg-mine{border:1px dashed var(--line);border-radius:16px;padding:14px;display:grid;gap:8px}
+.rg-mine b{font-size:14px}
+.rg-mine-it{display:flex;gap:8px;align-items:center;font-size:13px;min-width:0}
+.rg-mine-it > span:last-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 /* hrd */
 .kpi{display:grid;gap:2px;padding:16px;border:1px solid var(--line);border-radius:12px}
 .kpi b{font-size:28px;font-variant-numeric:tabular-nums;color:var(--ink);line-height:1.2}
@@ -254,14 +579,87 @@ tr:last-child td{border-bottom:0}
 .stuck div::before{counter-increment:s;content:counter(s);flex:none;width:24px;height:24px;border-radius:50%;background:var(--warn-soft);color:var(--warn);display:grid;place-items:center;font-size:12px;font-weight:700}
 .stuck b{margin-left:auto;color:var(--warn);font-variant-numeric:tabular-nums;white-space:nowrap}
 
+/* hrd dashboard */
+.hd-hero{padding-block:clamp(20px,3vw,28px)}
+.hd-filter{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.hd-filter button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 13px;font-size:13px;color:var(--ink-2)}
+.hd-filter button:hover{border-color:var(--blue-line)}
+.hd-filter button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff;font-weight:700}
+.hd-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+@media (max-width:860px){.hd-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.hd-kpi{border:1px solid var(--line);border-radius:16px;background:#fff;padding:16px;display:grid;gap:4px;align-content:start;text-decoration:none;color:inherit}
+.hd-kpi.link:hover{border-color:var(--blue-line);box-shadow:0 10px 24px -20px rgba(0,48,122,.6)}
+.hd-kl{font-size:13px;color:var(--ink-2)}
+.hd-kpi b{font-size:30px;line-height:1.15;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.hd-kpi b small{font-size:15px;font-weight:600;color:var(--ink-2);margin-left:2px}
+.hd-ks{font-size:12px;color:var(--ink-3)}
+.hd-kpi.link .hd-ks{color:var(--blue);font-weight:600}
+.hd-meter{display:block;height:6px;border-radius:99px;background:var(--bg-soft);overflow:hidden;margin:4px 0 2px}
+.hd-meter i{display:block;height:100%;background:var(--blue);border-radius:99px}
+.hd-main{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:960px){.hd-main{grid-template-columns:minmax(0,1fr)}}
+.hd-side{display:grid;gap:16px}
+.hd-card{border:1px solid var(--line);border-radius:18px;background:#fff;padding:18px;display:grid;gap:14px}
+.hd-card-h{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.hd-card h2{font-size:17px;letter-spacing:-.01em}
+.hd-card-h p{font-size:13px;color:var(--ink-3);margin-top:2px}
+.hd-legend{display:flex;gap:12px;font-size:12px;color:var(--ink-2)}
+.hd-legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+i.neg{background:#e0662f}i.pos{background:#2f6fd6}
+.hd-axis{display:grid;grid-template-columns:150px 1fr 1fr;font-size:11px;color:var(--ink-3)}
+.hd-axis span:first-child{grid-column:2;text-align:right;padding-right:8px}
+.hd-axis span:last-child{padding-left:8px}
+.hd-div{display:grid;gap:2px}
+.hd-day{font-size:12px;font-weight:700;color:var(--ink-2);padding:10px 0 4px;border-top:1px solid var(--line);margin-top:4px}
+.hd-day:first-child{border-top:0;margin-top:0;padding-top:0}
+.hd-row{display:grid;grid-template-columns:150px minmax(0,1fr);gap:10px;align-items:center;padding:5px 6px;margin:0 -6px;border-radius:8px;cursor:default;outline:none}
+.hd-row:hover,.hd-row:focus-visible{background:var(--bg-soft)}
+.hd-row:focus-visible{box-shadow:0 0 0 2px var(--blue) inset}
+.hd-nm{display:grid;min-width:0}
+.hd-nm b{font-size:13.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hd-nm small{font-size:11px;color:var(--ink-3)}
+.hd-arms{display:grid;grid-template-columns:1fr 1fr;align-items:center;position:relative}
+.hd-arms::before{content:"";position:absolute;left:50%;top:-4px;bottom:-4px;width:1px;background:#c9ced8}
+.hd-arm{display:flex;align-items:center;gap:6px;height:18px;min-width:0}
+.hd-arm.l{justify-content:flex-end;padding-right:2px}
+.hd-arm.r{padding-left:2px}
+.hd-arm i{display:block;height:14px;min-width:0}
+.hd-arm.l i{border-radius:4px 0 0 4px}
+.hd-arm.r i{border-radius:0 4px 4px 0}
+.hd-v{flex:none;font-size:11px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+@media (max-width:560px){.hd-row,.hd-axis{grid-template-columns:96px minmax(0,1fr)}.hd-axis{grid-template-columns:96px 1fr 1fr}}
+.hd-table summary{cursor:pointer;font-size:13px;color:var(--blue);font-weight:600}
+.hd-table .tbl{margin-top:10px}
+.hd-tip{position:fixed;z-index:60;width:280px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:grid;gap:6px;font-size:12.5px;box-shadow:0 16px 36px -14px rgba(0,30,80,.4);pointer-events:none}
+.hd-tip > b{font-size:14px}
+.hd-tip-r{display:grid;grid-template-columns:18px minmax(0,1fr) auto;gap:8px;align-items:center}
+.hd-tip-k{width:18px;height:18px;border-radius:5px;display:grid;place-items:center;font-size:10px;font-weight:800;color:#fff}
+.hd-tip-k.neg{background:#e0662f}.hd-tip-k.pos{background:#2f6fd6}.hd-tip-k.mid{background:#9aa3b5}
+.hd-tip-t{color:var(--ink-2);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.hd-tip-r b{font-variant-numeric:tabular-nums}
+.hd-stuck{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.hd-stuck li{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:10px;align-items:center;padding:10px;border-radius:12px;background:var(--bg-soft)}
+.hd-rank{width:28px;height:28px;border-radius:50%;background:var(--ink);color:#fff;display:grid;place-items:center;font-weight:800;font-size:13px}
+.hd-stuck li:first-child .hd-rank{background:#e0662f}
+.hd-stuck b{display:block;font-size:14px}
+.hd-stuck small{font-size:12px;color:var(--ink-3)}
+.hd-pick{display:block;font-size:12px;color:var(--ink-2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hd-stuck strong{font-size:22px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.hd-stuck strong small{font-size:12px;color:var(--ink-2)}
+.hd-tips ul{list-style:none;margin:0;padding:0;display:grid;gap:8px;font-size:14px;color:var(--ink-2)}
+.hd-tips li{display:flex;gap:10px;align-items:center}
+.hd-tips li span{flex:none;width:30px;height:30px;border-radius:9px;background:var(--blue-soft);display:grid;place-items:center}
+.hd-db tr.wait td{background:#fffaf0}
+.hd-db td b{font-weight:600}
 /* character + people */
 .greet{display:flex;align-items:flex-end;gap:12px}
 .greet svg{flex:none}
 .bubble{position:relative;background:var(--blue-soft);color:var(--ink);border-radius:16px 16px 16px 4px;padding:12px 16px;font-size:14px;margin-bottom:28px;min-width:0}
-.hero-side{display:grid;gap:4px}
 .people{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:14px}
 .people figure{margin:0;display:grid;gap:8px}
 .people img{width:100%;max-width:100%;aspect-ratio:1;border-radius:16px;background:#eeecf0;object-fit:cover}
+.people .pimg{display:block;width:100%;aspect-ratio:1;border-radius:16px;overflow:hidden}
+.pimg svg,.av.pt svg{display:block}
 .people figcaption{display:grid;font-size:13px;color:var(--ink-3);line-height:1.4}
 .people figcaption b{font-size:15px;color:var(--ink)}
 @media (max-width:760px){.people{grid-template-columns:repeat(3,minmax(0,1fr))}}
@@ -302,10 +700,10 @@ footer img{height:18px;width:auto}
   </div>
   <nav class="wrap tabs" id="tabs" aria-label="메뉴">
     <a href="#home">홈</a>
-    <a href="#game">100일 게임<small>신입</small></a>
-    <a href="#community">소통 공간<small>모두</small></a>
-    <a href="#register">경험 등록<small>시니어</small></a>
-    <a href="#hrd">운영 대시보드<small>HRD</small></a>
+    <a href="#game">100일 게임</a>
+    <a href="#community">소통 공간</a>
+    <a href="#register">경험 등록</a>
+    <a href="#hrd">운영 대시보드</a>
   </nav>
 </header>
 
@@ -407,7 +805,24 @@ const ICON_PATHS = {
   inbox:'<path d="M4 13l2.5-8h11L20 13v6H4z"/><path d="M4 13h4.5l1 2h5l1-2H20"/>',
   user:'<circle cx="12" cy="9" r="3.6"/><path d="M5.5 19.5a6.5 6.5 0 0 1 13 0"/>'
 };
-const AUTHORS = {'최유진':{bri:BRI_VARIANTS[1]},'강민호':{bri:BRI_VARIANTS[5]},'이도현':{img:'p-lee'},'박서연':{img:'p-park'},'정하은':{img:'p-jung'},'한지훈':{img:'p-han'}};
+const UI_P={
+  chat:'<path d="M4 5h16v11H9l-5 4z"/><path d="M8 9.5h8M8 12.5h5"/>',
+  ask:'<circle cx="12" cy="12" r="9"/><path d="M9.6 9.4a2.5 2.5 0 1 1 3.4 2.4c-.6.3-1 .9-1 1.5v.6"/><path d="M12 17h.01"/>',
+  anon:'<path d="M3 9.5c3-1.3 6-1.3 9 0 3-1.3 6-1.3 9 0V11c0 3-2.2 5-5 5-1.8 0-3-.9-4-2-1 1.1-2.2 2-4 2-2.8 0-5-2-5-5z"/><path d="M7 11h2M15 11h2"/>',
+  group:'<circle cx="9" cy="8" r="3.2"/><path d="M3 19a6 6 0 0 1 12 0"/><circle cx="17" cy="9" r="2.6"/><path d="M15.6 14.1A5 5 0 0 1 21 19"/>',
+  user:'<circle cx="12" cy="8.5" r="3.6"/><path d="M5.5 19.5a6.5 6.5 0 0 1 13 0"/>',
+  scene:'<rect x="3" y="9" width="18" height="11" rx="2"/><path d="M3 9l1.6-4.4 16 0L21 9M8.5 4.6 7 9M14.5 4.6 13 9"/>',
+  bulb:'<path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.6 10.8c.7.5 1.1 1.3 1.1 2.2h5c0-.9.4-1.7 1.1-2.2A6 6 0 0 0 12 3z"/>',
+  eye:'<path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+  chart:'<path d="M4 20V10M10 20V4M16 20v-7M21 20H3"/>',
+  cap:'<path d="M2 9.5 12 5l10 4.5-10 4.5z"/><path d="M6 11.3v4.4c3.3 2.2 8.7 2.2 12 0v-4.4M22 9.5v5"/>',
+  bell:'<path d="M6 16v-5a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/>',
+  lock:'<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
+  card:'<rect x="5" y="3" width="14" height="18" rx="2.5"/><path d="M9 8h6M9 12h6M9 16h3"/>',
+  pen:'<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/>'
+};
+const UI=(n,c)=>`<svg class="ui${c?' '+c:''}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${UI_P[n]||''}</svg>`;
+const AUTHORS = {'윤채린':{img:'p-yoon'},'최유진':{bri:{c:'#8e6bd8',top:'ribbon',face:'glasses',neck:'badge',ear:'none',eyes:'round'}},'강민호':{bri:{c:'#2b8a6e',top:'sprout',face:'none',neck:'tie',ear:'none',eyes:'smile',mouth:'open'}},'이도현':{img:'p-lee'},'박서연':{img:'p-park'},'정하은':{img:'p-jung'},'한지훈':{img:'p-han'}};
 const CAST = [{img:'p-han',n:'한지훈',r:'인사팀장'},{img:'p-park',n:'박서연',r:'채용 5년차 · 사수'},{img:'p-lee',n:'이도현',r:'HRD 4년차'},{img:'p-jung',n:'정하은',r:'평가·보상 7년차'},{img:'p-oh',n:'오정민',r:'개발2팀 팀장'},{img:'p-yoon',n:'윤채린',r:'입사 동기 · 마케팅'}];
 const PARTS = ['채용','교육(HRD)','평가·보상','노무·조직문화'];
 const TYPES = ['채용','교육(HRD)','평가·보상','노무·조직문화','조직 생활'];
@@ -421,6 +836,8 @@ const SEED_POSTS = [
   {id:'s2',ch:'anon',by:null,tag:'익명 신입',t:'다른 팀 동기가 자꾸 평가 등급을 물어봐요. 어떻게 거절해야 서운하지 않을까요?',when:'3일 전',rep:[{by:'정하은',tag:'선배 · 평가·보상 7년차',t:'"그건 인사팀 비밀 1번이라 나도 못 봐~" 정도로 가볍게 넘기세요. 원칙은 단단하게, 말투는 가볍게요.'}]},
   {id:'s3',ch:'peer',by:'강민호',tag:'신입 · 채용 · D+30',t:'첫 채용 박람회 부스 운영 끝! 다들 박람회 때 명함 몇 장 챙겨 가요? 저는 50장 들고 갔다가 모자랐어요.',when:'5일 전',rep:[{by:'최유진',tag:'신입 · 교육(HRD)',t:'저는 다음 주 박람회예요. 100장 챙길게요 ㅎㅎ'}]},
   {id:'s4',ch:'ask',by:'강민호',tag:'신입 · 채용 · D+30',ref:'D+14 · 겹친 면접',t:'지원자 면접 일정 변경 요청, 몇 번까지 받아 주는 게 보통인가요?',when:'어제',rep:[]},
+  {id:'s6',ch:'peer',by:'윤채린',tag:'신입 · 마케팅',t:'다들 첫 주 어땠어? 나는 아직 메신저 채널 이름도 다 못 외웠어 😂',when:'어제',rep:[{by:'최유진',tag:'신입 · 교육(HRD)',t:'나도ㅋㅋ 채널 20개 넘는 거 실화야?'}]},
+  {id:'s7',ch:'peer',by:'강민호',tag:'신입 · 채용 · D+30',t:'오늘 점심 같이 먹을 사람? 사내 식당 돈가스 나온대 🍱',when:'오늘',rep:[{by:'윤채린',tag:'신입 · 마케팅',t:'나 콜! 12시에 1층에서 봐'}]},
   {id:'s5',ch:'anon',by:null,tag:'익명 신입',t:'외부 강사 섭외 메일에서 첫 연락부터 강의료를 물어봐도 실례가 아닐까요?',when:'오늘',rep:[]}
 ];
 
@@ -428,10 +845,11 @@ const SEED_POSTS = [
 const KEY='hb100-v1';
 function defaults(){return{role:'junior',channel:'ask',filter:'전체',
   game:{phase:'setup',name:'',avatar:0,part:0,dayIdx:0,pos:0,g:[50,50,50,50],log:[],last:null,retroText:'',retroShown:false,fail:null},
-  stats:{},runs:0,done:0,posts:[],replies:{},db:[],shared:false,draft:null}}
+  stats:{},runs:0,done:0,posts:[],replies:{},db:[],shared:false,draft:null,dm:'group',dms:{}}}
 let S=defaults();
 try{const raw=localStorage.getItem(KEY);if(raw){S=Object.assign(defaults(),JSON.parse(raw));}}catch(e){}
 try{if(window.claude?.hot?.data?.S)S=window.claude.hot.data.S}catch(e){}
+if(['play','feedback','retro'].includes(S.game.phase))S.game.phase='world';
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 try{window.claude?.hot?.snapshot?.(()=>({S}))}catch(e){}
 
@@ -439,41 +857,128 @@ const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(toast.h);toast.h=setTimeout(()=>t.classList.remove('on'),2400)}
 function bri(o={}){
-  const c=o.c||'#004aad', acc=o.acc||'none', wave=o.wave!==false, sz=o.size||120, head=!!o.head;
-  const dark='#0b1a3a';
+  const c=o.c||'#004aad', wave=o.wave!==false, sz=o.size||120, head=!!o.head, dark='#0b1a3a';
+  let top=o.top, face=o.face, neck=o.neck, ear=o.ear;
+  if(top===undefined){const a=o.acc||'none';top=a==='sprout'?'sprout':a==='ribbon'?'ribbon':'dot';face=a==='glasses'?'glasses':'none';neck=a==='tie'?'tie':a==='badge'?'badge':'none';ear=a==='headset'?'headset':'none';}
+  const eyes=o.eyes||'round', mouth=o.mouth||'smile', cheek=o.cheek===undefined?'#ff8fab':o.cheek;
   const parts=[];
   if(!head)parts.push(`<ellipse cx="100" cy="206" rx="58" ry="7" fill="#0b1a3a" opacity=".08"/>`);
-  // arms (behind body)
   parts.push(wave?`<path d="M152 128 Q174 112 180 86" stroke="${c}" stroke-width="15" stroke-linecap="round" fill="none"/>`:`<path d="M152 132 Q168 146 172 160" stroke="${c}" stroke-width="15" stroke-linecap="round" fill="none"/>`);
   parts.push(`<path d="M48 132 Q32 146 28 160" stroke="${c}" stroke-width="15" stroke-linecap="round" fill="none"/>`);
   // body: arch-shaped (bridge) with an arch opening between the legs
   parts.push(`<path d="M38 104 A62 62 0 0 1 162 104 L162 186 Q162 198 150 198 L132 198 Q130 166 100 164 Q70 166 68 198 L50 198 Q38 198 38 186 Z" fill="${c}"/>`);
-  // soft highlight
   parts.push(`<path d="M58 80 A48 48 0 0 1 96 54" stroke="#fff" stroke-opacity=".28" stroke-width="7" stroke-linecap="round" fill="none"/>`);
   // eyes
-  parts.push(`<ellipse cx="80" cy="106" rx="12" ry="14" fill="#fff"/><ellipse cx="120" cy="106" rx="12" ry="14" fill="#fff"/>`);
-  parts.push(`<circle cx="82" cy="109" r="7" fill="${dark}"/><circle cx="122" cy="109" r="7" fill="${dark}"/>`);
-  parts.push(`<circle cx="85" cy="105" r="2.6" fill="#fff"/><circle cx="125" cy="105" r="2.6" fill="#fff"/>`);
+  if(eyes==='smile')parts.push(`<path d="M68 110 Q80 94 92 110 M108 110 Q120 94 132 110" stroke="#fff" stroke-width="7" stroke-linecap="round" fill="none"/>`);
+  else if(eyes==='wink')parts.push(`<ellipse cx="80" cy="106" rx="12" ry="14" fill="#fff"/><circle cx="82" cy="109" r="7" fill="${dark}"/><circle cx="85" cy="105" r="2.6" fill="#fff"/><path d="M108 108 Q120 98 132 108" stroke="#fff" stroke-width="7" stroke-linecap="round" fill="none"/>`);
+  else if(eyes==='sparkle')parts.push(`<ellipse cx="80" cy="106" rx="14" ry="16" fill="#fff"/><ellipse cx="120" cy="106" rx="14" ry="16" fill="#fff"/><circle cx="81" cy="108" r="10" fill="${dark}"/><circle cx="121" cy="108" r="10" fill="${dark}"/><circle cx="85" cy="103" r="3.6" fill="#fff"/><circle cx="125" cy="103" r="3.6" fill="#fff"/><circle cx="77" cy="113" r="1.8" fill="#fff"/><circle cx="117" cy="113" r="1.8" fill="#fff"/>`);
+  else if(eyes==='calm')parts.push(`<ellipse cx="80" cy="108" rx="12" ry="11" fill="#fff"/><ellipse cx="120" cy="108" rx="12" ry="11" fill="#fff"/><circle cx="81" cy="111" r="6.5" fill="${dark}"/><circle cx="121" cy="111" r="6.5" fill="${dark}"/><path d="M67 101 Q80 96 93 101 M107 101 Q120 96 133 101" stroke="${c}" stroke-width="6" stroke-linecap="round" fill="none"/>`);
+  else parts.push(`<ellipse cx="80" cy="106" rx="12" ry="14" fill="#fff"/><ellipse cx="120" cy="106" rx="12" ry="14" fill="#fff"/><circle cx="82" cy="109" r="7" fill="${dark}"/><circle cx="122" cy="109" r="7" fill="${dark}"/><circle cx="85" cy="105" r="2.6" fill="#fff"/><circle cx="125" cy="105" r="2.6" fill="#fff"/>`);
   // cheeks + mouth
-  parts.push(`<ellipse cx="64" cy="128" rx="9" ry="5.5" fill="#ff8fab" opacity=".75"/><ellipse cx="136" cy="128" rx="9" ry="5.5" fill="#ff8fab" opacity=".75"/>`);
-  parts.push(`<path d="M91 128 Q100 138 109 128" stroke="#fff" stroke-width="3.5" stroke-linecap="round" fill="none"/>`);
-  // accessories
-  if(acc==='tie')parts.push(`<path d="M94 146 L106 146 L109 152 L100 176 L91 152 Z" fill="#ffb400"/><path d="M94 146 L106 146 L100 153 Z" fill="#e09a00"/>`);
-  if(acc==='glasses')parts.push(`<g fill="none" stroke="${dark}" stroke-width="3.5"><circle cx="80" cy="106" r="17"/><circle cx="120" cy="106" r="17"/><path d="M97 104 Q100 101 103 104"/></g>`);
-  if(acc==='headset')parts.push(`<path d="M40 100 A60 60 0 0 1 160 100" stroke="${dark}" stroke-width="6" fill="none"/><rect x="31" y="92" width="14" height="26" rx="6" fill="${dark}"/><rect x="155" y="92" width="14" height="26" rx="6" fill="${dark}"/><path d="M38 118 Q42 140 66 140" stroke="${dark}" stroke-width="3.5" fill="none"/><circle cx="68" cy="140" r="4.5" fill="${dark}"/>`);
-  if(acc==='badge')parts.push(`<path d="M78 140 L96 160 M122 140 L104 160" stroke="#ffb400" stroke-width="3.5"/><rect x="88" y="158" width="24" height="30" rx="4" fill="#fff"/><rect x="92" y="164" width="16" height="4" rx="2" fill="${c}"/><rect x="92" y="172" width="11" height="3" rx="1.5" fill="#c9d6ee"/>`);
-  if(acc==='ribbon')parts.push(`<g transform="translate(140 52) rotate(18)"><path d="M0 0 L-17 -10 L-17 10 Z" fill="#ff8fab"/><path d="M0 0 L17 -10 L17 10 Z" fill="#ff8fab"/><circle r="5" fill="#ff6f91"/></g>`);
-  if(acc==='sprout')parts.push(`<path d="M100 44 L100 30" stroke="#2b8a6e" stroke-width="4" stroke-linecap="round"/><path d="M100 32 Q86 18 76 26 Q88 38 100 32Z" fill="#3fb37f"/><path d="M100 30 Q112 14 124 22 Q112 36 100 30Z" fill="#3fb37f"/>`);
+  if(cheek!=='none')parts.push(`<ellipse cx="64" cy="128" rx="9" ry="5.5" fill="${cheek}" opacity=".75"/><ellipse cx="136" cy="128" rx="9" ry="5.5" fill="${cheek}" opacity=".75"/>`);
+  if(mouth==='open')parts.push(`<path d="M90 127 Q100 127 110 127 Q109 142 100 142 Q91 142 90 127Z" fill="${dark}"/><path d="M94 137 Q100 133 106 137 Q103 141 100 141 Q97 141 94 137Z" fill="#ff8fab"/>`);
+  else if(mouth==='cat')parts.push(`<path d="M88 128 Q94 135 100 128 Q106 135 112 128" stroke="#fff" stroke-width="3.5" stroke-linecap="round" fill="none"/>`);
+  else if(mouth==='o')parts.push(`<ellipse cx="100" cy="132" rx="5" ry="6" fill="${dark}"/>`);
+  else parts.push(`<path d="M91 128 Q100 138 109 128" stroke="#fff" stroke-width="3.5" stroke-linecap="round" fill="none"/>`);
+  // neck
+  if(neck==='tie')parts.push(`<path d="M94 146 L106 146 L109 152 L100 176 L91 152 Z" fill="#ffb400"/><path d="M94 146 L106 146 L100 153 Z" fill="#e09a00"/>`);
+  if(neck==='bowtie')parts.push(`<path d="M100 152 L82 142 L82 162 Z M100 152 L118 142 L118 162 Z" fill="#ff6f91"/><circle cx="100" cy="152" r="5" fill="#e0557a"/>`);
+  if(neck==='badge')parts.push(`<path d="M78 140 L96 160 M122 140 L104 160" stroke="#ffb400" stroke-width="3.5"/><rect x="88" y="158" width="24" height="30" rx="4" fill="#fff"/><rect x="92" y="164" width="16" height="4" rx="2" fill="${c}"/><rect x="92" y="172" width="11" height="3" rx="1.5" fill="#c9d6ee"/>`);
+  if(neck==='scarf')parts.push(`<path d="M44 140 Q100 158 156 140 L156 152 Q100 170 44 152 Z" fill="#ff6f61"/><path d="M128 152 L134 186 L120 186 L116 156 Z" fill="#ff6f61"/><path d="M60 146 L60 156 M76 150 L76 160 M92 152 L92 162 M108 152 L108 162 M124 150 L124 160 M140 146 L140 156" stroke="#fff" stroke-opacity=".5" stroke-width="3"/>`);
+  // face
+  if(face==='glasses')parts.push(`<g fill="none" stroke="${dark}" stroke-width="3.5"><circle cx="80" cy="106" r="17"/><circle cx="120" cy="106" r="17"/><path d="M97 104 Q100 101 103 104"/></g>`);
+  if(face==='sunglasses')parts.push(`<path d="M60 96 H140 V104 Q140 122 122 122 Q106 122 104 104 H96 Q94 122 78 122 Q60 122 60 104 Z" fill="${dark}"/><path d="M68 102 l10 0 M110 102 l10 0" stroke="#fff" stroke-opacity=".5" stroke-width="3" stroke-linecap="round"/>`);
+  if(face==='star')parts.push(`<path d="M138 120 l3 7 7 1 -5 5 1 7 -6 -3 -6 3 1 -7 -5 -5 7 -1z" fill="#ffd54d"/>`);
+  // ear
+  if(ear==='headset')parts.push(`<path d="M40 100 A60 60 0 0 1 160 100" stroke="${dark}" stroke-width="6" fill="none"/><rect x="31" y="92" width="14" height="26" rx="6" fill="${dark}"/><rect x="155" y="92" width="14" height="26" rx="6" fill="${dark}"/><path d="M38 118 Q42 140 66 140" stroke="${dark}" stroke-width="3.5" fill="none"/><circle cx="68" cy="140" r="4.5" fill="${dark}"/>`);
+  if(ear==='earmuff')parts.push(`<path d="M40 96 A60 60 0 0 1 160 96" stroke="#ff8fab" stroke-width="6" fill="none"/><circle cx="38" cy="104" r="13" fill="#fff"/><circle cx="162" cy="104" r="13" fill="#fff"/><circle cx="38" cy="104" r="13" fill="none" stroke="#ff8fab" stroke-width="3"/><circle cx="162" cy="104" r="13" fill="none" stroke="#ff8fab" stroke-width="3"/>`);
+  // top of head
+  if(top==='ribbon')parts.push(`<g transform="translate(140 52) rotate(18)"><path d="M0 0 L-17 -10 L-17 10 Z" fill="#ff8fab"/><path d="M0 0 L17 -10 L17 10 Z" fill="#ff8fab"/><circle r="5" fill="#ff6f91"/></g>`);
+  if(top==='sprout')parts.push(`<path d="M100 44 L100 30" stroke="#2b8a6e" stroke-width="4" stroke-linecap="round"/><path d="M100 32 Q86 18 76 26 Q88 38 100 32Z" fill="#3fb37f"/><path d="M100 30 Q112 14 124 22 Q112 36 100 30Z" fill="#3fb37f"/>`);
+  if(top==='cap')parts.push(`<path d="M46 78 Q50 30 100 30 Q150 30 154 78 Q100 66 46 78Z" fill="${dark}"/><path d="M150 72 Q182 70 188 84 Q166 88 150 80Z" fill="${dark}"/><circle cx="100" cy="30" r="5" fill="#ffb400"/><path d="M92 52 h16" stroke="#ffb400" stroke-width="5" stroke-linecap="round"/>`);
+  if(top==='crown')parts.push(`<path d="M74 52 L78 26 L90 40 L100 20 L110 40 L122 26 L126 52 Z" fill="#ffc83d" stroke="#e09a00" stroke-width="2.5" stroke-linejoin="round"/><circle cx="100" cy="42" r="4" fill="#ff6f91"/>`);
   // signature amber dot (the 'i' of Hi / aha moment)
-  if(acc!=='sprout')parts.push(`<circle cx="100" cy="24" r="12" fill="#ffb400"/><path d="M78 20 L71 16 M122 20 L129 16 M100 6 L100 0" stroke="#ffb400" stroke-width="3" stroke-linecap="round" opacity=".7"/>`);
+  if(top==='dot'||top==='ribbon')parts.push(`<circle cx="100" cy="24" r="12" fill="#ffb400"/><path d="M78 20 L71 16 M122 20 L129 16 M100 6 L100 0" stroke="#ffb400" stroke-width="3" stroke-linecap="round" opacity=".7"/>`);
   if(head)return `<svg viewBox="24 2 152 152" width="100%" height="100%" aria-hidden="true">${parts.join('')}</svg>`;
   return `<svg viewBox="0 -4 200 216" width="${sz}" height="${sz*216/200}" role="img" aria-label="${o.label||'하이브릿지 캐릭터 브리'}">${parts.join('')}</svg>`;
 }
 
+/* character portraits — soft flat illustration, drawn inline (same eye/cheek language as Bri) */
+const PORTRAITS={
+  'p-han': {bg:['#eef3ff','#cfdcf6'],skin:'#f5cdb0',hair:'#34343e',hl:'#5a5a68',style:'part', cloth:'#25324d',top:'suit',f:0,gray:1},
+  'p-park':{bg:['#fff1ec','#fbd3c8'],skin:'#ffdcc6',hair:'#4a2c22',hl:'#7a4d3c',style:'long', cloth:'#ff8a73',top:'knit',badge:1,f:1},
+  'p-lee': {bg:['#ecfaf3','#c6ecd9'],skin:'#f7d1b4',hair:'#2a2129',hl:'#4d3f4b',style:'curly',cloth:'#2f8f6f',top:'knit',glasses:1,f:0},
+  'p-jung':{bg:['#fff8e6','#fbe2a8'],skin:'#ffdec9',hair:'#231c24',hl:'#463a47',style:'bob',  cloth:'#e2a427',top:'cardigan',glasses:1,f:1},
+  'p-oh':  {bg:['#f1f2f7','#d6d9e6'],skin:'#f1c6a4',hair:'#1d1a22',hl:'#3e3a46',style:'short',cloth:'#4b5567',top:'hood',f:0},
+  'p-yoon':{bg:['#eef5ff','#c9ddff'],skin:'#ffe2cf',hair:'#6a3f2c',hl:'#9a6650',style:'pony', cloth:'#5b8def',top:'shirt',f:1}
+};
+function shade(hex,amt){const n=parseInt(hex.slice(1),16);const c=[n>>16,(n>>8)&255,n&255].map(v=>Math.max(0,Math.min(255,Math.round(v+amt))));return '#'+c.map(v=>v.toString(16).padStart(2,'0')).join('')}
+function portrait(id,crop){return drawPortrait(PORTRAITS[id],id.replace(/\W/g,''),crop)}
+/* player Bri look (character creator) */
+const BRI_OPTS={
+  c:[['#004aad','하이브릿지 블루'],['#3d8bff','스카이'],['#00307a','딥 네이비'],['#2b8a6e','그린'],['#e0795f','코랄'],['#8e6bd8','라벤더'],['#f08cae','핑크'],['#f2a516','선샤인'],['#5f6b7d','차콜']],
+  cheek:[['#ff8fab','핑크'],['#ffb37a','피치'],['#ff6f61','레드'],['none','없음']],
+  eyes:[{n:'초롱',v:'round'},{n:'반짝',v:'sparkle'},{n:'웃는 눈',v:'smile'},{n:'윙크',v:'wink'},{n:'차분',v:'calm'}],
+  mouth:[{n:'미소',v:'smile'},{n:'활짝',v:'open'},{n:'고양이',v:'cat'},{n:'놀람',v:'o'}],
+  top:[{n:'노란 점',v:'dot'},{n:'새싹',v:'sprout'},{n:'리본',v:'ribbon'},{n:'캡모자',v:'cap'},{n:'왕관',v:'crown'},{n:'없음',v:'none'}],
+  face:[{n:'없음',v:'none'},{n:'안경',v:'glasses'},{n:'선글라스',v:'sunglasses'},{n:'별 스티커',v:'star'}],
+  neck:[{n:'넥타이',v:'tie'},{n:'사원증',v:'badge'},{n:'나비넥타이',v:'bowtie'},{n:'목도리',v:'scarf'},{n:'없음',v:'none'}],
+  ear:[{n:'없음',v:'none'},{n:'헤드셋',v:'headset'},{n:'귀마개',v:'earmuff'}],
+  bg:[['#d6e4ff','블루'],['#ffd9cc','피치'],['#c9eedb','민트'],['#ffe7a8','옐로'],['#e2d6ff','라일락'],['#dfe3ec','그레이']]
+};
+const DEFAULT_BRI={c:0,cheek:0,eyes:'round',mouth:'smile',top:'dot',face:'none',neck:'tie',ear:'none',bg:0};
+const BRI_NUM=['c','cheek','bg'];
+function myBriLook(){return Object.assign({},DEFAULT_BRI,S.game.bri||{})}
+function briOf(L){return {c:(BRI_OPTS.c[L.c]||BRI_OPTS.c[0])[0],cheek:(BRI_OPTS.cheek[L.cheek]||BRI_OPTS.cheek[0])[0],eyes:L.eyes,mouth:L.mouth,top:L.top,face:L.face,neck:L.neck,ear:L.ear}}
+function myBri(){return briOf(myBriLook())}
+function myBg(){return (BRI_OPTS.bg[myBriLook().bg]||BRI_OPTS.bg[0])[0]}
+function drawPortrait(P,k,crop,noBg){
+  const h=P.hair, sk=P.skin, skD=shade(sk,-38), cl=P.cloth, clD=shade(cl,-30), o=[];
+  o.push(`<defs><radialGradient id="${k}bg" cx="50%" cy="38%" r="75%"><stop offset="0" stop-color="${P.bg[0]}"/><stop offset="1" stop-color="${P.bg[1]}"/></radialGradient><linearGradient id="${k}sk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${shade(sk,8)}"/><stop offset="1" stop-color="${sk}"/></linearGradient><linearGradient id="${k}cl" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="${cl}"/><stop offset="1" stop-color="${clD}"/></linearGradient><linearGradient id="${k}hr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${P.hl}"/><stop offset=".45" stop-color="${h}"/></linearGradient><radialGradient id="${k}bl"><stop offset="0" stop-color="#ff7d9a" stop-opacity=".55"/><stop offset="1" stop-color="#ff7d9a" stop-opacity="0"/></radialGradient></defs>`);
+  if(!noBg)o.push(`<rect width="200" height="200" fill="url(#${k}bg)"/><circle cx="160" cy="44" r="10" fill="#fff" opacity=".5"/><circle cx="36" cy="150" r="6" fill="#fff" opacity=".45"/>`);
+  const HR=`url(#${k}hr)`;
+  if(P.style==='long')o.push(`<path d="M56 98 Q50 38 100 36 Q150 38 144 98 L152 178 Q100 192 48 178Z" fill="${HR}"/>`);
+  if(P.style==='bob')o.push(`<path d="M54 98 Q50 36 100 36 Q150 36 146 98 L149 140 Q138 150 124 144 L76 144 Q62 150 51 140Z" fill="${HR}"/>`);
+  if(P.style==='pony')o.push(`<path d="M128 58 Q180 52 172 112 Q168 144 146 156 Q158 114 134 84Z" fill="${h}"/><path d="M150 70 Q168 82 160 120" stroke="${P.hl}" stroke-width="3" fill="none" stroke-linecap="round" opacity=".7"/>`);
+  o.push(`<path d="M24 204 Q26 166 70 156 Q100 150 130 156 Q174 166 176 204Z" fill="url(#${k}cl)"/>`);
+  o.push(`<path d="M87 124 L87 150 Q100 160 113 150 L113 124Z" fill="${sk}"/><path d="M87 128 Q100 146 113 128 L113 124 L87 124Z" fill="${skD}" opacity=".35"/>`);
+  const T={
+    suit:`<path d="M80 156 L100 186 L120 156 Q100 150 80 156Z" fill="#fff"/><path d="M80 156 L100 186 L88 204 L60 204 Q62 172 80 156Z M120 156 L100 186 L112 204 L140 204 Q138 172 120 156Z" fill="#000" opacity=".2"/><path d="M95 158 h10 l3 6 -8 26 -8 -26z" fill="#ffb400"/><path d="M95 158 h10 l-5 7z" fill="#e09a00"/><rect x="128" y="176" width="14" height="4" rx="2" fill="#fff" opacity=".7"/>`,
+    knit:`<path d="M80 156 Q100 172 120 156" stroke="${clD}" stroke-width="6" fill="none" stroke-linecap="round"/><path d="M60 182 v22 M140 182 v22" stroke="#000" stroke-opacity=".08" stroke-width="3"/>`,
+    cardigan:`<path d="M80 155 L100 184 L120 155 Q100 150 80 155Z" fill="#fff"/><path d="M100 184 V204" stroke="${clD}" stroke-width="3"/><circle cx="107" cy="192" r="2.6" fill="#fff"/><path d="M80 155 L100 184 M120 155 L100 184" stroke="${clD}" stroke-width="4"/>`,
+    hood:`<path d="M66 162 Q100 190 134 162 Q126 150 116 150 Q100 168 84 150 Q74 150 66 162Z" fill="${clD}"/><path d="M92 170 v20 M108 170 v20" stroke="#fff" stroke-width="3" stroke-linecap="round"/><circle cx="92" cy="191" r="2.6" fill="#fff"/><circle cx="108" cy="191" r="2.6" fill="#fff"/>`,
+    shirt:`<path d="M82 154 L96 172 L100 158 L104 172 L118 154 Q100 149 82 154Z" fill="#fff"/><path d="M100 172 V204" stroke="#fff" stroke-opacity=".5" stroke-width="2"/><circle cx="100" cy="182" r="1.8" fill="#fff"/><circle cx="100" cy="194" r="1.8" fill="#fff"/>`
+  };
+  o.push(T[P.top]);
+  if(P.badge)o.push(`<path d="M84 157 L97 182 M116 157 L103 182" stroke="#004aad" stroke-width="3"/><rect x="90" y="180" width="20" height="24" rx="3" fill="#fff"/><rect x="94" y="185" width="12" height="4" rx="2" fill="#004aad"/><rect x="94" y="192" width="8" height="3" rx="1.5" fill="#c9d6ee"/>`);
+  o.push(`<ellipse cx="63" cy="100" rx="8" ry="11" fill="${sk}"/><ellipse cx="137" cy="100" rx="8" ry="11" fill="${sk}"/><ellipse cx="64" cy="101" rx="3.5" ry="5.5" fill="${skD}" opacity=".35"/><ellipse cx="136" cy="101" rx="3.5" ry="5.5" fill="${skD}" opacity=".35"/>`);
+  o.push(`<path d="M63 92 Q63 52 100 52 Q137 52 137 92 Q137 126 100 138 Q63 126 63 92Z" fill="url(#${k}sk)"/>`);
+  const F={
+    short:`<path d="M60 100 Q52 46 100 42 Q148 46 140 100 Q138 78 130 66 Q122 74 108 70 Q100 78 88 70 Q74 74 68 70 Q62 82 60 100Z" fill="${HR}"/><path d="M80 52 Q100 44 122 52" stroke="#fff" stroke-opacity=".22" stroke-width="5" fill="none" stroke-linecap="round"/>`,
+    part:`<path d="M60 104 Q50 44 100 40 Q150 44 140 104 Q140 80 132 64 Q106 74 84 54 Q72 72 60 104Z" fill="${HR}"/><path d="M84 54 Q100 68 132 64" stroke="${shade(h,-12)}" stroke-width="2" fill="none"/>${P.gray?`<path d="M134 70 Q140 84 140 98 M62 84 Q60 92 61 100" stroke="#b9bdc7" stroke-width="4" fill="none" stroke-linecap="round"/>`:''}<path d="M92 48 Q112 42 128 50" stroke="#fff" stroke-opacity=".22" stroke-width="5" fill="none" stroke-linecap="round"/>`,
+    curly:[[62,90,11],[64,72,12],[74,57,13],[90,47,14],[110,46,14],[126,55,13],[136,70,12],[138,88,11],[100,58,14],[82,66,10],[118,66,10]].map(([x,y,r])=>`<circle cx="${x}" cy="${y}" r="${r}" fill="${h}"/>`).join('')+[[88,44],[108,42],[124,52]].map(([x,y])=>`<path d="M${x-5} ${y} q5 -5 10 0" stroke="${P.hl}" stroke-width="3" fill="none" stroke-linecap="round"/>`).join(''),
+    long:`<path d="M62 102 Q56 48 100 46 Q144 48 138 98 Q132 66 110 60 Q98 86 62 102Z" fill="${HR}"/><path d="M76 56 Q94 46 114 50" stroke="#fff" stroke-opacity=".25" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M58 120 Q56 150 62 170 M142 120 Q146 150 140 170" stroke="${P.hl}" stroke-width="2.5" fill="none" stroke-linecap="round" opacity=".6"/>`,
+    bob:`<path d="M61 90 Q60 46 100 46 Q140 46 139 90 Q124 79 100 79 Q76 79 61 90Z" fill="${HR}"/><path d="M78 54 Q100 44 122 54" stroke="#fff" stroke-opacity=".25" stroke-width="5" fill="none" stroke-linecap="round"/>`,
+    pony:`<path d="M62 100 Q56 46 100 44 Q144 46 138 94 Q128 64 100 62 Q84 64 74 72 Q66 82 62 100Z" fill="${HR}"/><path d="M100 62 Q86 70 80 84" stroke="${shade(h,-14)}" stroke-width="2" fill="none"/><path d="M80 52 Q100 44 120 50" stroke="#fff" stroke-opacity=".28" stroke-width="5" fill="none" stroke-linecap="round"/><ellipse cx="134" cy="62" rx="7" ry="9" fill="#ffb400" transform="rotate(-25 134 62)"/>`
+  };
+  o.push(F[P.style]);
+  o.push(`<path d="M74 84 Q83 79 92 83 M108 83 Q117 79 126 84" stroke="${shade(h,10)}" stroke-width="3.6" stroke-linecap="round" fill="none"/>`);
+  const eye=x=>`<ellipse cx="${x}" cy="99" rx="6" ry="7.5" fill="#2b1f24"/><ellipse cx="${x}" cy="101.5" rx="4.2" ry="4.2" fill="#5b3b33" opacity=".7"/><circle cx="${x+2}" cy="96" r="2.4" fill="#fff"/><circle cx="${x-2}" cy="103" r="1.1" fill="#fff" opacity=".9"/>`;
+  o.push(eye(84)+eye(116));
+  o.push(P.f?`<path d="M76 95 Q84 88 92 94 M108 94 Q116 88 124 95" stroke="#2b1f24" stroke-width="2.6" fill="none" stroke-linecap="round"/><path d="M76.5 95 l-4 -3 M123.5 95 l4 -3" stroke="#2b1f24" stroke-width="2.2" stroke-linecap="round"/>`
+            :`<path d="M77 94 Q84 89 91 93 M109 93 Q116 89 123 94" stroke="#2b1f24" stroke-width="2.2" fill="none" stroke-linecap="round"/>`);
+  o.push(`<path d="M100 106 Q97.5 112 101.5 113.5" stroke="${skD}" stroke-width="2.2" fill="none" stroke-linecap="round"/>`);
+  o.push(`<ellipse cx="74" cy="113" rx="11" ry="7" fill="url(#${k}bl)"/><ellipse cx="126" cy="113" rx="11" ry="7" fill="url(#${k}bl)"/>`);
+  o.push(`<path d="M91 119 Q100 130 109 119 Q100 122 91 119Z" fill="#b8433f"/><path d="M93.5 120.2 Q100 122.6 106.5 120.2 L106 122 Q100 124 94 122Z" fill="#fff"/>`);
+  if(P.glasses)o.push(`<g fill="#fff" fill-opacity=".14" stroke="#2b1f24" stroke-width="2.6"><rect x="70" y="88" width="28" height="22" rx="10"/><rect x="102" y="88" width="28" height="22" rx="10"/></g><path d="M98 97 Q100 95 102 97 M70 96 L63 93 M130 96 L137 93" stroke="#2b1f24" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M75 92 l6 -1" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".7"/>`);
+  return `<svg viewBox="${crop?'52 38 96 96':noBg?'10 26 180 180':'16 22 168 168'}" width="100%" height="100%" aria-hidden="true">${o.join('')}</svg>`;
+}
+
 function avatar(p,cls='av'){
+  if(p.img&&PORTRAITS[p.img])return `<span class="${cls} pt">${portrait(p.img,true)}</span>`;
   if(p.img)return `<img class="${cls}" src="assets/${p.img}.jpg" alt="">`;
   if(p.icon)return `<span class="${cls} ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICON_PATHS[p.icon]}</svg></span>`;
-  if(p.me)return `<span class="${cls} br">${bri({...BRI_VARIANTS[S.game.avatar||0],head:true,wave:false})}</span>`;
+  if(p.me)return `<span class="${cls} br" style="background:${myBg()}">${bri({...myBri(),head:true,wave:false})}</span>`;
   if(p.bri)return `<span class="${cls} br">${bri({...p.bri,head:true,wave:false})}</span>`;
   return avatar({icon:'user'},cls);
 }
@@ -492,7 +997,8 @@ function route(){
   const name=VIEWS[v]?v:'home';
   document.querySelectorAll('#tabs a').forEach(a=>a.setAttribute('aria-current',a.getAttribute('href')==='#'+name?'page':'false'));
   document.querySelectorAll('#roleSeg button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.role===S.role));
-  $('#app').innerHTML=`<div class="view enter">${VIEWS[name]()}</div>`;
+  const same=route._last===name;route._last=name;
+  $('#app').innerHTML=`<div class="view${same?'':' enter'}">${VIEWS[name]()}</div>`;
   bind[name]?.();
 }
 window.addEventListener('hashchange',()=>{route();window.scrollTo(0,0)});
@@ -500,81 +1006,72 @@ $('#roleSeg').addEventListener('click',e=>{const b=e.target.closest('button');if
   const go={junior:'#game',senior:'#register',hrd:'#hrd'}[S.role];
   if(location.hash===go)route();else location.hash=go;});
 const bind={};
+window.addEventListener('message',e=>{
+  const m=e.data;if(!m||m.src!=='hb-game')return;
+  const G=S.game;
+  if(m.type==='progress'){G.progress={day:m.day,phase:m.phase,g:m.gauges};save();return}
+  if(m.type==='nav'){location.hash='#'+(VIEWS[m.view]?m.view:'home');return}
+  if(m.type==='restart'){G.phase='setup';save();route();window.scrollTo(0,0);return}
+  if(m.type==='ask'){const anon=m.ch==='anon';
+    S.posts.unshift({id:'p'+Date.now(),ch:anon?'anon':'ask',by:anon?null:myName(),tag:anon?'익명 신입':'신입 · '+(PARTS[G.part]||'')+' · '+(m.card.day||''),ref:m.card.day+' · '+m.card.title,t:String(m.text||'').slice(0,500),when:'방금',mine:true});
+    save();toast('소통 공간에 질문이 올라갔어요');return}
+  if(m.type==='share'){S.posts.unshift({id:'p'+Date.now(),ch:'peer',by:myName(),tag:'신입 · '+(PARTS[G.part]||'')+' · D+100',t:String(m.text||'').slice(0,500),when:'방금',mine:true});
+    S.shared=true;S.channel='peer';save();setTimeout(()=>{location.hash='#community'},600);return}
+});
 
 /* ---------- home ---------- */
 function home(){
-  const c=CARDS.c4,p=PEOPLE[c.who];
+  const G=S.game, playing=G.phase!=='setup';
+  const ic=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+  const FEATS=[
+    {h:'#game',n:'100일 게임',who:'신입사원',d:'선배들이 실제로 겪은 상황 카드에 대응하고, 선배의 선택과 비교해요.',i:`<span class="fi br" style="background:${myBg()}">${bri({...myBri(),head:true,wave:false})}</span>`,hot:true},
+    {h:'#community',n:'소통 공간',who:'모두',d:'동기방, 선배에게 물어보기, 익명 질문방에서 편하게 물어봐요.',i:`<span class="fi">${ic(ICON_PATHS.msg)}</span>`},
+    {h:'#register',n:'경험 등록',who:'시니어',d:'질문 4개, 5분이면 내 경험이 후배의 상황 카드가 돼요.',i:`<span class="fi">${ic('<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/>')}</span>`},
+    {h:'#hrd',n:'운영 대시보드',who:'HRD 담당자',d:'신입들이 어떤 상황에서 막히는지 한눈에 확인해요.',i:`<span class="fi">${ic('<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>')}</span>`}
+  ];
   return `
-  <section class="hero">
-    <div class="copy">
-      <div class="eyebrow">㈜하이브릿지 인사팀 온보딩</div>
-      <h1 class="h1">신입 100일 생존기</h1>
-      <p class="lead">AI가 알려 주지 않는 '우리 회사'의 일하는 방식을, 선배들이 실제로 겪은 상황으로 미리 겪어 보세요. 정답 대신 여러 선배의 대응과 판단 근거를 비교하며 배웁니다.</p>
-      <div class="row">
-        <a class="btn" href="#game">${S.game.phase==='setup'?'입사하기':'이어서 하기'}</a>
-        <a class="btn ghost" href="#community">선배에게 물어보기</a>
+  <section class="hx">
+    <span class="big" aria-hidden="true">100</span>
+    <div class="hx-copy">
+      <h1>입사 첫날부터 D+100까지,<br><em>살아남을 수 있을까?</em></h1>
+      <p>선배들이 실제로 겪은 상황 속에서, 우리 회사의 일하는 방식을 직접 골라 보며 익혀요.</p>
+      <div class="row" style="gap:12px">
+        <a class="btn start" href="#game">${playing?'▶ 이어서 하기':'▶ 입사하기'}</a>
       </div>
-      <div class="row small muted"><span>하루 3개 상황 카드</span>·<span>4대 게이지</span>·<span>퇴근 회고</span>·<span>100일 엔딩</span></div>
     </div>
-    <div class="hero-side" aria-label="상황 카드 미리보기">
-      <div class="greet">${bri({size:96})}<div class="bubble">안녕하세요! 하이브릿지 신입 가이드 <b>브리</b>예요. 선배들이 실제로 겪은 상황, 같이 풀어 볼까요?</div></div>
-      <article class="sc">
-        <div class="sc-head">${avatar(p)}<div class="who"><b>${esc(p.n)}</b><span>${esc(p.r)}</span></div><span class="chip">D+14 · ${esc(c.type)}</span></div>
-        <div class="sc-body">
-          <p class="sc-text">${esc(c.text)}</p>
-          <div class="choices">${c.ch.slice(0,2).map((x,i)=>`<a class="choice" href="#game" style="text-decoration:none;color:inherit"><span class="k">${'AB'[i]}</span><span>${esc(x.t)}</span></a>`).join('')}</div>
-        </div>
-      </article>
+    <div class="hx-stage">
+      <div class="hx-me" style="background:${myBg()}">${bri({...myBri(),size:170})}</div>
     </div>
   </section>
 
-  <section class="grid3">
-    <div class="panel role-card"><span class="chip">신입사원 · SECI 내면화</span><h3>상황을 겪고, 선배와 비교해요</h3>
-      <ul><li>하루 3개 상황 카드에 대응</li><li>여러 선배의 실제 대응과 판단 근거 비교</li><li>퇴근 회고에서 '나라면?'을 먼저 쓰고 확인</li></ul>
-      <a class="btn sm ghost" href="#game" style="justify-self:start">100일 게임</a></div>
-    <div class="panel role-card"><span class="chip">시니어 · SECI 표출화</span><h3>경험을 5분 만에 남겨요</h3>
-      <ul><li>4가지 질문 템플릿으로 경험 등록</li><li>소통 공간에서 신입 질문에 답변</li><li>내 사례로 배운 신입 수 확인</li></ul>
-      <a class="btn sm ghost" href="#register" style="justify-self:start">경험 등록</a></div>
-    <div class="panel role-card"><span class="chip">HRD 담당자 · SECI 연결화</span><h3>막히는 지점을 찾아요</h3>
-      <ul><li>상황별 신입 선택 분포 확인</li><li>자주 막히는 상황 파악</li><li>시니어 경험을 시나리오 DB로 검토·게시</li></ul>
-      <a class="btn sm ghost" href="#hrd" style="justify-self:start">운영 대시보드</a></div>
+  <section style="display:grid;gap:16px">
+    <h2 class="h2">이런 걸 할 수 있어요</h2>
+    <div class="feats">
+      ${FEATS.map(f=>`<a class="feat${f.hot?' hot':''}" href="${f.h}">${f.i}<span class="who">${f.who}</span><h3>${f.n}</h3><p>${f.d}</p><span class="go">바로 가기</span></a>`).join('')}
+    </div>
   </section>
 
   <section style="display:grid;gap:14px">
     <div class="row" style="justify-content:space-between"><h2 class="h2">함께하는 사람들</h2><span class="sample">예시 인물 · 인터뷰 후 실제 사례로 교체</span></div>
-    <div class="people">${CAST.map(c=>`<figure><img src="assets/${c.img}.jpg" alt="${c.n} 프로필"><figcaption><b>${c.n}</b>${c.r}</figcaption></figure>`).join('')}</div>
+    <div class="people">${CAST.map(c=>`<figure><span class="pimg" role="img" aria-label="${c.n} 프로필">${portrait(c.img)}</span><figcaption><b>${c.n}</b>${c.r}</figcaption></figure>`).join('')}</div>
   </section>
 
-  <section style="display:grid;gap:14px">
-    <h2 class="h2">지식이 도는 순서</h2>
-    <p class="muted">Nonaka &amp; Takeuchi(1995)의 SECI 모델. 게임으로 배운 신입이 훗날 시니어가 되어 다시 경험을 등록하면 한 바퀴가 돕니다.</p>
-    <div class="cycle">
-      <div><b class="l">S</b><span class="k">공동화</span><span class="f">소통 공간에서 동기·선배·팀장과 대화</span></div>
-      <div><b class="l">E</b><span class="k">표출화</span><span class="f">시니어 경험 등록 → 상황 카드·피드백</span></div>
-      <div><b class="l">C</b><span class="k">연결화</span><span class="f">시나리오 DB에서 유형별로 묶고 비교</span></div>
-      <div><b class="l">I</b><span class="k">내면화</span><span class="f">게임 플레이와 퇴근 회고로 체화</span></div>
+  <section class="hb-band">
+    <div class="hb-about">
+      <div class="hb-about-h"><span class="hb-bri">${bri({size:78})}</span>
+        <div><div class="eyebrow">수업용 가상 기업</div><h2 class="h2" style="margin-top:4px">㈜하이브릿지 인사팀</h2>
+        <p class="small" style="color:var(--ink-2);margin-top:4px">Hi(신입을 반기는 인사) + Bridge(선배와 신입을 잇는 다리). 캐릭터 브리의 아치 모양 몸이 바로 그 다리예요.</p></div></div>
+      <div class="hb-facts"><span>IT 서비스 · 임직원 약 500명</span><span>채용 · 교육 · 평가보상 · 노무/조직문화</span><span>수평적 호칭 · 하이브리드 근무</span></div>
     </div>
-  </section>
-
-  <section class="grid2">
-    <div class="panel soft" style="display:grid;gap:16px;align-content:start">
-      <div class="row" style="gap:16px;flex-wrap:nowrap"><img src="assets/logo-v.png" alt="HiBridge ㈜하이브릿지 로고" style="width:96px;height:auto;flex:none">
-      <div style="min-width:0"><div class="eyebrow">가상 기업 프로필</div><h2 class="h2" style="margin-top:4px">㈜하이브릿지 (가칭)</h2>
-      <p class="muted small" style="margin-top:2px">Hi(신입을 반기는 인사) + Bridge(선배와 신입을 잇는 다리)</p></div></div>
-      <dl class="facts">
-        <div><dt>업종</dt><dd>IT 서비스 기업 (중견, 임직원 약 500명)</dd></div>
-        <div><dt>조직</dt><dd>경영지원본부 산하 인사팀</dd></div>
-        <div><dt>인사팀 파트</dt><dd>채용 · 교육 · 평가보상 · 노무/조직문화</dd></div>
-        <div><dt>문화</dt><dd>수평적 호칭 · 하이브리드 근무 · 메신저 중심 소통</dd></div>
-      </dl>
-    </div>
-    <div class="panel soft mascot-panel">
-      ${bri({size:120})}
-      <div style="display:grid;gap:10px;min-width:0">
-        <div><div class="eyebrow">하이브릿지 캐릭터</div><h2 class="h2" style="margin-top:4px">브리 (Bri)</h2></div>
-        <p class="small" style="color:var(--ink-2)">이름은 Bridge에서 왔어요. 몸 아래 아치는 선배와 신입을 잇는 다리, 머리 위 노란 점은 'Hi'의 점이자 '아하!' 하고 깨닫는 순간이에요. 신입사원은 게임에서 브리를 아바타로 골라 100일을 보냅니다.</p>
-        <div class="minis">${BRI_VARIANTS.map(v=>`<span class="av br" title="${v.n}">${bri({...v,head:true,wave:false})}</span>`).join('')}</div>
-      </div>
+    <div class="hb-cycle">
+      <div class="eyebrow">지식이 도는 순서</div>
+      <ol>
+        <li><b>S</b><span>공동화</span><small>소통 공간에서 대화</small></li>
+        <li><b>E</b><span>표출화</span><small>선배가 경험 등록</small></li>
+        <li><b>C</b><span>연결화</span><small>시나리오 DB로 묶기</small></li>
+        <li><b>I</b><span>내면화</span><small>게임과 퇴근 회고</small></li>
+      </ol>
+      <p class="small muted">Nonaka &amp; Takeuchi(1995) SECI 모델 · 배운 신입이 시니어가 되어 다시 경험을 남기면 한 바퀴가 돌아요.</p>
     </div>
   </section>`;
 }
@@ -599,29 +1096,68 @@ function cardHTML(id){
   <dl class="ctx"><div><dt>인물 관계</dt><dd>${esc(c.ctx[0])}</dd></div><div><dt>시점</dt><dd>${esc(c.ctx[1])}</dd></div><div><dt>직전 상황</dt><dd>${esc(c.ctx[2])}</dd></div></dl>`;
 }
 function deltaChips(d){return d.map((v,i)=>v?`<span class="chip ${v>0?'good':'warn'}">${GAUGES[i]} ${v>0?'+':''}${v}</span>`:'').join('')}
+function gameSrc(){
+  const G=S.game,q=new URLSearchParams({name:G.name||'김하이',part:PARTS[G.part]||'',run:String(S.runs),bri:JSON.stringify(myBri()),bg:myBg()});
+  return 'game/index.html?'+q.toString();
+}
+function gameFrameHTML(){
+  return `<div class="gframe-wrap">
+    <div class="gframe-bar"><div class="row" style="gap:10px"><span class="av br" style="width:34px;height:34px;background:${myBg()}">${bri({...myBri(),head:true,wave:false})}</span>
+      <div><b>${esc(myName())}</b> <span class="small muted">· ㈜하이브릿지 인사팀 신입</span></div></div>
+      <div class="row" style="gap:6px"><button class="btn sm ghost" id="gRestart">↺ 처음부터 다시</button><button class="btn sm ghost" id="gReset">캐릭터 다시 꾸미기</button></div></div>
+    <iframe class="gframe" id="gframe" src="${esc(gameSrc())}" title="100일 게임 · 하이브릿지 사무실" allow="fullscreen" allowfullscreen></iframe>
+  </div>`;
+}
+let CC_TAB='color';
+const CC_TABS=[['color','색상'],['face','표정'],['acc','소품'],['bg','프로필 색']];
+function ccHTML(){
+  const G=S.game,L=myBriLook(),bg=myBg();
+  const th=over=>`<span class="th" style="background:${bg}">${bri({...briOf({...L,...over}),head:true,wave:false})}</span>`;
+  const opt=(key,o)=>`<button type="button" data-k="${key}" data-v="${o.v}" aria-pressed="${L[key]===o.v}">${th({[key]:o.v})}${o.n}</button>`;
+  const sw=(key,arr,fill)=>arr.map((c,i)=>`<button type="button" data-k="${key}" data-v="${i}" aria-pressed="${L[key]===i}" style="background:${fill(c)}" title="${esc(c[1])}" aria-label="${esc(c[1])}"></button>`).join('');
+  const sec=(t,body,cls)=>`<div class="cc-sec"><h4>${t}</h4><div class="${cls}">${body}</div></div>`;
+  const tabs={
+    color:sec('몸 색',sw('c',BRI_OPTS.c,c=>c[0]),'cc-sw')+sec('볼 터치',sw('cheek',BRI_OPTS.cheek,c=>c[0]==='none'?'repeating-linear-gradient(45deg,#3a4766 0 4px,#26324f 4px 8px)':c[0]),'cc-sw'),
+    face:sec('눈',BRI_OPTS.eyes.map(o=>opt('eyes',o)).join(''),'cc-opts')+sec('입',BRI_OPTS.mouth.map(o=>opt('mouth',o)).join(''),'cc-opts'),
+    acc:sec('머리 위',BRI_OPTS.top.map(o=>opt('top',o)).join(''),'cc-opts')+sec('얼굴',BRI_OPTS.face.map(o=>opt('face',o)).join(''),'cc-opts')+sec('목',BRI_OPTS.neck.map(o=>opt('neck',o)).join(''),'cc-opts')+sec('귀',BRI_OPTS.ear.map(o=>opt('ear',o)).join(''),'cc-opts'),
+    bg:sec('프로필 동그라미 색 · 홈, 게임 HUD, 채팅에서 내 프로필 바탕으로 보여요',sw('bg',BRI_OPTS.bg,c=>c[0]),'cc-sw')
+  };
+  return `
+    <div class="cc-stage">
+      <span class="cc-label">MY BRI</span>
+      <button type="button" class="cc-dice" id="ccDice" aria-label="랜덤으로 꾸미기">🎲 랜덤</button>
+      <div class="cc-fig">${bri({...briOf(L),size:240,label:'내가 꾸민 브리'})}</div>
+      <div class="cc-plate${CC_TAB==='bg'?' hl':''}"><span class="cc-pf" style="background:${bg}" title="내 프로필">${bri({...briOf(L),head:true,wave:false})}</span><span class="cc-pt"><b id="ccName">${esc(G.name||'김하이')}</b><span>㈜하이브릿지 인사팀 · ${esc(PARTS[G.part]||'')} 신입</span></span></div>
+    </div>
+    <div class="cc-panel">
+      <div><div class="eyebrow" style="color:var(--amber)">STEP 1 · 브리 꾸미기</div><h2 class="cc-title">나만의 브리 만들기</h2></div>
+      <div class="cc-tabs" role="group" aria-label="꾸미기 항목">${CC_TABS.map(([k,n])=>`<button type="button" data-tab="${k}" aria-pressed="${CC_TAB===k}">${n}</button>`).join('')}</div>
+      <div class="cc-body">${tabs[CC_TAB]||tabs.color}</div>
+      <div class="cc-foot">
+        <div class="eyebrow" style="color:var(--amber)">STEP 2 · 입사 정보</div>
+        <label class="f" for="nm">이름 (게임 속에서만 쓰여요)<input type="text" id="nm" maxlength="12" placeholder="예: 김하이" value="${esc(G.name)}"></label>
+        <div class="f">관심 있는 인사 파트<div class="parts">${PARTS.map((p,i)=>`<button type="button" data-part="${i}" aria-pressed="${i===G.part}">${p}</button>`).join('')}</div></div>
+        <button class="btn start" id="start" style="width:100%">▶ 이 브리로 입사하기</button>
+      </div>
+    </div>`;
+}
 function game(){
   const G=S.game;
   if(G.phase==='setup'){
-    return `<div class="game">
-      <div class="greet">${bri({size:84})}<div class="bubble">반가워요! 저는 하이브릿지 캐릭터 <b>브리</b>예요. 100일 동안 함께할 내 아바타를 골라 주세요.</div></div>
-      <div><div class="eyebrow">아바타 생성</div><h1 class="h1" style="font-size:32px;margin-top:6px">하이브릿지 인사팀에 오신 걸 환영해요</h1>
-      <p class="lead" style="margin-top:8px">오늘부터 100일, 실제 선배들이 겪은 상황이 차례로 찾아옵니다. 정답은 없어요. 고르고, 비교하고, 돌아보면 됩니다.</p></div>
-      <div class="panel" style="display:grid;gap:18px">
-        <label class="f" for="nm">이름 (게임 속에서만 쓰여요)<input type="text" id="nm" maxlength="12" placeholder="예: 김하이" value="${esc(G.name)}"></label>
-        <div class="f">아바타 · 하이브릿지 캐릭터 '브리'<div class="avatars" id="avs">${BRI_VARIANTS.map((v,i)=>`<button type="button" aria-pressed="${i===G.avatar}" data-i="${i}" aria-label="브리 아바타 · ${v.n}">${bri({...v,size:58,wave:false})}<small>${v.n}</small></button>`).join('')}</div></div>
-        <div class="f">관심 있는 인사 파트<div class="parts" id="parts">${PARTS.map((p,i)=>`<button type="button" aria-pressed="${i===G.part}" data-i="${i}">${p}</button>`).join('')}</div>
-        <span class="small muted" style="font-weight:400">입사 후 100일 동안은 모든 파트 업무를 돌아가며 경험해요.</span></div>
-        <div class="panel soft small" style="padding:14px 16px"><b>4대 게이지</b> · 팀장 신뢰, 동료 관계, 업무 성과, 체력은 모두 50에서 시작해요. 하나라도 0이 되면 번아웃·고립 같은 엔딩을 맞게 됩니다. 선택지에 마우스를 올리면 영향을 받는 게이지에 노란 점이 떠요.</div>
-        <button class="btn" id="start">입사하기</button>
-      </div></div>`;
+    return `<div class="game wide">
+      <div class="greet">${bri({size:84})}<div class="bubble">반가워요! 저는 하이브릿지 캐릭터 <b>브리</b>예요. 100일 동안 함께할 <b>나만의 브리</b>를 꾸며 볼까요?</div></div>
+      <div class="cc" id="cc">${ccHTML()}</div>
+      <div class="panel soft small" style="padding:14px 16px"><b>4대 게이지</b> · 팀장 신뢰, 동료 관계, 업무 성과, 체력은 모두 50에서 시작해요. 하나라도 0이 되면 번아웃·고립 같은 엔딩을 맞게 됩니다. 선택지에 마우스를 올리면 영향을 받는 게이지에 노란 점이 떠요.</div>
+    </div>`;
   }
+  if(G.phase==='world')return gameFrameHTML();
   if(G.phase==='ending')return endingHTML();
   const D=DAYS[G.dayIdx];
   if(G.phase==='retro'){
     const R=D.retro,c=CARDS[R.card],s=SENIORS[R.by];
     return `<div class="game">${gaugeHTML()}${dayHead()}
       <section class="panel" style="display:grid;gap:16px">
-        <div class="greet" style="align-items:center;gap:14px">${bri({...BRI_VARIANTS[G.avatar],size:60,wave:false})}<div style="min-width:0"><div class="eyebrow">퇴근 회고 · D+${D.day} · 오늘도 수고했어요</div><h2 class="h2" style="margin-top:4px">오늘 '${esc(c.title)}' 상황, 나라면?</h2>
+        <div class="greet" style="align-items:center;gap:14px"><span class="av br" style="width:60px;height:60px;background:${myBg()}">${bri({...myBri(),head:true,wave:false})}</span><div style="min-width:0"><div class="eyebrow">퇴근 회고 · D+${D.day} · 오늘도 수고했어요</div><h2 class="h2" style="margin-top:4px">오늘 '${esc(c.title)}' 상황, 나라면?</h2>
         <p class="muted small" style="margin-top:4px">${esc(c.text)}</p></div></div>
         <label class="f" for="rt">내 생각을 먼저 적어 보세요. 채점하지 않아요.<textarea id="rt" placeholder="나라면 이렇게 했을 것 같다. 왜냐하면…">${esc(G.retroText)}</textarea></label>
         ${G.retroShown?`
@@ -674,7 +1210,7 @@ function endingHTML(){
   return `<div class="game">
     <section class="ending ${E.fail?'fail':''}">
       <div class="row" style="justify-content:space-between"><img src="assets/logo-white.png" alt="HiBridge"><span class="chip amber">${E.fail?`D+${day}에서 멈춤`:'D+100 생존'}</span></div>
-      <div class="end-hero"><span class="end-bri">${bri({...BRI_VARIANTS[G.avatar],size:84,wave:!E.fail})}</span><div><p style="color:#c9d6ee;font-size:13px">${esc(myName())} 님의 100일 유형</p><div class="type">${esc(E.t)}</div></div></div>
+      <div class="end-hero"><span class="end-bri" style="background:${myBg()}">${bri({...myBri(),size:84,wave:!E.fail})}</span><div><p style="color:#c9d6ee;font-size:13px">${esc(myName())} 님의 100일 유형</p><div class="type">${esc(E.t)}</div></div></div>
       <p>${esc(E.d)}</p>
       <div class="stats">${GAUGES.map((n,i)=>`<div>${n}<b>${G.g[i]}</b></div>`).join('')}</div>
       <p style="font-size:13px">상황 ${G.log.length}개 중 ${same}개에서 다수 신입과 같은 선택을 했어요.${E.n?' '+esc(E.n):''}</p>
@@ -690,11 +1226,23 @@ function endingHTML(){
 }
 bind.game=()=>{
   const G=S.game;
+  if(G.phase==='world'){
+    $('#gRestart').addEventListener('click',()=>{if(!confirm('처음부터 다시 시작할까요? 지금까지의 게임 진행은 사라져요.'))return;S.runs++;save();route();toast('D+1부터 다시 시작해요')});
+    $('#gReset').addEventListener('click',()=>{if(!confirm('캐릭터를 다시 꾸미면 게임이 처음부터 시작돼요. 계속할까요?'))return;G.phase='setup';save();route();window.scrollTo(0,0)});
+    return;
+  }
   if(G.phase==='setup'){
-    $('#nm').addEventListener('input',e=>{G.name=e.target.value.trim();save()});
-    $('#avs').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;G.avatar=+b.dataset.i;save();route()});
-    $('#parts').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;G.part=+b.dataset.i;save();route()});
-    $('#start').addEventListener('click',()=>{if(!G.name){G.name='김하이'}Object.assign(G,{phase:'play',dayIdx:0,pos:0,g:[50,50,50,50],log:[],last:null,retroText:'',retroShown:false,fail:null});S.shared=false;S.runs++;save();route();window.scrollTo(0,0)});
+    const cc=$('#cc'), redraw=()=>{cc.innerHTML=ccHTML()};
+    cc.addEventListener('input',e=>{if(e.target.id!=='nm')return;G.name=e.target.value.trim();save();$('#ccName').textContent=G.name||'김하이'});
+    cc.addEventListener('click',e=>{
+      const b=e.target.closest('button');if(!b)return;
+      if(b.dataset.tab){CC_TAB=b.dataset.tab;redraw();return}
+      if(b.dataset.part!=null){G.part=+b.dataset.part;save();redraw();return}
+      if(b.dataset.k){const L=myBriLook(),k=b.dataset.k;L[k]=BRI_NUM.includes(k)?+b.dataset.v:b.dataset.v;G.bri=L;save();redraw();return}
+      if(b.id==='ccDice'){const r=a=>Math.floor(Math.random()*a.length),pick=k=>BRI_OPTS[k][r(BRI_OPTS[k])].v;
+        G.bri={c:r(BRI_OPTS.c),cheek:r(BRI_OPTS.cheek),eyes:pick('eyes'),mouth:pick('mouth'),top:pick('top'),face:pick('face'),neck:pick('neck'),ear:pick('ear'),bg:r(BRI_OPTS.bg)};save();redraw();return}
+      if(b.id==='start'){if(!G.name){G.name='김하이'}if(!G.bri)G.bri=myBriLook();Object.assign(G,{phase:'world'});S.shared=false;S.runs++;save();route();window.scrollTo(0,0)}
+    });
     return;
   }
   if(G.phase==='play'){
@@ -740,47 +1288,184 @@ function askSenior(id){
 /* ---------- community ---------- */
 function allPosts(){return [...S.posts,...SEED_POSTS]}
 function repliesOf(p){return [...(p.rep||[]),...(S.replies[p.id]||[])]}
+const CH_ICON={peer:UI('chat'),ask:UI('ask'),anon:UI('anon')};
 function community(){
   const ch=CHANNELS.find(c=>c.id===S.channel)||CHANNELS[1];
-  const posts=allPosts().filter(p=>p.ch===ch.id);
+  const all=allPosts(),posts=all.filter(p=>p.ch===ch.id);
   const canPropose=S.role!=='junior';
   const anonForced=ch.id==='anon';
   const dr=S.draft||{};
   const who=S.role==='junior'?`${esc(myName())} · 신입`:S.role==='senior'?'선배 (나)':'HRD 담당자';
+  const meAv=S.role==='junior'?avatar({me:true},'av'):avatar({icon:'user'},'av');
+  const waiting=all.filter(p=>p.ch!=='peer'&&!repliesOf(p).length).length;
+  const fresh=all.filter(p=>/방금|오늘/.test(p.when||'')).length;
+  const isChat=ch.id==='peer';
   return `
-  <div><div class="eyebrow">SECI 공동화</div><h1 class="h1" style="font-size:32px;margin-top:6px">소통 공간</h1>
-  <p class="lead" style="margin-top:6px">사내 메신저에서 묻기 어려운 것을 여기서 물어요. 게임 속 상황을 그대로 가져와 질문할 수 있고, 좋은 질문과 답변은 새 상황 카드가 됩니다.</p></div>
-  <div class="comm">
-    <div class="chans" id="chans">${CHANNELS.map(c=>{const n=allPosts().filter(p=>p.ch===c.id).length;return `<button data-c="${c.id}" aria-pressed="${c.id===ch.id}"><b>${c.n} <span class="muted" style="font-weight:400">${n}</span></b><span>${c.d}</span></button>`}).join('')}</div>
-    <div class="posts">
-      <form class="panel composer" id="compose">
-        ${dr.ref&&ch.id==='ask'?`<div class="ref small" style="background:var(--blue-soft);color:var(--blue);border-radius:8px;padding:8px 10px">연결된 상황 카드 · ${esc(dr.ref)}</div>`:''}
-        <label class="f" for="ptext">${anonForced?'익명으로 질문하기':`${ch.n}에 글쓰기`}<textarea id="ptext" placeholder="${ch.id==='peer'?'동기들과 나누고 싶은 이야기':'궁금한 상황을 구체적으로 적을수록 좋은 답이 와요 (언제, 누구와, 무엇이)'}">${esc(ch.id==='ask'?dr.t||'':'')}</textarea></label>
-        <div class="row" style="justify-content:space-between">
-          <label class="row small" for="anon" style="gap:6px"><input type="checkbox" id="anon" ${anonForced?'checked disabled':''}> 익명으로 올리기</label>
-          <span class="row small muted">작성자: ${anonForced?'익명':who}<button class="btn sm" type="submit">올리기</button></span>
-        </div>
-      </form>
-      ${posts.map(p=>postHTML(p,canPropose)).join('')||'<p class="muted">아직 글이 없어요.</p>'}
-      <p class="sample">예시 글이 섞여 있어요. 내가 쓴 글과 답글은 이 브라우저에만 저장돼요.</p>
+  <section class="cm-hero">
+    <div class="cm-hero-copy">
+      <h1>소통 공간</h1>
+      <p>메신저로 묻기 어려운 것, 여기서 편하게 물어보세요. 좋은 질문과 답변은 다음 신입의 상황 카드가 됩니다.</p>
+      <div class="cm-stats"><span><b>${fresh}</b> 오늘 새 글</span><span class="${waiting?'warn':''}"><b>${waiting}</b> 답변 기다리는 질문</span><span><b>${all.length}</b> 전체 글</span></div>
     </div>
+    <div class="cm-hero-bri" aria-hidden="true">${bri({size:96})}</div>
+  </section>
+
+  <div class="cm-tabs" id="chans" role="tablist" aria-label="채널">
+    ${CHANNELS.map(c=>{const n=all.filter(p=>p.ch===c.id).length,w=all.filter(p=>p.ch===c.id&&c.id!=='peer'&&!repliesOf(p).length).length;
+      return `<button data-c="${c.id}" role="tab" aria-selected="${c.id===ch.id}" aria-pressed="${c.id===ch.id}">
+        <span class="cm-ic">${CH_ICON[c.id]||UI('chat')}</span><span class="cm-tx"><b>${c.n}</b><small>${c.d}</small></span>
+        <span class="cm-badge${w?' warn':''}">${w?`답변 대기 ${w}`:n}</span></button>`}).join('')}
+  </div>
+
+  ${isChat?chatHTML():feedHTML(ch,posts,canPropose,anonForced,dr,who,meAv)}
   </div>`;
+}
+function feedHTML(ch,posts,canPropose,anonForced,dr,who,meAv){
+  return `  <div class="cm-feed">
+    <form class="cm-compose" id="compose">
+      ${meAv}
+      <div class="cm-compose-body">
+        ${dr.ref&&ch.id==='ask'?`<span class="cm-ref">${UI('card')} ${esc(dr.ref)}</span>`:''}
+        <textarea id="ptext" rows="2" aria-label="${anonForced?'익명으로 질문하기':ch.n+'에 글쓰기'}" placeholder="${ch.id==='peer'?'동기들과 나누고 싶은 이야기를 적어 보세요':anonForced?'이름 없이 편하게 물어보세요':'언제, 누구와, 무슨 일이 있었는지 적을수록 좋은 답이 와요'}">${esc(ch.id==='ask'?dr.t||'':'')}</textarea>
+        <div class="cm-compose-foot">
+          <label class="cm-toggle" for="anon"><input type="checkbox" id="anon" ${anonForced?'checked disabled':''}><span></span>익명으로</label>
+          <span class="small muted">${anonForced?'익명':who}</span>
+          <button class="btn sm" type="submit">올리기</button>
+        </div>
+      </div>
+    </form>
+
+    ${posts.map(p=>postHTML(p,canPropose)).join('')||`<div class="cm-empty">${CH_ICON[ch.id]||UI('chat')}<p>아직 글이 없어요. 첫 글을 남겨 보세요!</p></div>`}
+    <p class="sample">예시 글이 섞여 있어요. 내가 쓴 글과 답글은 이 브라우저에만 저장돼요.</p>`;
+}
+function chatMsgs(){
+  const mine=(by,tag)=>S.role==='junior'&&by===myName()&&/^신입/.test(tag||'');
+  const list=[...SEED_POSTS.filter(p=>p.ch==='peer'),...S.posts.filter(p=>p.ch==='peer').slice().reverse()];
+  const out=[];
+  list.forEach(p=>{
+    out.push({by:p.by||'익명',tag:p.tag,t:p.t,when:p.when,me:!!p.mine||mine(p.by,p.tag),au:authorOf(p)});
+    repliesOf(p).forEach(r=>out.push({by:r.by,tag:r.tag,t:r.t,when:r.when||p.when||'',me:!!r.mine||mine(r.by,r.tag),au:AUTHORS[r.by]||(mine(r.by,r.tag)?{me:true}:{icon:'user'})}));
+  });
+  return out;
+}
+const PEERS=[{n:'최유진',part:'교육(HRD) · D+12',bio:'입문교육 자료 정리 장인 📚'},{n:'강민호',part:'채용 · D+30',bio:'채용 박람회 다녀온 사람 🎪'},{n:'윤채린',part:'마케팅팀',bio:'동기 점심 메뉴 담당 🍜'}];
+const isPeer=n=>PEERS.some(x=>x.n===n);
+const DM_SEED={
+  '최유진':[{by:'최유진',t:'우리 둘 다 HRD 쪽이잖아! 입문교육 자료 나중에 같이 보자 📚',when:'어제'}],
+  '강민호':[{by:'강민호',t:'채용 박람회 부스 사진 보내줄게. 다음엔 같이 가자!',when:'5일 전'},{by:'강민호',t:'명함은 100장 챙기는 거 잊지 마 ㅋㅋ',when:'5일 전'}],
+  '윤채린':[{by:'윤채린',t:'점심 메뉴 추천 좀… 매일 고민이야 🥲',when:'오늘'}]
+};
+const DM_REPLY={
+  '최유진':['오 좋아! 나도 그거 궁금했어','ㅋㅋㅋ 완전 공감','이따 퇴근하고 같이 정리해 볼까? 📝','나도 선배한테 물어보고 알려줄게!'],
+  '강민호':['ㅇㅋ 알겠어 👍','나도 처음엔 그랬어 ㅋㅋ','그거 선배에게 물어보기 방에 올려 봐!','오늘 점심 같이 먹을래?'],
+  '윤채린':['헐 진짜? ㅋㅋㅋ','완전 좋아 😆','우리 팀도 비슷해!','나중에 커피 한잔하면서 얘기하자 ☕']
+};
+let DM_TYPING=null;
+function dmMsgs(n){const mineN=S.role==='junior'?myName():'나';return [...(DM_SEED[n]||[]),...(S.dms[n]||[])].map(m=>({by:m.me?mineN:m.by,tag:'',t:m.t,when:m.when,me:!!m.me,au:m.me?(S.role==='junior'?{me:true}:{icon:'user'}):AUTHORS[m.by]}))}
+function chatMsgs(){
+  const mine=(by,tag)=>S.role==='junior'&&by===myName()&&/^신입/.test(tag||'');
+  const list=[...SEED_POSTS.filter(p=>p.ch==='peer'),...S.posts.filter(p=>p.ch==='peer').slice().reverse()];
+  const out=[];
+  list.forEach(p=>{
+    out.push({by:p.by||'익명',tag:p.tag,t:p.t,when:p.when,me:!!p.mine||mine(p.by,p.tag),au:authorOf(p)});
+    repliesOf(p).forEach(r=>out.push({by:r.by,tag:r.tag,t:r.t,when:r.when||p.when||'',me:!!r.mine||mine(r.by,r.tag),au:AUTHORS[r.by]||(mine(r.by,r.tag)?{me:true}:{icon:'user'})}));
+  });
+  return out;
+}
+function msgsHTML(msgs,typing,group){
+  let lastDay='';const day=w=>/일 전|어제/.test(w||'')?w:'오늘';
+  const body=msgs.map((m,i)=>{const prev=msgs[i-1],d=day(m.when),div=d!==lastDay?`<div class="chat-day"><span>${esc(d)}</span></div>`:'';lastDay=d;
+    const cont=prev&&prev.by===m.by&&prev.me===m.me&&!div;
+    const pb=group&&!m.me&&isPeer(m.by);
+    return `${div}<div class="cmsg${m.me?' me':''}${cont?' cont':''}">${m.me?'':cont?'<span class="cmsg-sp"></span>':pb?`<button type="button" class="cmsg-avbtn" data-prof="${esc(m.by)}" aria-label="${esc(m.by)} 프로필 보기">${avatar(m.au||{icon:'user'},'av sm')}</button>`:avatar(m.au||{icon:'user'},'av sm')}
+      <div class="cmsg-col">${!m.me&&!cont?`<span class="cmsg-nm">${pb?`<button type="button" class="cmsg-nmbtn" data-prof="${esc(m.by)}">${esc(m.by)}</button>`:esc(m.by)}${m.tag?` <small>${esc(m.tag.replace(/^신입 · /,''))}</small>`:''}</span>`:''}
+      <div class="cmsg-row"><p class="cmsg-bub">${esc(m.t)}</p>${m.when&&/:/.test(m.when)?`<span class="cmsg-tm">${esc(m.when.replace(/^오늘 /,''))}</span>`:''}</div></div></div>`}).join('');
+  const typ=typing?`<div class="cmsg"><span class="cmsg-sp">${avatar(AUTHORS[typing],'av sm')}</span><div class="cmsg-col"><p class="cmsg-bub typing" aria-label="${esc(typing)} 입력 중"><i></i><i></i><i></i></p></div></div>`:'';
+  return (body||`<div class="cm-empty">${UI('chat')}<p>첫 인사를 남겨 보세요!</p></div>`)+typ;
+}
+function chatHTML(){
+  const room=S.dm&&S.dm!=='group'&&PEERS.some(x=>x.n===S.dm)?S.dm:'group';
+  const group=chatMsgs(),last=a=>a.length?a[a.length-1]:null;
+  const prev=m=>m?esc((m.me?'나: ':'')+m.t):'아직 대화가 없어요';
+  const side=`<aside class="chat-side" aria-label="대화 목록"><div class="chat-side-h">대화</div>
+    <button type="button" class="chat-it" data-room="group" aria-pressed="${room==='group'}"><span class="chat-it-av grp">${UI('group')}</span><span class="chat-it-tx"><b>동기방 <small>단체 · ${PEERS.length+1}명</small></b><span>${prev(last(group))}</span></span></button>
+    ${PEERS.map(x=>{const m=last(dmMsgs(x.n));return `<button type="button" class="chat-it" data-room="${esc(x.n)}" aria-pressed="${room===x.n}">${avatar(AUTHORS[x.n],'av sm')}<span class="chat-it-tx"><b>${esc(x.n)} <small>1:1</small></b><span>${DM_TYPING===x.n?'입력 중…':prev(m)}</span></span></button>`}).join('')}
+  </aside>`;
+  const head=room==='group'
+    ?`<div class="chat-head"><span class="cm-ic">${UI('group')}</span><div class="chat-title"><b>2026 하반기 입사 동기방</b><small>${group.length}개의 메시지 · 편하게 이야기해요</small></div><div class="chat-faces">${PEERS.map(x=>`<button type="button" data-prof="${esc(x.n)}" aria-label="${esc(x.n)} 프로필 보기">${avatar(AUTHORS[x.n],'av xs')}</button>`).join('')}${S.role==='junior'?avatar({me:true},'av xs'):''}</div></div>`
+    :(()=>{const x=PEERS.find(y=>y.n===room);return `<div class="chat-head">${avatar(AUTHORS[room],'av sm')}<div class="chat-title"><b>${esc(room)}</b><small>1:1 대화 · ${esc(x.part)}</small></div><span class="chip gray">${UI('lock')} 둘만 보여요</span></div>`})();
+  const msgs=room==='group'?group:dmMsgs(room);
+  return `<div class="chat-room">
+    ${side}
+    <div class="chat-main">
+      ${head}
+      <div class="chat-log" id="chatLog" role="log" aria-live="polite">${msgsHTML(msgs,room!=='group'&&DM_TYPING===room?room:null,room==='group')}</div>
+      <form class="chat-input" id="chatForm" data-room="${esc(room)}">
+        ${S.role==='junior'?avatar({me:true},'av sm'):avatar({icon:'user'},'av sm')}
+        <input type="text" id="chatText" placeholder="${room==='group'?'동기들에게 메시지 보내기':esc(room)+'에게 1:1 메시지'}" autocomplete="off" aria-label="메시지 입력" maxlength="300">
+        <button class="btn sm" type="submit">전송</button>
+      </form>
+    </div>
+  </div>
+  <p class="sample" style="max-width:960px;width:100%;margin:0 auto">예시 대화가 섞여 있어요. 1:1 답장은 시연용 자동 답장이고, 내가 보낸 메시지는 이 브라우저에만 저장돼요.</p>`;
 }
 function postHTML(p,canPropose){
   const reps=repliesOf(p);
   const proposed=S.db.some(d=>d.from===p.id);
-  return `<article class="post">
-    <div class="meta">${avatar(authorOf(p),'av sm')}<b>${esc(p.by||'익명')}</b><span class="muted">${esc(p.tag)} · ${esc(p.when)}</span>${p.mine?'<span class="chip gray">내 글</span>':''}${reps.length||p.ch==='peer'?'':'<span class="chip amber">답변 대기</span>'}</div>
-    ${p.ref?`<div class="ref">연결된 상황 카드 · ${esc(p.ref)}</div>`:''}
-    <p>${esc(p.t)}</p>
-    ${reps.length?`<div class="replies">${reps.map(r=>`<div class="reply"><div class="meta">${avatar(AUTHORS[r.by]||(r.tag==='신입'&&r.by===myName()?{me:true}:{icon:'user'}),'av xs')}<b>${esc(r.by)}</b>${/^(선배|HRD 담당자)/.test(r.tag)?`<span class="chip">${esc(r.tag)}</span>`:`<span class="muted">${esc(r.tag)}</span>`}</div><span>${esc(r.t)}</span></div>`).join('')}</div>`:''}
-    <form class="reply-form" data-p="${p.id}"><input type="text" aria-label="답글" placeholder="${S.role==='senior'?'선배로서 답변하기':'답글 달기'}"><button class="btn sm ghost" type="submit">답글</button></form>
-    ${canPropose&&p.ch!=='peer'?`<div><button class="btn sm ghost" data-prop="${p.id}" ${proposed?'disabled':''}>${proposed?'시나리오 DB에 제안됨':'상황 카드로 제안'}</button></div>`:''}
+  const status=p.ch==='peer'?'':reps.length?`<span class="cm-st done">답변 ${reps.length}</span>`:'<span class="cm-st wait">답변 대기</span>';
+  return `<article class="cm-post">
+    <header>${avatar(authorOf(p),'av sm')}<div class="cm-who"><b>${esc(p.by||'익명')}</b>${p.mine?'<span class="chip gray">내 글</span>':''}<small>${esc(p.tag)}</small></div>
+      <span class="cm-when">${esc(p.when)}</span>${status}</header>
+    ${p.ref?`<span class="cm-ref">${UI('card')} ${esc(p.ref)}</span>`:''}
+    <p class="cm-text">${esc(p.t)}</p>
+    ${reps.length?`<div class="cm-thread">${reps.map(r=>{const sr=/^(선배|HRD 담당자)/.test(r.tag);return `<div class="cm-reply${sr?' is-sr':''}">${avatar(AUTHORS[r.by]||(r.tag==='신입'&&r.by===myName()?{me:true}:{icon:'user'}),'av xs')}<div class="cm-bubble"><div class="cm-rmeta"><b>${esc(r.by)}</b>${sr?`<span class="chip">${esc(r.tag)}</span>`:`<small>${esc(r.tag)}</small>`}</div>${esc(r.t)}</div></div>`}).join('')}</div>`:''}
+    <footer>
+      <form class="reply-form cm-replyform" data-p="${p.id}"><input type="text" aria-label="답글" placeholder="${S.role==='senior'?'선배로서 답변하기':'답글 달기'}"><button class="btn sm" type="submit">답글</button></form>
+      ${canPropose&&p.ch!=='peer'?`<button class="btn sm ghost" data-prop="${p.id}" ${proposed?'disabled':''}>${proposed?'✓ 시나리오 DB에 제안됨':UI('card')+' 상황 카드로 제안'}</button>`:''}
+    </footer>
   </article>`;
 }
 bind.community=()=>{
+  const log=$('#chatLog');if(log)log.scrollTop=log.scrollHeight;
+  const croom=$('.chat-room');
+  if(croom)croom.addEventListener('click',e=>{
+    const pop=croom.querySelector('.prof-pop');
+    if(pop&&pop.contains(e.target)){const go=e.target.closest('[data-dm]');if(go){S.dm=go.dataset.dm;save();route();setTimeout(()=>{const i=$('#chatText');if(i)i.focus({preventScroll:true})},0)}else if(e.target.closest('.prof-x'))pop.remove();return}
+    if(pop)pop.remove();
+    const b=e.target.closest('[data-prof]');if(!b)return;
+    const x=PEERS.find(y=>y.n===b.dataset.prof);if(!x)return;
+    const n=dmMsgs(x.n).length,el=document.createElement('div');el.className='prof-pop';el.setAttribute('role','dialog');el.setAttribute('aria-label',x.n+' 프로필');
+    el.innerHTML=`<button type="button" class="prof-x" aria-label="닫기">✕</button>
+      <div class="prof-top">${avatar(AUTHORS[x.n],'av')}<div><b>${esc(x.n)}</b><small>입사 동기 · ${esc(x.part)}</small></div></div>
+      <p class="prof-bio">${esc(x.bio)}</p>
+      <button type="button" class="btn sm prof-go" data-dm="${esc(x.n)}">💬 1:1 채팅하기</button>
+      <span class="prof-meta">${n?`지금까지 1:1 메시지 ${n}개`:'아직 1:1 대화가 없어요'}</span>`;
+    croom.appendChild(el);
+    const r=b.getBoundingClientRect(),rr=croom.getBoundingClientRect(),w=el.offsetWidth,h=el.offsetHeight;
+    let left=r.right-rr.left+8,top=r.top-rr.top-6;
+    if(left+w>rr.width-8)left=Math.max(8,r.left-rr.left-w-8);
+    top=Math.max(8,Math.min(top,rr.height-h-8));
+    el.style.left=left+'px';el.style.top=top+'px';
+    el.querySelector('.prof-go').focus({preventScroll:true});
+  });
+  if(!bind._profEsc){bind._profEsc=true;document.addEventListener('keydown',e=>{if(e.key==='Escape'){const p2=document.querySelector('.prof-pop');if(p2)p2.remove()}})}
+  document.querySelectorAll('.chat-it').forEach(b=>b.addEventListener('click',()=>{S.dm=b.dataset.room;save();route();setTimeout(()=>{const i=$('#chatText');if(i)i.focus({preventScroll:true})},0)}));
+  const chf=$('#chatForm');if(chf)chf.addEventListener('submit',e=>{e.preventDefault();const t=$('#chatText').value.trim();if(!t)return;
+    const d=new Date(),hm=`${d.getHours()<12?'오전':'오후'} ${((d.getHours()+11)%12)+1}:${String(d.getMinutes()).padStart(2,'0')}`;
+    const room=chf.dataset.room,refocus=()=>setTimeout(()=>{const i=$('#chatText');if(i)i.focus({preventScroll:true})},0);
+    if(room==='group'){
+      S.posts.unshift({id:'p'+Date.now(),ch:'peer',by:S.role==='junior'?myName():S.role==='senior'?'선배 (나)':'HRD 담당자',tag:S.role==='junior'?`신입 · ${PARTS[S.game.part]}`:S.role==='senior'?'선배':'HRD 담당자',t,when:'오늘 '+hm,mine:true});
+      save();route();refocus();return;
+    }
+    (S.dms[room]=S.dms[room]||[]).push({me:true,t,when:'오늘 '+hm});save();route();refocus();
+    clearTimeout(bind._dmT);DM_TYPING=room;
+    bind._dmT=setTimeout(()=>{if(location.hash==='#community'&&S.channel==='peer')route(),refocus()},450);
+    bind._dmT2=setTimeout(()=>{const pool=DM_REPLY[room]||['👍'],d2=new Date();
+      (S.dms[room]=S.dms[room]||[]).push({by:room,t:pool[Math.floor(Math.random()*pool.length)],when:`오늘 ${d2.getHours()<12?'오전':'오후'} ${((d2.getHours()+11)%12)+1}:${String(d2.getMinutes()).padStart(2,'0')}`});
+      DM_TYPING=null;save();if(location.hash==='#community'&&S.channel==='peer'){const act=document.activeElement&&document.activeElement.id==='chatText';route();if(act)refocus()}},1900);
+  });
   $('#chans').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;S.channel=b.dataset.c;save();route()});
-  $('#compose').addEventListener('submit',e=>{e.preventDefault();const t=$('#ptext').value.trim();if(!t){toast('내용을 입력해 주세요');return}
+  const cf=$('#compose');if(cf)cf.addEventListener('submit',e=>{e.preventDefault();const t=$('#ptext').value.trim();if(!t){toast('내용을 입력해 주세요');return}
     const anon=S.channel==='anon'||$('#anon').checked;
     const tag=S.role==='junior'?`신입 · ${PARTS[S.game.part]}`:S.role==='senior'?'선배':'HRD 담당자';
     S.posts.unshift({id:'p'+Date.now(),ch:S.channel,by:anon?null:(S.role==='junior'?myName():S.role==='senior'?'선배 (나)':'HRD 담당자'),tag:anon?'익명':tag,t,ref:S.channel==='ask'?S.draft?.ref:undefined,when:'방금',mine:true});
@@ -797,111 +1482,238 @@ bind.community=()=>{
 /* ---------- register ---------- */
 const REG_DEFAULT={who:'',year:'3~5년차',part:'채용',rel:'',when:'',before:'',q1:'',q2:'',q3:'',q4:''};
 let REG={...REG_DEFAULT};
+let REG_PV={open:false,tab:'card'};
+const REG_YEARS=['1~2년차','3~5년차','6~9년차','10년차 이상'];
+const REG_Q=[
+  {t:'신입 때 가장 당황했던 순간은?',h:'누가, 언제, 무슨 말을 했는지 장면처럼 적어 주세요',tip:'상황 카드의 지문이 돼요',req:1},
+  {t:'그때 실제로 어떻게 행동했나요?',h:'실제로 한 말과 행동을 그대로',tip:'선배 피드백의 본문이 돼요',req:1},
+  {t:'왜 그렇게 했나요? 무엇을 보고 판단했나요?',h:'상대 표정, 타이밍, 팀 분위기 등 판단의 단서',tip:'신입이 가장 궁금해하는 판단 근거예요',req:1},
+  {t:'지금 신입에게 해 주고 싶은 조언은?',h:'한두 문장이면 충분해요',tip:'퇴근 회고의 선배 팁으로 쓰여요',req:0}
+];
+const REG_STEPS=[['basic','기본 정보'],['ctx','장면'],['q1','①'],['q2','②'],['q3','③'],['q4','④']];
+function regProgress(){
+  const st={basic:true,ctx:!!(REG.rel.trim()&&REG.when.trim()),q1:!!REG.q1.trim(),q2:!!REG.q2.trim(),q3:!!REG.q3.trim(),q4:!!REG.q4.trim()};
+  const done=Object.values(st).filter(Boolean).length,need=['q1','q2','q3'].filter(k=>!st[k]).length;
+  return {st,done,pct:Math.round(done/REG_STEPS.length*100),need};
+}
 function register(){
-  const mine=S.db.filter(d=>d.src==='시니어 등록');
+  const mine=S.db.filter(d=>d.src==='시니어 등록'),pr=regProgress();
+  const chips=(name,list,cur)=>list.map(v=>`<label class="rg-chip"><input type="radio" name="${name}" value="${esc(v)}" ${v===cur?'checked':''}><span>${esc(v)}</span></label>`).join('');
   return `
-  <div><div class="eyebrow">SECI 표출화 · 시니어</div><h1 class="h1" style="font-size:32px;margin-top:6px">경험 등록 · 5분 템플릿</h1>
-  <p class="lead" style="margin-top:6px">신입 때 겪은 장면 하나를 네 가지 질문에 답하며 남겨 주세요. 답변은 HRD 담당자 검토를 거쳐 상황 카드와 선배 피드백이 됩니다. 직접 쓰기 어렵다면 HRD 담당자가 인터뷰 후 대신 입력할 수 있어요.</p></div>
-  <div class="reg">
-    <form class="panel" id="regf">
-      <div class="grid3">
-        <label class="f" for="r-who">이름 (비우면 익명)<input type="text" id="r-who" value="${esc(REG.who)}" placeholder="예: 박서연"></label>
-        <label class="f" for="r-year">연차<select id="r-year">${['1~2년차','3~5년차','6~9년차','10년차 이상'].map(y=>`<option ${y===REG.year?'selected':''}>${y}</option>`).join('')}</select></label>
-        <label class="f" for="r-part">파트<select id="r-part">${TYPES.map(y=>`<option ${y===REG.part?'selected':''}>${y}</option>`).join('')}</select></label>
+  <section class="cm-hero rg-hero">
+    <div class="cm-hero-copy">
+      <h1>경험 등록</h1>
+      <p>신입 때 겪은 장면 하나를 네 가지 질문으로 남겨 주세요. 5분이면 후배가 미리 겪어 볼 상황 카드가 돼요.</p>
+      <div class="cm-stats"><span><b>${mine.length}</b> 내가 등록한 경험</span><span><b>${mine.filter(d=>d.status==='게시').length}</b> 게시된 카드</span><span><b>5분</b> 평균 소요</span></div>
+    </div>
+    <div class="rg-faces" aria-hidden="true">${['p-park','p-lee','p-jung','p-han'].map(id=>`<span class="pimg">${portrait(id,true)}</span>`).join('')}</div>
+  </section>
+
+  <div class="rg-steps" id="rgSteps" aria-label="작성 진행">${REG_STEPS.map(([k,n])=>`<span class="rg-step${pr.st[k]?' on':''}" data-step="${k}"><i>${pr.st[k]?'✓':''}</i>${n}</span>`).join('')}
+    <span class="rg-pct"><b id="rgPct">${pr.pct}%</b></span><span class="rg-bar"><i id="rgBar" style="width:${pr.pct}%"></i></span></div>
+
+  <div class="rg">
+    <form id="regf" class="rg-form">
+      <section class="rg-card">
+        <div class="rg-card-h"><span class="rg-ic">${UI('user')}</span><div><h3>누구의 경험인가요?</h3><p>이름은 비워 두면 익명으로 게시돼요.</p></div></div>
+        <label class="f" for="r-who">이름<input type="text" id="r-who" value="${esc(REG.who)}" placeholder="예: 박서연"></label>
+        <div class="f">연차<div class="rg-chips">${chips('r-year',REG_YEARS,REG.year)}</div></div>
+        <div class="f">파트<div class="rg-chips">${chips('r-part',TYPES,REG.part)}</div></div>
+      </section>
+
+      <section class="rg-card">
+        <div class="rg-card-h"><span class="rg-ic">${UI('scene')}</span><div><h3>어떤 장면이었나요?</h3><p>글로 옮길 때 사라지기 쉬운 맥락이에요. 상황 카드 상단 정보가 됩니다.</p></div></div>
+        <div class="grid3">
+          <label class="f" for="r-rel">인물 관계<input type="text" id="r-rel" value="${esc(REG.rel)}" placeholder="예: 현업 팀장"></label>
+          <label class="f" for="r-when">시점<input type="text" id="r-when" value="${esc(REG.when)}" placeholder="예: 입사 3개월 차"></label>
+          <label class="f" for="r-before">직전 상황<input type="text" id="r-before" value="${esc(REG.before)}" placeholder="예: 사수 외근 중"></label>
+        </div>
+      </section>
+
+      ${REG_Q.map((q,i)=>{const k='q'+(i+1),v=REG[k]||'';return `<section class="rg-card rg-q${v.trim()?' done':''}" data-q="${k}">
+        <div class="rg-card-h"><span class="rg-num">${i+1}</span><div><h3>${q.t}${q.req?' <em>필수</em>':' <em class="opt">선택</em>'}</h3><p>${UI('bulb')} ${q.tip}</p></div><span class="rg-ok" aria-hidden="true">✓</span></div>
+        <textarea id="r-${k}" rows="3" placeholder="${q.h}" maxlength="400">${esc(v)}</textarea>
+        <div class="rg-count"><span id="c-${k}">${v.length}</span> / 400</div>
+      </section>`}).join('')}
+
+      <div class="rg-submit">
+        <span class="small" id="rgNeed">${pr.need?`필수 질문 <b>${pr.need}개</b>가 남았어요`:'모든 필수 질문을 채웠어요 🎉'}</span>
+        <button class="rg-sample" type="button" id="r-sample">예시로 채우기</button>
+        <button class="btn" type="submit">등록하기</button>
       </div>
-      <fieldset style="border:0;padding:0;margin:0;display:grid;gap:10px"><legend class="small" style="font-weight:700;margin-bottom:6px">맥락 정보 <span class="muted" style="font-weight:400">· 글로 옮길 때 사라지기 쉬운 부분이에요</span></legend>
-      <div class="grid3">
-        <label class="f" for="r-rel">인물 관계<input type="text" id="r-rel" value="${esc(REG.rel)}" placeholder="예: 현업 팀장"></label>
-        <label class="f" for="r-when">시점<input type="text" id="r-when" value="${esc(REG.when)}" placeholder="예: 입사 3개월 차"></label>
-        <label class="f" for="r-before">직전 상황<input type="text" id="r-before" value="${esc(REG.before)}" placeholder="예: 사수 외근 중"></label>
-      </div></fieldset>
-      ${STORY_Q.map((q,i)=>`<label class="f" for="r-q${i+1}"><span><span class="qnum">${i+1}</span>${['신입 때 가장 당황했던 순간은?','그때 실제로 어떻게 행동했나요?','왜 그렇게 했나요? 무엇을 보고 판단했나요?','지금 신입에게 해 주고 싶은 조언은?'][i]}${i<3?' *':''}</span><textarea id="r-q${i+1}" placeholder="${['누가, 언제, 무슨 말을 했는지 장면처럼 적어 주세요','실제로 한 말과 행동','그 순간 무엇을 보고 판단했는지 (상대 표정, 타이밍, 팀 분위기 등)','한두 문장이면 충분해요'][i]}">${esc(REG['q'+(i+1)])}</textarea></label>`).join('')}
-      <div class="row"><button class="btn" type="submit">등록하기</button><button class="btn ghost" type="button" id="r-sample">예시로 채우기</button><span class="small muted">* 필수 · 평균 5분</span></div>
     </form>
-    <aside class="sticky">
-      <div class="small muted">이렇게 바뀌어요</div>
-      <article class="sc"><div class="sc-head">${avatar({icon:'user'})}<div class="who"><b id="pv-rel">${esc(REG.rel||'인물 관계')}</b><span id="pv-when">${esc(REG.when||'시점')}</span></div><span class="chip" id="pv-part">${esc(REG.part)}</span></div>
-        <div class="sc-body"><p class="sc-text" id="pv-q1" style="font-size:15px">${esc(REG.q1||'① 당황했던 순간이 상황 카드의 지문이 됩니다.')}</p>
-        <div class="senior" style="padding:12px">${avatar({icon:'user'})}<div><div class="nm" id="pv-who">${esc(REG.who||'익명 선배')}<span>${esc(REG.year)}</span></div><q id="pv-q2">${esc(REG.q2||'② 내 대응이 선배 피드백이 되고,')}</q><div class="why" id="pv-q3">${esc(REG.q3?'판단 근거: '+REG.q3:'③ 판단 근거가 피드백의 핵심이 됩니다.')}</div></div></div>
-        <p class="small" id="pv-q4" style="color:var(--ink-2)">${esc(REG.q4?'퇴근 회고 팁 · '+REG.q4:'④ 조언은 퇴근 회고의 선배 팁으로 쓰여요.')}</p></div></article>
-      <div class="panel soft" style="display:grid;gap:10px">
-        <b style="font-size:14px">내 기여</b>
-        <div class="badges"><span class="chip">등록한 경험 ${mine.length}건</span><span class="chip">게시된 카드 ${mine.filter(d=>d.status==='게시').length}건</span></div>
-        <p class="small muted">카드가 게시되면 '내 사례로 배운 신입 수'가 여기에 표시돼요. 예: 박서연 선배 · 사례 4건 · 배운 신입 37명</p>
+
+    <aside class="sticky rg-side">
+      <details class="rg-pvd" id="rgPvd" ${REG_PV.open?'open':''}>
+        <summary><span>${UI('eye')} 후배 화면 미리보기</span><small>쓴 내용이 게임에 어떻게 들어가는지 그림으로 보기</small></summary>
+        <div class="pv-tabs" role="group" aria-label="미리보기 장면">
+          <button type="button" data-pv="card" aria-pressed="${REG_PV.tab!=='fb'}">① 상황 카드</button>
+          <button type="button" data-pv="fb" aria-pressed="${REG_PV.tab==='fb'}">②③④ 선배 피드백</button>
+        </div>
+        <div class="pvg" data-tab="${REG_PV.tab==='fb'?'fb':'card'}">
+          <div class="pvg-hud"><span class="pvg-me">${bri({head:true,wave:false})}</span><b>김하이</b><span class="pvg-bars"><i></i><i></i><i></i><i></i></span><span class="pvg-day">D+14</span></div>
+          <div class="pvg-scene" aria-hidden="true"><span class="pvg-win"></span><span class="pvg-win r"></span><span class="pvg-desk"></span>
+            <span class="pvg-bri">${bri({size:58,wave:false})}<em>❗</em></span><span class="pvg-npc">${avatar({icon:'user'},'av sm')}</span></div>
+          <div class="pvg-dlg pvg-card">
+            <div class="pvg-spk">${avatar({icon:'user'},'av sm')}<b id="pv-rel">${esc(REG.rel||'인물 관계')}</b></div>
+            <div class="pvg-body"><div class="pvg-head"><span class="chip" id="pv-part">${esc(REG.part)}</span><small id="pv-when">${esc(REG.when||'시점')}</small></div>
+              <p id="pv-q1">${esc(REG.q1||'① 당황했던 순간이 이 대화창의 상황이 돼요.')}</p>
+              <div class="pvg-ch"><span><b>1</b></span><span><b>2</b></span><span><b>3</b></span></div></div>
+          </div>
+          <div class="pvg-dlg pvg-fb">
+            <div class="pvg-fbh">선배들은 어떻게 했을까?</div>
+            <div class="pvg-sr">${avatar({icon:'user'},'av sm')}<div><b id="pv-who">${esc(REG.who||'익명 선배')}</b> <small id="pv-year">${esc(REG.year)}</small>
+              <p id="pv-q2">${esc(REG.q2||'② 내 대응')}</p><p class="why" id="pv-q3">${esc(REG.q3?'판단 근거: '+REG.q3:'③ 판단 근거')}</p></div></div>
+            <p class="pvg-tip" id="pv-q4">${esc(REG.q4?'🌙 퇴근 회고 팁 · '+REG.q4:'④ 조언은 퇴근 회고 팁으로 쓰여요')}</p>
+          </div>
+        </div>
+      </details>
+      <div class="rg-mine">
+        <b>내가 등록한 경험</b>
+        ${mine.length?mine.slice(0,4).map(d=>`<div class="rg-mine-it"><span class="chip ${d.status==='게시'?'good':'amber'}">${esc(d.status)}</span><span>${esc(d.title)}</span></div>`).join(''):'<p class="small muted">아직 없어요. 첫 경험을 남기면 HRD 검토 후 게임에 게시돼요.</p>'}
+        <p class="small muted">게시되면 '내 사례로 배운 신입 수'가 여기에 표시돼요.</p>
       </div>
     </aside>
   </div>`;
 }
 bind.register=()=>{
   const f=$('#regf');
-  const map={'r-who':'who','r-year':'year','r-part':'part','r-rel':'rel','r-when':'when','r-before':'before','r-q1':'q1','r-q2':'q2','r-q3':'q3','r-q4':'q4'};
+  const pvd=$('#rgPvd');pvd.addEventListener('toggle',()=>{REG_PV.open=pvd.open});
+  pvd.querySelectorAll('[data-pv]').forEach(b=>b.addEventListener('click',()=>{REG_PV.tab=b.dataset.pv;pvd.querySelector('.pvg').dataset.tab=REG_PV.tab;pvd.querySelectorAll('[data-pv]').forEach(x=>x.setAttribute('aria-pressed',x===b))}));
+  const map={'r-who':'who','r-rel':'rel','r-when':'when','r-before':'before','r-q1':'q1','r-q2':'q2','r-q3':'q3','r-q4':'q4'};
   const pv=()=>{
     $('#pv-rel').textContent=REG.rel||'인물 관계';$('#pv-when').textContent=REG.when||'시점';$('#pv-part').textContent=REG.part;
-    $('#pv-q1').textContent=REG.q1||'① 당황했던 순간이 상황 카드의 지문이 됩니다.';
-    $('#pv-who').innerHTML=`${esc(REG.who||'익명 선배')}<span>${esc(REG.year)}</span>`;
-    $('#pv-q2').textContent=REG.q2||'② 내 대응이 선배 피드백이 되고,';
-    $('#pv-q3').textContent=REG.q3?'판단 근거: '+REG.q3:'③ 판단 근거가 피드백의 핵심이 됩니다.';
-    $('#pv-q4').textContent=REG.q4?'퇴근 회고 팁 · '+REG.q4:'④ 조언은 퇴근 회고의 선배 팁으로 쓰여요.';
+    $('#pv-q1').textContent=REG.q1||'① 당황했던 순간이 이 대화창의 상황이 돼요.';
+    $('#pv-who').textContent=REG.who||'익명 선배';$('#pv-year').textContent=REG.year;
+    $('#pv-q2').textContent=REG.q2||'② 내 대응';
+    $('#pv-q3').textContent=REG.q3?'판단 근거: '+REG.q3:'③ 판단 근거';
+    $('#pv-q4').textContent=REG.q4?'🌙 퇴근 회고 팁 · '+REG.q4:'④ 조언은 퇴근 회고 팁으로 쓰여요';
+    const pr=regProgress();
+    document.querySelectorAll('.rg-step').forEach(el=>{const on=pr.st[el.dataset.step];el.classList.toggle('on',on);el.querySelector('i').textContent=on?'✓':''});
+    $('#rgPct').textContent=pr.pct+'%';$('#rgBar').style.width=pr.pct+'%';
+    $('#rgNeed').innerHTML=pr.need?`필수 질문 <b>${pr.need}개</b>가 남았어요`:'모든 필수 질문을 채웠어요 🎉';
+    ['q1','q2','q3','q4'].forEach(k=>{const c=document.querySelector(`.rg-q[data-q="${k}"]`);if(c)c.classList.toggle('done',!!REG[k].trim());const n=$('#c-'+k);if(n)n.textContent=REG[k].length});
   };
-  f.addEventListener('input',e=>{const k=map[e.target.id];if(k){REG[k]=e.target.value;pv()}});
+  f.addEventListener('input',e=>{
+    if(e.target.name==='r-year'){REG.year=e.target.value;pv();return}
+    if(e.target.name==='r-part'){REG.part=e.target.value;pv();return}
+    const k=map[e.target.id];if(k){REG[k]=e.target.value;pv()}});
+  f.addEventListener('change',e=>{if(e.target.name==='r-year'){REG.year=e.target.value;pv()}if(e.target.name==='r-part'){REG.part=e.target.value;pv()}});
   $('#r-sample').addEventListener('click',()=>{REG={who:'한지훈',year:'10년차 이상',part:'노무·조직문화',rel:'현업 팀장',when:'입사 3개월 차',before:'사수 선배 외근 중',
     q1:'현업 팀장님이 찾아와 "저 직원 좀 내보내 달라"고 하셨어요.',q2:'"알아보겠습니다"라고만 하고, 아무것도 기록하지 않았어요.',q3:'인사팀이 뭐든 해결해 줘야 한다고 생각했어요. 사실관계가 없으면 할 수 있는 게 없다는 걸 몰랐어요.',q4:'들으면서 바로 적으세요. 언제, 무엇을, 몇 번.'};route()});
   f.addEventListener('submit',e=>{e.preventDefault();
-    if(!REG.q1.trim()||!REG.q2.trim()||!REG.q3.trim()){toast('1~3번 질문은 꼭 답해 주세요');return}
+    const miss=['q1','q2','q3'].find(k=>!REG[k].trim());
+    if(miss){toast('1~3번 질문은 꼭 답해 주세요');const t=$('#r-'+miss);if(t){t.focus();t.closest('.rg-card').scrollIntoView({block:'center',behavior:'smooth'})}return}
     S.db.unshift({id:'d'+Date.now(),type:REG.part,title:REG.q1.slice(0,40)+(REG.q1.length>40?'…':''),src:'시니어 등록',by:REG.who||'익명',status:'검토 대기',full:{...REG}});
     REG={...REG_DEFAULT};save();toast('등록했어요. HRD 검토 후 상황 카드로 게시돼요');route();window.scrollTo(0,0)});
 };
 
 /* ---------- hrd ---------- */
+let HRD_ROWS=[];
+function hrdRows(){
+  return Object.keys(CARDS).map(id=>{const c=CARDS[id],st=S.stats[id]||[0,0,0],cn=c.seed.map((v,i)=>v+(st[i]||0)),t=cn.reduce((a,b)=>a+b,0);
+    const eff=c.ch.map(x=>x.d.reduce((p,q)=>p+q,0));
+    const neg=cn.reduce((a,v,i)=>a+(eff[i]<0?v:0),0),pos=cn.reduce((a,v,i)=>a+(eff[i]>0?v:0),0);
+    const day=DAYS.find(d=>d.cards.includes(id));
+    const top=cn.indexOf(Math.max(...cn));
+    return{id,c,cn,t,eff,day:day?day.day:0,neg:pct(neg,t),pos:pct(pos,t),mid:100-pct(neg,t)-pct(pos,t),top}});
+}
 function hrd(){
-  const ids=Object.keys(CARDS);
-  const rows=ids.map(id=>{const c=CARDS[id],st=S.stats[id]||[0,0,0],cn=c.seed.map((v,i)=>v+(st[i]||0)),t=cn.reduce((a,b)=>a+b,0);
-    const neg=cn.reduce((a,v,i)=>a+(c.ch[i].d.reduce((x,y)=>x+y,0)<0?v:0),0);return{id,c,cn,t,neg:pct(neg,t)}});
-  const stuck=[...rows].sort((a,b)=>b.neg-a.neg).slice(0,3);
-  const participants=48+S.runs,finished=31+S.done;
+  const all=hrdRows(),fd=S.hday||'all';
+  const rows=fd==='all'?all:all.filter(r=>String(r.day)===String(fd));
+  HRD_ROWS=rows;
+  const stuck=[...all].sort((a,b)=>b.neg-a.neg).slice(0,3);
+  const participants=48+S.runs,finished=31+S.done,rate=pct(finished,participants);
   const unanswered=allPosts().filter(p=>p.ch!=='peer'&&!repliesOf(p).length).length;
-  const base=ids.map(id=>({id,type:CARDS[id].type,title:CARDS[id].title,src:'시니어 인터뷰 (예시)',status:'게시'}));
-  const db=[...S.db,...base];
+  const base=Object.keys(CARDS).map(id=>({id,type:CARDS[id].type,title:CARDS[id].title,src:'시니어 인터뷰 (예시)',status:'게시'}));
+  const db=[...S.db,...base],waiting=db.filter(d=>d.status==='검토 대기').length;
   const types=['전체',...TYPES,'미분류'];
   const shown=S.filter==='전체'?db:db.filter(d=>d.type===S.filter);
+  const maxArm=Math.max(50,...rows.map(r=>Math.max(r.neg,r.pos)));
+  const days=DAYS.filter(d=>fd==='all'||String(d.day)===String(fd));
   return `
-  <div><div class="eyebrow">SECI 연결화 · HRD 담당자</div><h1 class="h1" style="font-size:32px;margin-top:6px">운영 대시보드</h1>
-  <p class="lead" style="margin-top:6px">신입들의 선택에서 자주 막히는 상황을 찾고, 시니어 경험을 시나리오로 묶어 교육과 멘토링을 보완해요.</p>
-  <p class="sample" style="margin-top:8px">예시 데이터에 이 브라우저에서 플레이한 기록이 더해져 표시돼요.</p></div>
-  <section class="grid4">
-    <div class="kpi"><span>참여 신입</span><b>${participants}명</b><small>이번 기수 기준</small></div>
-    <div class="kpi"><span>100일 완주율</span><b>${pct(finished,participants)}%</b><small>${finished}명 완주</small></div>
-    <div class="kpi"><span>시나리오 DB</span><b>${db.length}건</b><small>검토 대기 ${db.filter(d=>d.status==='검토 대기').length}건</small></div>
-    <div class="kpi"><span>답변 대기 질문</span><b>${unanswered}건</b><small>소통 공간 · 동기방 제외</small></div>
-  </section>
-  <section class="grid2" style="align-items:start">
-    <div class="panel" style="display:grid;gap:14px">
-      <div class="row" style="justify-content:space-between"><h2 class="h2" style="font-size:18px">상황별 선택 분포</h2>
-      <div class="legend"><span><i style="background:#7fa2dc"></i>A</span><span><i style="background:var(--blue)"></i>B</span><span><i style="background:#b9c9e6"></i>C</span></div></div>
-      <div class="distlist">${rows.map(r=>`<div class="it"><div class="nm">${esc(r.c.title)}<span>${esc(r.c.type)} · ${r.t}명</span></div><div class="stack" role="img" aria-label="A ${pct(r.cn[0],r.t)}%, B ${pct(r.cn[1],r.t)}%, C ${pct(r.cn[2],r.t)}%">${r.cn.map(v=>`<i style="width:${pct(v,r.t)}%">${pct(v,r.t)>=12?pct(v,r.t)+'%':''}</i>`).join('')}</div></div>`).join('')}</div>
-    </div>
-    <div style="display:grid;gap:20px">
-      <div class="panel" style="display:grid;gap:12px"><h2 class="h2" style="font-size:18px">자주 막히는 상황</h2>
-        <p class="small muted">게이지가 떨어지는 선택을 한 신입 비율이 높은 순서예요. 입문교육이나 멘토링 주제로 쓰기 좋아요.</p>
-        <div class="stuck">${stuck.map(r=>`<div><span>${esc(r.c.title)} <span class="muted small">${esc(r.c.type)}</span></span><b>${r.neg}% 하락</b></div>`).join('')}</div></div>
-      <div class="panel soft" style="display:grid;gap:8px"><h2 class="h2" style="font-size:18px">활용 제안</h2>
-        <ul style="margin:0;padding-left:18px;font-size:14px;color:var(--ink-2)"><li>막히는 상황 1위를 다음 기수 입문교육 사례로</li><li>답변 대기 질문은 해당 파트 시니어에게 알림</li><li>선택이 고르게 갈리는 카드는 토론형 멘토링 주제로</li></ul></div>
+  <section class="cm-hero hd-hero">
+    <div class="cm-hero-copy">
+      <h1>운영 대시보드</h1>
+      <p>신입들이 어디서 막히는지 찾고, 시니어 경험을 시나리오로 묶어 교육과 멘토링을 보완해요.</p>
+      <div class="cm-stats"><span>${UI('chart')} 예시 데이터 + 이 브라우저의 플레이 기록</span></div>
     </div>
   </section>
-  <section style="display:grid;gap:12px">
-    <div class="row" style="justify-content:space-between"><h2 class="h2" style="font-size:18px">시나리오 DB</h2>
-    <div class="filters" id="filters">${types.map(t=>`<button aria-pressed="${t===S.filter}" data-t="${t}">${t}</button>`).join('')}</div></div>
-    <div class="tbl"><table><thead><tr><th>유형</th><th>제목</th><th>출처</th><th>상태</th><th></th></tr></thead><tbody>
-    ${shown.map(d=>`<tr><td><span class="chip gray">${esc(d.type)}</span></td><td>${esc(d.title)}</td><td class="muted">${esc(d.src)}${d.by?' · '+esc(d.by):''}</td>
-      <td><span class="chip ${d.status==='게시'?'good':d.status==='보류'?'gray':'amber'}">${d.status}</span></td>
+
+  <div class="hd-filter" id="hdays" role="group" aria-label="기간">
+    <span class="small muted">기간</span>
+    ${[['all','전체 100일'],...DAYS.map(d=>[String(d.day),'D+'+d.day+' · '+d.label])].map(([k,n])=>`<button type="button" data-d="${k}" aria-pressed="${String(fd)===k}">${n}</button>`).join('')}
+  </div>
+
+  <section class="hd-kpis">
+    <div class="hd-kpi"><span class="hd-kl">참여 신입</span><b>${participants}<small>명</small></b><span class="hd-ks">이번 기수 기준</span></div>
+    <div class="hd-kpi"><span class="hd-kl">100일 완주율</span><b>${rate}<small>%</small></b><span class="hd-meter" role="img" aria-label="완주율 ${rate}%"><i style="width:${rate}%"></i></span><span class="hd-ks">${finished}명 완주</span></div>
+    <div class="hd-kpi"><span class="hd-kl">검토 대기 시나리오</span><b>${waiting}<small>건</small></b><span class="hd-ks">시나리오 DB 전체 ${db.length}건</span></div>
+    <a class="hd-kpi link" href="#community"><span class="hd-kl">답변 대기 질문</span><b>${unanswered}<small>건</small></b><span class="hd-ks">소통 공간에서 답하기 →</span></a>
+  </section>
+
+  <section class="hd-main">
+    <div class="hd-card">
+      <div class="hd-card-h"><div><h2>상황별 선택 결과</h2><p>각 상황에서 신입들이 고른 선택이 게이지를 떨어뜨렸는지, 올렸는지 비율이에요.</p></div>
+        <div class="hd-legend"><span><i class="neg"></i>게이지 하락 선택</span><span><i class="pos"></i>게이지 상승 선택</span></div></div>
+      <div class="hd-axis" aria-hidden="true"><span>◀ 하락</span><span>상승 ▶</span></div>
+      <div class="hd-div" id="hdChart">
+        ${days.map(d=>`<div class="hd-day">D+${d.day} · ${esc(d.label)}</div>${rows.filter(r=>r.day===d.day).map(r=>{const i=rows.indexOf(r);return `
+          <div class="hd-row" data-i="${i}" tabindex="0" aria-label="${esc(r.c.title)}: 하락 ${r.neg}%, 상승 ${r.pos}%, 응답 ${r.t}명">
+            <div class="hd-nm"><b>${esc(r.c.title)}</b><small>${esc(r.c.type)} · ${r.t}명</small></div>
+            <div class="hd-arms">
+              <div class="hd-arm l"><span class="hd-v">${r.neg?r.neg+'%':''}</span><i class="neg" style="width:${r.neg/maxArm*100}%"></i></div>
+              <div class="hd-arm r"><i class="pos" style="width:${r.pos/maxArm*100}%"></i><span class="hd-v">${r.pos?r.pos+'%':''}</span></div>
+            </div>
+          </div>`}).join('')}`).join('')}
+      </div>
+      <details class="hd-table"><summary>표로 보기</summary>
+        <div class="tbl"><table><thead><tr><th>상황</th><th>응답</th><th>A</th><th>B</th><th>C</th><th>하락</th><th>상승</th></tr></thead><tbody>
+        ${rows.map(r=>`<tr><td>${esc(r.c.title)}</td><td>${r.t}</td>${r.cn.map((v,k)=>`<td>${pct(v,r.t)}% <span class="muted">${r.eff[k]>0?'▲':r.eff[k]<0?'▼':'–'}</span></td>`).join('')}<td>${r.neg}%</td><td>${r.pos}%</td></tr>`).join('')}
+        </tbody></table></div></details>
+    </div>
+
+    <div class="hd-side">
+      <div class="hd-card">
+        <div class="hd-card-h"><div><h2>자주 막히는 상황 TOP 3</h2><p>게이지가 떨어지는 선택이 많은 순서 · 전체 기간</p></div></div>
+        <ol class="hd-stuck">${stuck.map((r,k)=>`<li><span class="hd-rank">${k+1}</span><div><b>${esc(r.c.title)}</b><small>${esc(r.c.type)} · D+${r.day}</small>
+          <span class="hd-pick">가장 많이 고른 선택 · ${esc(r.c.ch[r.top].t)}</span></div><strong>${r.neg}<small>%</small></strong></li>`).join('')}</ol>
+      </div>
+      <div class="hd-card hd-tips">
+        <h2>이렇게 활용해 보세요</h2>
+        <ul><li><span>${UI('cap')}</span>막히는 상황 1위를 다음 기수 입문교육 사례로</li><li><span>${UI('bell')}</span>답변 대기 질문은 해당 파트 시니어에게 알림</li><li><span>${UI('chat')}</span>선택이 고르게 갈리는 카드는 토론형 멘토링 주제로</li></ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="hd-card">
+    <div class="hd-card-h"><div><h2>시나리오 DB</h2><p>시니어 경험과 소통 공간 질문이 모이는 곳이에요. 검토 후 게시하면 다음 기수 게임에 들어가요.</p></div>
+      ${waiting?`<span class="chip amber">검토 대기 ${waiting}건</span>`:''}</div>
+    <div class="filters" id="filters">${types.map(t=>`<button aria-pressed="${t===S.filter}" data-t="${t}">${t}</button>`).join('')}</div>
+    <div class="tbl hd-db"><table><thead><tr><th>유형</th><th>제목</th><th>출처</th><th>상태</th><th></th></tr></thead><tbody>
+    ${shown.map(d=>`<tr class="${d.status==='검토 대기'?'wait':''}"><td><span class="chip gray">${esc(d.type)}</span></td><td><b>${esc(d.title)}</b></td><td class="muted">${esc(d.src)}${d.by?' · '+esc(d.by):''}</td>
+      <td><span class="chip ${d.status==='게시'?'good':d.status==='보류'?'gray':'amber'}">${d.status==='게시'?'✓ ':d.status==='검토 대기'?'⏳ ':''}${d.status}</span></td>
       <td>${d.status==='검토 대기'?`<span class="row" style="gap:6px;flex-wrap:nowrap"><button class="btn sm" data-ok="${d.id}">게시</button><button class="btn sm ghost" data-no="${d.id}">보류</button></span>`:''}</td></tr>`).join('')||'<tr><td colspan="5" class="muted">이 유형의 시나리오가 아직 없어요.</td></tr>'}
     </tbody></table></div>
-  </section>`;
+  </section>
+  <div class="hd-tip" id="hdTip" role="tooltip" hidden></div>`;
 }
 bind.hrd=()=>{
   $('#filters').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;S.filter=b.dataset.t;save();route()});
+  $('#hdays').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;S.hday=b.dataset.d;save();route()});
   document.querySelectorAll('[data-ok],[data-no]').forEach(b=>b.addEventListener('click',()=>{const id=b.dataset.ok||b.dataset.no;const d=S.db.find(x=>x.id===id);if(!d)return;
     d.status=b.dataset.ok?'게시':'보류';save();toast(b.dataset.ok?'게시했어요. 다음 기수 게임에 반영돼요':'보류했어요');route()}));
+  document.querySelectorAll('body > .hd-tip').forEach(x=>x.remove());
+  const tip=$('#hdTip'),chart=$('#hdChart');document.body.appendChild(tip);
+  const show=(row,x,y)=>{const r=HRD_ROWS[+row.dataset.i];if(!r)return;
+    tip.innerHTML=`<b>${esc(r.c.title)}</b><span class="muted">${esc(r.c.type)} · 응답 ${r.t}명</span>
+      ${r.c.ch.map((ch,k)=>`<div class="hd-tip-r"><span class="hd-tip-k ${r.eff[k]<0?'neg':r.eff[k]>0?'pos':'mid'}">${'ABC'[k]}</span><span class="hd-tip-t">${esc(ch.t)}</span><b>${pct(r.cn[k],r.t)}%</b></div>`).join('')}`;
+    tip.hidden=false;const w=tip.offsetWidth,h=tip.offsetHeight;
+    tip.style.left=Math.min(window.innerWidth-w-12,Math.max(12,x+16))+'px';tip.style.top=Math.max(12,y-h-12)+'px';};
+  chart.addEventListener('mousemove',e=>{const row=e.target.closest('.hd-row');if(row)show(row,e.clientX,e.clientY);else tip.hidden=true});
+  chart.addEventListener('mouseleave',()=>{tip.hidden=true});
+  chart.addEventListener('focusin',e=>{const row=e.target.closest('.hd-row');if(row){const rc=row.getBoundingClientRect();show(row,rc.left+rc.width/2,rc.top)}});
+  chart.addEventListener('focusout',()=>{tip.hidden=true});
 };
 
 route();
