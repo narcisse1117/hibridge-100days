@@ -63,7 +63,14 @@ const Story = (() => {
     if (k.startsWith("Arrow") || e.repeat) return;
     press(k);
   });
-  document.addEventListener("keyup", (e) => { const k = MAP[e.key] || e.key; keys[k.length === 1 ? k.toLowerCase() : k] = false; });
+  document.addEventListener("keyup", (e) => {
+    const k = MAP[e.key] || e.key; keys[k.length === 1 ? k.toLowerCase() : k] = false;
+    // 포커스된 버튼이 Space 로 다시 눌리지 않도록 (버튼 클릭은 keyup 에서 일어남)
+    const tag = (e.target.tagName || "").toLowerCase();
+    if (e.key === " " && tag !== "textarea" && tag !== "input") e.preventDefault();
+  });
+  // 마우스로 누른 버튼은 바로 포커스 해제 → Space 가 게임 조작으로만 쓰이게
+  document.addEventListener("click", (e) => { const b = e.target.closest && e.target.closest("button"); if (b && e.detail > 0) b.blur(); });
   window.addEventListener("blur", () => Object.keys(keys).forEach((k) => (keys[k] = false)));
 
   function press(k) {
