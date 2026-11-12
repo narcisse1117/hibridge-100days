@@ -1298,10 +1298,12 @@ const Game3D = (() => {
   }
   function updateLabels() {
     const target = World.target(), walk = Story.mode === "walk" && S.game.phase === "play";
+    const nb = walk ? nearest() : null;
     NPCS.forEach((n) => {
       const el = labelEls[n.id], o = npcs[n.id];
       if (!el) return;
-      if (!o.visible || !walk) { el.style.display = "none"; return; }
+      // 말 걸 수 있는 사람은 이름표 대신 말풍선 하나로 보여 줌 (두 줄 겹침 방지)
+      if (!o.visible || !walk || (nb && nb.look && nb.id === n.id)) { el.style.display = "none"; return; }
       const h = headPos(n.id); h.y += 0.32;
       const sp = toScreen(h), d = camera.position.distanceTo(h);
       if (!sp || d > 16) { el.style.display = "none"; return; }
@@ -1309,9 +1311,9 @@ const Game3D = (() => {
       el.classList.toggle("target", n.id === target);
       el.style.opacity = Math.max(0.35, Math.min(1, 1.6 - d / 12));
     });
-    const nb = walk ? nearest() : null;
     if (nb) {
-      const h = headPos(nb.id); h.y += nb.look ? 0.75 : 0.45;
+      // 사람: 이름표 자리에 "Space 이름 · 말 걸기" / 물건(내 자리·엘리베이터 등): 브리 머리 바로 위
+      const h = nb.look ? headPos(nb.id) : new THREE.Vector3(player.x, 1.4, player.z); if (nb.look) h.y += 0.32;
       const sp = toScreen(h);
       if (sp) {
         promptEl.style.display = "block"; promptEl.style.transform = `translate(${sp.x}px, ${sp.y}px) translate(-50%, -100%)`;

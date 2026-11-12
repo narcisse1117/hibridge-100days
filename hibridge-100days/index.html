@@ -1224,11 +1224,18 @@ function endingHTML(){
       ${G.log.map(l=>{const c=CARDS[l.id];return `<div class="row small" style="justify-content:space-between;border-bottom:1px solid var(--line);padding-bottom:8px"><span><b>${esc(c.title)}</b> <span class="muted">${'ABC'[l.i]} · ${esc(c.ch[l.i].t)}</span></span><span class="deltas">${deltaChips(c.ch[l.i].d)}</span></div>`}).join('')}
     </section></div>`;
 }
+// 게임 화면에서 Space·방향키가 사이트 페이지를 스크롤하지 않도록 → 게임으로 포커스를 넘김
+document.addEventListener('keydown',e=>{
+  const gf=document.getElementById('gframe');if(!gf)return;
+  const t=(e.target.tagName||'').toLowerCase();if(t==='input'||t==='textarea'||t==='select')return;
+  if([' ','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)){e.preventDefault();if(e.target.blur)e.target.blur();try{gf.contentWindow.focus()}catch(_){}}
+});
 bind.game=()=>{
   const G=S.game;
   if(G.phase==='world'){
     $('#gRestart').addEventListener('click',()=>{if(!confirm('처음부터 다시 시작할까요? 지금까지의 게임 진행은 사라져요.'))return;S.runs++;save();route();toast('D+1부터 다시 시작해요')});
     $('#gReset').addEventListener('click',()=>{if(!confirm('캐릭터를 다시 꾸미면 게임이 처음부터 시작돼요. 계속할까요?'))return;G.phase='setup';save();route();window.scrollTo(0,0)});
+    const gf=$('#gframe');gf.addEventListener('load',()=>{try{gf.contentWindow.focus()}catch(e){}});
     return;
   }
   if(G.phase==='setup'){
