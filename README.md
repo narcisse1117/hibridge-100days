@@ -4,7 +4,7 @@ AI가 알려 주지 않는 '우리 회사'의 암묵지를 전수하는 신입�
 
 교육공학 프로젝트 · 에듀링크 (김용은 · 오승현 · 육예원)
 
-👉 **바로 보기: https://main.d3bz2k565fpc2j.amplifyapp.com/**  (GitHub Pages: https://narcisse1117.github.io/hibridge-100days/)
+👉 **바로 보기: https://main.d1urndoddsyfrn.amplifyapp.com/**  (GitHub Pages: https://narcisse1117.github.io/hibridge-100days/)
 
 ## 소개
 - 가상 기업 ㈜하이브릿지 인사팀 신입이 되어 100일을 보내는 상황 선택형 시뮬레이션
