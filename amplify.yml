@@ -1,0 +1,14 @@
+# AWS Amplify Hosting 배포 설정
+# 빌드 과정 없는 정적 사이트: hibridge-100days/ 폴더를 그대로 배포
+version: 1
+frontend:
+  phases:
+    build:
+      commands:
+        - echo "정적 사이트 - 빌드 없음"
+  artifacts:
+    baseDirectory: hibridge-100days
+    files:
+      - '**/*'
+  cache:
+    paths: []
