@@ -38,7 +38,15 @@ function shuffle(arr) {
 }
 const allCards = () => CARDS.concat(S.customCards);
 const activeCards = () => allCards().filter((c) => !S.disabled.includes(c.id));
-const cardsForDay = (d) => activeCards().filter((c) => c.day === d);
+// 관심 분야(실무·보고·소통·대처·통합): 상황 카드에 area 가 붙어 있으면 고른 분야의 카드만,
+// '통합'이거나 그 분야 카드가 아직 없으면 그날의 모든 카드를 섞어서 낸다
+const myArea = () => Q.get("part") || "통합";
+const cardsForDay = (d) => {
+  const all = activeCards().filter((c) => c.day === d), a = myArea();
+  if (a === "통합") return all;
+  const mine = all.filter((c) => c.area === a);
+  return mine.length ? mine : all;
+};
 const findCard = (id) => allCards().find((c) => c.id === id);
 const seniorOf = (fb) => SENIORS[fb.senior] || { name: "익명의 선배", role: "인사팀 선배", emoji: "🧑‍🏫" };
 function orderOf(card) {
@@ -76,7 +84,7 @@ function openAsk(card) {
     <h3>🙋 선배에게 물어보기</h3>
     <p class="muted small"><span class="card-ref">🃏 ${esc(card.title)}</span> 상황에서 궁금한 점을 남기면 소통 공간에서 선배들이 답해줘요.</p>
     <label>어디에 물어볼까요?</label>
-    <select id="ach"><option value="ask">🙋 선배에게 물어보기 (이름 공개)</option><option value="anon">🎭 익명 질문방</option></select>
+    <select id="ach"><option value="anon">🎭 익명 질문방에 바로 올리기</option><option value="ask">🙋 선배를 골라 1:1로 묻기 (소통 공간에서 선배 선택)</option></select>
     <label>질문</label>
     <textarea id="aq" placeholder="예: 이런 상황에서 팀장님께 먼저 말씀드려야 할까요, 사수에게 먼저 물어봐야 할까요?"></textarea>
     <div class="row" style="justify-content:flex-end;margin-top:14px">
@@ -88,7 +96,8 @@ function openAsk(card) {
     if (!text) return toast("질문을 입력해 주세요");
     S.stats.asks[card.id] = (S.stats.asks[card.id] || 0) + 1; save();
     toParent({ type: "ask", ch, text, card: { id: card.id, title: card.title, day: DAYS[card.day - 1].label } });
-    closeModal(); toast("소통 공간에 질문을 올렸어요. 게임을 마치고 확인해 보세요!");
+    closeModal(); toast(ch === "anon" ? "익명 질문방에 질문을 올렸어요. 게임을 마치고 확인해 보세요!" : "질문을 담아 뒀어요. 소통 공간 → 선배에게 물어보기에서 선배를 고르면 바로 보낼 수 있어요");
+    if (typeof Story !== "undefined" && Story.giveItem) Story.giveItem("bubble");
   });
 }
 
@@ -125,3 +134,12 @@ function render() {
 render();
 // 조작 안내: 처음 한 번만 잠깐 보여 주고, 이후엔 HUD의 ⌨️ 버튼으로
 setTimeout(() => { const h = document.getElementById("ghelp"); if (!h || LS.get("helpSeen", false)) return; h.classList.add("show"); LS.set("helpSeen", true); setTimeout(() => h.classList.remove("show"), 7000); }, 600);
+// 확인용: 주소에 ?testdrop=아이템id (또는 1) 가 있으면, 출근해서 걷기 시작할 때 그 아이템 하나를 바로 띄운다
+if (Q.get("testdrop")) {
+  const tdId = Q.get("testdrop") === "1" ? "goldbadge" : Q.get("testdrop");
+  const tryDrop = () => {
+    if (typeof Story !== "undefined" && Story.mode === "walk" && !document.querySelector(".gpanel:not(.hidden)")) Story.giveItem(tdId);
+    else setTimeout(tryDrop, 700);
+  };
+  setTimeout(tryDrop, 1200);
+}

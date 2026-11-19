@@ -73,6 +73,47 @@ const Story = (() => {
   document.addEventListener("click", (e) => { const b = e.target.closest && e.target.closest("button"); if (b && e.detail > 0) b.blur(); });
   window.addEventListener("blur", () => Object.keys(keys).forEach((k) => (keys[k] = false)));
 
+  // ---------- 드랍 아이템 ----------
+  // 조건을 채우면 giveItem → 걷는 중(패널·대화 없음)일 때 선물 상자가 떨어지고 획득 카드가 뜬다
+  // 이번 판에서 모은 아이템(gm.items)은 다시 시작하면 초기화, 도감(hb-items)은 한 번 얻으면 계속 남음
+  const dropQ = []; let dropBusy = false;
+  function giveItem(id) {
+    const gm = g(); if (!gm || typeof hbItem !== "function" || !hbItem(id)) return false;
+    gm.items = gm.items || []; if (gm.items.includes(id)) return false;
+    gm.items.push(id); save();
+    const isNew = hbItemGive(id);
+    dropQ.push({ id, isNew }); if (typeof toParent === "function") toParent({ type: "item", id, isNew }); return true;
+  }
+  setInterval(() => {
+    if (!dropQ.length || dropBusy || mode !== "walk" || !R) return;
+    const p = $id("gpanel"); if (p && !p.classList.contains("hidden")) return;
+    const d = dropQ.shift(), it = hbItem(d.id); if (!it) return;
+    dropBusy = true; sfx("good");
+    (R.spawnGift ? (toast("🎁 선물 상자가 도착했어요! 상자를 눌러서 열어 보세요"), R.spawnGift(it)) : R.dropBox ? R.dropBox(it.tier) : Promise.resolve()).then(() => { showItemCard(it, d.isNew); dropBusy = false; });
+  }, 500);
+  function itemPic(it, size) {
+    const b = { top: "dot", face: "none", neck: "tie", ear: "none", ...(look().bri || {}), [it.slot]: it.v };
+    return HBArt.bri({ ...b, head: it.slot === "top", wave: it.slot === "hand" ? false : true, size: size || 90 });
+  }
+  function showItemCard(it, isNew) {
+    const host = $id("gwrap"); if (!host) return;
+    const old = host.querySelector(".itemget"); if (old) old.remove();
+    const tr = HB_TIER[it.tier] || ["", "#6b7280"], have = hbItemsOwned().length, run = (g().items || []).length;
+    const el = document.createElement("div"); el.className = "itemget t-" + it.tier;
+    el.innerHTML = `<div class="ig-pic" style="background:${(look().bg) || "#eef3fc"}">${itemPic(it, 86)}</div>
+      <div class="ig-tx"><span class="ig-tag" style="background:${tr[1]}">${isNew === false ? "🎁 다시 획득" : "🎁 새 아이템 · 도감 등록"} · ${tr[0]}</span><b>${esc(it.n)}</b><small>${esc(it.desc)}</small><em>이번 판 ${run}개 · 도감 ${have} / ${HB_ITEMS.length} · ${esc(it.how)}</em>
+      <div class="ig-acts"><button class="btn" data-eq>착용하기</button><button class="btn ghost" data-x>나중에</button></div></div>`;
+    host.appendChild(el);
+    const close = () => { el.classList.add("out"); setTimeout(() => el.remove(), 300); };
+    el.querySelector("[data-eq]").addEventListener("click", () => {
+      const gm = g(); gm.look = { ...gm.look, bri: { ...(gm.look.bri || {}), [it.slot]: it.v } }; save(); R.sync();
+      if (typeof toParent === "function") toParent({ type: "equip", slot: it.slot, v: it.v });
+      if (R.react) R.react(8); toast(`${it.n}을(를) 착용했어요!`); close();
+    });
+    el.querySelector("[data-x]").addEventListener("click", close);
+    setTimeout(() => { if (el.isConnected) close(); }, 12000);
+  }
+
   function press(k) {
     if (mode === "cut") { if (k === " " || k === "Enter") endCut(false); return; }
     if (mode === "walk" && (k === " " || k === "Enter")) return interact();
@@ -180,7 +221,7 @@ const Story = (() => {
     if (nb.id === "coffee") {
       if (gm.coffee === gm.day) return say(nb, "오늘은 이미 한 잔 마셨어요. 카페인은 하루 한 잔! ☕");
       gm.coffee = gm.day; gm.gauges.hp = clamp(gm.gauges.hp + 3); save(); updateHUD();
-      R.onGain({ hp: 3 }); sfx("good");
+      R.onGain({ hp: 3 }); sfx("good"); giveItem("coffee");
       return say(nb, "따뜻한 커피 한 잔. 잠깐 숨 돌렸다. (체력 +3)");
     }
     if (nb.id === "board") {
@@ -308,7 +349,7 @@ const Story = (() => {
   function pick(card, i, who) {
     const gm = g(), eff = card.choices[i].effects, delta = {};
     GAUGES.forEach((x, k) => { const b = gm.gauges[x.key]; gm.gauges[x.key] = clamp(b + eff[k]); delta[x.key] = gm.gauges[x.key] - b; });
-    gm.history.push({ cardId: card.id, choice: i, best: card.best, day: gm.day });
+    gm.history.push({ cardId: card.id, choice: i, best: card.best, day: gm.day, delta });
     gm.last = { cardId: card.id, choice: i, delta };
     gm.idx++;
     const dead = GAUGES.find((x) => gm.gauges[x.key] <= 0); if (dead) gm.failKey = dead.key;
@@ -395,9 +436,10 @@ const Story = (() => {
     if (!revealed) p.querySelector("#rrev").addEventListener("click", () => {
       const t = p.querySelector("#rt").value.trim();
       if (t.length < 5) return toast("한두 문장이라도 적어보세요 ✍️");
-      gm.retro[gm.day] = t; gm.revealed[gm.day] = true; save(); sfx("select"); showRetro();
+      gm.retro[gm.day] = t; gm.revealed[gm.day] = true; save(); sfx("select"); giveItem("notebook"); showRetro();
     });
     else p.querySelector("#rnext").addEventListener("click", () => {
+      if (typeof HB_DAY_ITEM !== "undefined" && HB_DAY_ITEM[gm.day - 1]) giveItem(HB_DAY_ITEM[gm.day - 1]);
       if (gm.day >= DAYS.length) { gm.phase = "ending"; save(); R.sync(); return showEnding(); }
       gm.day++; gm.idx = 0; gm.gauges.hp = clamp(gm.gauges.hp + 10); gm.phase = "dayIntro"; save();
       toast("🔋 푹 쉬고 왔어요. 체력 +10"); updateHUD(); showDayIntro();
@@ -412,8 +454,26 @@ const Story = (() => {
       sfx(e.fail ? "bad" : "end");
     }
     updateHUD();
-    const match = gm.history.filter((h) => h.choice === h.best).length;
-    const retros = Object.entries(gm.retro);
+    const H = gm.history.filter((h) => findCard(h.cardId));
+    const match = H.filter((h) => h.choice === h.best).length;
+    const pctM = H.length ? Math.round((match / H.length) * 100) : 0;
+    // 상황별 게이지 변화 (예전 기록은 선택지 효과로 계산)
+    const dOf = (h) => h.delta || Object.fromEntries(GAUGES.map((x, k) => [x.key, findCard(h.cardId).choices[h.choice].effects[k] || 0]));
+    const tot = Object.fromEntries(GAUGES.map((x) => [x.key, H.reduce((a, h) => a + (dOf(h)[x.key] || 0), 0)]));
+    const ranked = GAUGES.slice().sort((a, b) => tot[b.key] - tot[a.key]), up = ranked[0], low = ranked[ranked.length - 1];
+    const chips = (d) => GAUGES.filter((x) => d[x.key]).map((x) => `<span class="rp-chip ${d[x.key] > 0 ? "up" : "dn"}">${x.icon} ${x.label} ${d[x.key] > 0 ? "+" : ""}${d[x.key]}</span>`).join("") || `<span class="rp-chip">변화 없음</span>`;
+    const days = DAYS.map((d) => ({ d, items: H.filter((h) => h.day === d.day) })).filter((x) => x.items.length);
+    const missed = H.filter((h) => h.choice !== h.best).map((h) => findCard(h.cardId));
+    const lessons = (missed.length ? missed : H.map((h) => findCard(h.cardId))).filter((c) => c.insight).slice(0, 3);
+    // 100일 완주 보상 + 아이템 도감
+    let capeNew = false;
+    if (!e.fail) { gm.items = gm.items || []; if (!gm.items.includes("cape")) { gm.items.push("cape"); save(); capeNew = hbItemGive("cape"); if (typeof toParent === "function") toParent({ type: "item", id: "cape", isNew: capeNew }); } }
+    const own = typeof hbItemsOwned === "function" ? hbItemsOwned() : [], runItems = gm.items || [];
+    const itemsHTML = typeof HB_ITEMS === "undefined" ? "" : `<h3 class="rp-h3">🎁 이번 100일에 모은 아이템 <span class="muted small">${runItems.length} / ${HB_ITEMS.length} · 도감 전체 ${own.length} / ${HB_ITEMS.length}</span></h3>
+      <div class="rp-items">${HB_ITEMS.map((it) => { const got = runItems.includes(it.id), has = own.includes(it.id), tr = HB_TIER[it.tier] || ["", "#888"];
+        const st = got ? "" : has ? " past" : " locked";
+        return `<div class="rp-item${st}"><div class="rp-item-pic" style="background:${look().bg || "#eef3fc"}">${itemPic(it, 56)}</div>
+          <b>${has ? esc(it.n) : "???"}</b><small style="color:${tr[1]}">${tr[0]}${it.id === "cape" && capeNew ? " · NEW" : ""}</small><em>${got ? esc(it.desc) : has ? "이전 판에서 획득 · 이번엔 못 모았어요" : esc(it.tier === "hidden" ? "숨은 아이템 · 사무실을 둘러보세요" : it.how)}</em></div>`; }).join("")}</div>`;
     const confetti = e.fail ? "" : `<div class="confetti">${Array.from({ length: 36 }, (_, i) =>
       `<i style="left:${(i * 97) % 100}%;background:${["#e8a33d", "#3f8a68", "#5b8def", "#f29bb5", "#f7c548"][i % 5]};animation-delay:${(i % 12) * 0.12}s;animation-duration:${2.2 + (i % 5) * 0.35}s"></i>`).join("")}</div>`;
     const p = panel(`
@@ -424,15 +484,40 @@ const Story = (() => {
         <div style="opacity:.85">${esc(gm.name)}의 ${e.fail ? DAYS[gm.day - 1].label + "에서 멈춘 기록" : "100일 성장 유형"}</div>
         <h1>${e.title}</h1><p style="opacity:.92;margin:0">${e.desc}</p>
       </div>
-      <div class="grid4" style="margin:14px 0">${GAUGES.map((x) => `<div class="kpi"><div class="l">${x.icon} ${x.label}</div><div class="v">${gm.gauges[x.key]}</div></div>`).join("")}</div>
-      <p>🎯 선배 다수와 같은 선택 <b>${match} / ${gm.history.length}</b>개</p>
-      ${retros.length ? `<h3>📔 나의 퇴근 회고</h3>${retros.map(([d, t]) => `<p class="small"><span class="tag gray">${DAYS[d - 1].label}</span> ${esc(t)}</p>`).join("")}` : ""}
+
+      <div class="rp-head"><h2>📋 ${esc(gm.name)}의 100일 정리</h2><span class="muted small">${days.length}일 · 상황 ${H.length}개</span></div>
+      <div class="rp-sum">
+        <div><span>선배 다수와 같은 선택</span><b>${match} / ${H.length}</b><small>${pctM}%</small></div>
+        <div><span>가장 많이 성장한 역량</span><b>${up.icon} ${up.label}</b><small>${tot[up.key] >= 0 ? "+" : ""}${tot[up.key]}</small></div>
+        <div><span>더 신경 쓰면 좋을 역량</span><b>${low.icon} ${low.label}</b><small>${tot[low.key] >= 0 ? "+" : ""}${tot[low.key]}</small></div>
+      </div>
+      <div class="rp-gauges">${GAUGES.map((x) => `<div class="rp-g"><span>${x.icon} ${x.label}</span><div class="rp-bar"><i style="width:${gm.gauges[x.key]}%;background:${GCOLOR[x.key]}"></i></div><b>${gm.gauges[x.key]}</b><small>${START_GAUGES[x.key]}에서 ${gm.gauges[x.key] - START_GAUGES[x.key] >= 0 ? "+" : ""}${gm.gauges[x.key] - START_GAUGES[x.key]}</small></div>`).join("")}</div>
+
+      <h3 class="rp-h3">🗂️ 내가 겪은 상황</h3>
+      ${days.map(({ d, items }) => `<section class="rp-day">
+        <div class="rp-day-h"><span class="tag">${d.label}</span><b>${esc(d.title)}</b></div>
+        <ol class="rp-list">${items.map((h) => {
+          const c = findCard(h.cardId), same = h.choice === h.best;
+          return `<li class="rp-it ${same ? "ok" : "diff"}">
+            <div class="rp-it-h"><span class="tag gray">${esc(c.category)}</span><b>${esc(c.title)}</b><span class="rp-mark">${same ? "✓ 선배 다수와 같음" : "△ 선배들과 다른 선택"}</span></div>
+            <p class="rp-mine"><em>내 선택</em>${esc(c.choices[h.choice].text)}</p>
+            ${same ? "" : `<p class="rp-best"><em>선배 다수</em>${esc(c.choices[h.best].text)}</p>`}
+            <div class="rp-chips">${chips(dOf(h))}</div>
+          </li>`;
+        }).join("")}</ol>
+        ${gm.retro[d.day] ? `<p class="rp-retro"><em>📔 퇴근 회고</em>${esc(gm.retro[d.day])}</p>` : ""}
+      </section>`).join("")}
+
+      ${itemsHTML}
+      ${lessons.length ? `<div class="insight rp-lessons"><strong>💡 다음에 기억할 것</strong><ol>${lessons.map((c) => `<li><b>${esc(c.title)}</b> — ${esc(c.insight)}</li>`).join("")}</ol></div>` : ""}
       ${e.fail ? `<div class="insight"><strong>다시 도전할 때 팁</strong><br/>${esc(failTip(gm.failKey))}</div>` : ""}
-      <div class="row" style="margin-top:14px">
-        <button class="btn" id="eshare">📣 동기 피드에 공유</button>
+      <div class="row rp-actions" style="margin-top:14px">
+        <button class="btn" id="eprint">📄 정리본 저장 (PDF)</button>
+        <button class="btn soft" id="eshare">📣 동기 피드에 공유</button>
         <button class="btn soft" id="esenior">✍️ 다음 신입에게 경험 남기기</button>
         <button class="btn ghost" id="eagain">↺ 처음부터 다시</button>
-      </div>`, "night");
+      </div>`, "night report");
+    p.querySelector("#eprint").addEventListener("click", () => window.print());
     p.querySelector("#eshare").addEventListener("click", () => {
       hbShare(`${e.emoji} 100일 생존기 결과: [${e.title}] 나왔어! 선배들과 같은 선택 ${match}/${gm.history.length}개. 너희는?`);
       p.querySelector("#eshare").disabled = true;
@@ -442,7 +527,7 @@ const Story = (() => {
   }
 
   return {
-    keys, shell, attach, press, updateHUD, sfx,
+    keys, shell, attach, press, updateHUD, sfx, giveItem,
     get mode() { return mode; },
   };
 })();

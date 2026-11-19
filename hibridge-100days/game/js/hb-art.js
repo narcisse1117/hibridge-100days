@@ -9,6 +9,8 @@ function bri(o={}){
   if(!head)parts.push(`<ellipse cx="100" cy="206" rx="58" ry="7" fill="#0b1a3a" opacity=".08"/>`);
   parts.push(wave?`<path d="M152 128 Q174 112 180 86" stroke="${c}" stroke-width="15" stroke-linecap="round" fill="none"/>`:`<path d="M152 132 Q168 146 172 160" stroke="${c}" stroke-width="15" stroke-linecap="round" fill="none"/>`);
   parts.push(`<path d="M48 132 Q32 146 28 160" stroke="${c}" stroke-width="15" stroke-linecap="round" fill="none"/>`);
+  // back (아이템): 몸 뒤에 그려야 하므로 몸통보다 먼저
+  if(o.back==='cape')parts.push(`<path d="M46 100 Q100 74 154 100 L176 200 Q100 212 24 200 Z" fill="#d7263d"/><path d="M46 100 Q100 80 154 100 L160 128 Q100 108 40 128 Z" fill="#a8152b" opacity=".55"/>`);
   // body: arch-shaped (bridge) with an arch opening between the legs
   parts.push(`<path d="M38 104 A62 62 0 0 1 162 104 L162 186 Q162 198 150 198 L132 198 Q130 166 100 164 Q70 166 68 198 L50 198 Q38 198 38 186 Z" fill="${c}"/>`);
   parts.push(`<path d="M58 80 A48 48 0 0 1 96 54" stroke="#fff" stroke-opacity=".28" stroke-width="7" stroke-linecap="round" fill="none"/>`);
@@ -29,6 +31,7 @@ function bri(o={}){
   if(neck==='bowtie')parts.push(`<path d="M100 152 L82 142 L82 162 Z M100 152 L118 142 L118 162 Z" fill="#ff6f91"/><circle cx="100" cy="152" r="5" fill="#e0557a"/>`);
   if(neck==='badge')parts.push(`<path d="M78 140 L96 160 M122 140 L104 160" stroke="#ffb400" stroke-width="3.5"/><rect x="88" y="158" width="24" height="30" rx="4" fill="#fff"/><rect x="92" y="164" width="16" height="4" rx="2" fill="${c}"/><rect x="92" y="172" width="11" height="3" rx="1.5" fill="#c9d6ee"/>`);
   if(neck==='scarf')parts.push(`<path d="M44 140 Q100 158 156 140 L156 152 Q100 170 44 152 Z" fill="#ff6f61"/><path d="M128 152 L134 186 L120 186 L116 156 Z" fill="#ff6f61"/><path d="M60 146 L60 156 M76 150 L76 160 M92 152 L92 162 M108 152 L108 162 M124 150 L124 160 M140 146 L140 156" stroke="#fff" stroke-opacity=".5" stroke-width="3"/>`);
+  if(neck==='goldbadge')parts.push(`<path d="M78 140 L96 160 M122 140 L104 160" stroke="#d99a00" stroke-width="3.5"/><rect x="87" y="157" width="26" height="32" rx="4" fill="#ffd54d" stroke="#d99a00" stroke-width="2"/><path d="M100 163 l2.4 5 5.4 .8 -3.9 3.8 .9 5.4 -4.8 -2.6 -4.8 2.6 .9 -5.4 -3.9 -3.8 5.4 -.8z" fill="#fff"/><rect x="92" y="181" width="16" height="3" rx="1.5" fill="#d99a00"/>`);
   // face
   if(face==='glasses')parts.push(`<g fill="none" stroke="${dark}" stroke-width="3.5"><circle cx="80" cy="106" r="17"/><circle cx="120" cy="106" r="17"/><path d="M97 104 Q100 101 103 104"/></g>`);
   if(face==='sunglasses')parts.push(`<path d="M60 96 H140 V104 Q140 122 122 122 Q106 122 104 104 H96 Q94 122 78 122 Q60 122 60 104 Z" fill="${dark}"/><path d="M68 102 l10 0 M110 102 l10 0" stroke="#fff" stroke-opacity=".5" stroke-width="3" stroke-linecap="round"/>`);
@@ -41,8 +44,16 @@ function bri(o={}){
   if(top==='sprout')parts.push(`<path d="M100 44 L100 30" stroke="#2b8a6e" stroke-width="4" stroke-linecap="round"/><path d="M100 32 Q86 18 76 26 Q88 38 100 32Z" fill="#3fb37f"/><path d="M100 30 Q112 14 124 22 Q112 36 100 30Z" fill="#3fb37f"/>`);
   if(top==='cap')parts.push(`<path d="M46 78 Q50 30 100 30 Q150 30 154 78 Q100 66 46 78Z" fill="${dark}"/><path d="M150 72 Q182 70 188 84 Q166 88 150 80Z" fill="${dark}"/><circle cx="100" cy="30" r="5" fill="#ffb400"/><path d="M92 52 h16" stroke="#ffb400" stroke-width="5" stroke-linecap="round"/>`);
   if(top==='crown')parts.push(`<path d="M74 52 L78 26 L90 40 L100 20 L110 40 L122 26 L126 52 Z" fill="#ffc83d" stroke="#e09a00" stroke-width="2.5" stroke-linejoin="round"/><circle cx="100" cy="42" r="4" fill="#ff6f91"/>`);
+  if(top==='gradcap')parts.push(`<path d="M66 46 L66 60 Q100 74 134 60 L134 46 Z" fill="#1c2a4f"/><path d="M42 40 L100 18 L158 40 L100 62 Z" fill="#0b1a3a"/><path d="M100 40 L146 50 L148 70" stroke="#ffb400" stroke-width="3" fill="none"/><circle cx="148" cy="73" r="4.5" fill="#ffb400"/><circle cx="100" cy="40" r="3.5" fill="#ffb400"/>`);
+  if(top==='bubble')parts.push(`<g transform="translate(136 38) rotate(10)"><path d="M-18 -14 h36 a7 7 0 0 1 7 7 v14 a7 7 0 0 1 -7 7 h-18 l-9 9 v-9 h-9 a7 7 0 0 1 -7 -7 v-14 a7 7 0 0 1 7 -7z" fill="#fff" stroke="#5b8def" stroke-width="3.5"/><circle cx="-8" cy="0" r="2.8" fill="#5b8def"/><circle cx="0" cy="0" r="2.8" fill="#5b8def"/><circle cx="8" cy="0" r="2.8" fill="#5b8def"/></g>`);
   // signature amber dot (the 'i' of Hi / aha moment)
   if(top==='dot'||top==='ribbon')parts.push(`<circle cx="100" cy="24" r="12" fill="#ffb400"/><path d="M78 20 L71 16 M122 20 L129 16 M100 6 L100 0" stroke="#ffb400" stroke-width="3" stroke-linecap="round" opacity=".7"/>`);
+  // hand (아이템): 왼쪽(화면 기준) 손에 든 소품
+  const hand=o.hand;
+  if(hand==='clipboard')parts.push(`<g transform="translate(24 164) rotate(-8)"><rect x="-15" y="-4" width="30" height="38" rx="3" fill="#b7793f"/><rect x="-12" y="2" width="24" height="29" rx="1.5" fill="#fff"/><rect x="-6" y="-8" width="12" height="8" rx="2" fill="#9aa3b5"/><path d="M-8 10 h16 M-8 16 h16 M-8 22 h10" stroke="#9aa3b5" stroke-width="2"/></g>`);
+  if(hand==='briefcase')parts.push(`<g transform="translate(26 180)"><path d="M-8 -8 v-6 a3 3 0 0 1 3 -3 h10 a3 3 0 0 1 3 3 v6" stroke="#5a3a22" stroke-width="3.5" fill="none"/><rect x="-19" y="-8" width="38" height="27" rx="4" fill="#7a4b2a"/><path d="M-19 2 h38" stroke="#5a3a22" stroke-width="2"/><rect x="-3" y="-1" width="6" height="6" rx="1" fill="#ffc83d"/></g>`);
+  if(hand==='notebook')parts.push(`<g transform="translate(24 170) rotate(-10)"><rect x="-13" y="-17" width="26" height="34" rx="3" fill="#5b8def"/><rect x="-10" y="-17" width="3" height="34" fill="#3f6fd0"/><rect x="-3" y="-10" width="12" height="6" rx="1.5" fill="#fff"/><path d="M15 -14 L24 -24" stroke="#0b1a3a" stroke-width="4" stroke-linecap="round"/><path d="M24 -24 l3 -3" stroke="#ffc83d" stroke-width="4" stroke-linecap="round"/></g>`);
+  if(hand==='coffee')parts.push(`<g transform="translate(26 170)"><path d="M-12 -12 h24 l-3 27 h-18 z" fill="#fff" stroke="#c9d6ee" stroke-width="2"/><rect x="-13" y="-17" width="26" height="6" rx="2" fill="#6b3f26"/><rect x="-10" y="-3" width="20" height="8" fill="#004aad"/><path d="M-4 -23 q3 -4 0 -8 M4 -23 q3 -4 0 -8" stroke="#9aa3b5" stroke-width="2" fill="none" stroke-linecap="round"/></g>`);
   if(head)return `<svg viewBox="24 2 152 152" width="100%" height="100%" aria-hidden="true">${parts.join('')}</svg>`;
   return `<svg viewBox="0 -4 200 216" width="${sz}" height="${sz*216/200}" role="img" aria-label="${o.label||'하이브릿지 캐릭터 브리'}">${parts.join('')}</svg>`;
 }
