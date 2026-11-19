@@ -268,7 +268,10 @@ input[type=text],select,textarea{width:100%;border:1px solid var(--line);border-
 textarea{resize:vertical;min-height:84px;line-height:1.6}
 input:focus,select:focus,textarea:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-soft)}
 .parts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
-.parts button{border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:10px;text-align:left;font-size:14px}
+.parts button{border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:10px 12px;text-align:left;font-size:14px;display:grid;gap:1px}
+.parts button b{font-size:14.5px}.parts button small{font-size:11.5px;opacity:.7;font-weight:400}
+.parts button.all{grid-column:1 / -1}
+.f-hint{display:block;font-size:11.5px;opacity:.65;font-weight:400;margin:2px 0 2px}
 .parts button[aria-pressed="true"]{border-color:var(--blue);background:var(--blue-soft);color:var(--blue);font-weight:700}
 .story{display:grid;gap:10px;margin:0}
 .story div{display:grid;grid-template-columns:120px minmax(0,1fr);gap:12px;font-size:14px}
@@ -397,6 +400,176 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--blue);bo
 .chat-input input{flex:1;min-width:0;border-radius:999px;background:var(--bg-soft);border-color:transparent;padding:10px 16px}
 .chat-input input:focus{background:#fff}
 @media (max-width:560px){.cmsg{max-width:94%}.chat-faces{display:none}}
+/* 꾸미기: 내 아이템 도감 */
+.cc-cnt{color:var(--amber);margin-left:2px}
+.cc-items{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px}
+.cc-item{position:relative;display:grid;justify-items:center;gap:2px;border:1.5px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);border-radius:14px;padding:8px 6px;color:inherit;cursor:pointer;text-align:center}
+.cc-item:hover:not(:disabled){border-color:var(--amber)}
+.cc-item[aria-pressed="true"]{border-color:var(--amber);background:rgba(255,180,0,.14)}
+.cc-item .th{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;overflow:hidden}
+.cc-item .th svg{width:100%;height:100%}
+.cc-item b{font-size:12.5px}.cc-item small{font-size:10.5px;font-weight:700}.cc-item em{font-style:normal;font-size:10.5px;opacity:.75;line-height:1.3}
+.cc-item.locked{cursor:default}.cc-item.locked .th{filter:grayscale(1) brightness(.35);opacity:.6}
+.cc-lock{position:absolute;top:6px;right:8px;font-style:normal;font-size:12px}
+/* 소통 공간 위 숫자 버튼 */
+.cm-stats-btn button{display:inline-flex;align-items:center;gap:4px;background:#fff;border:1.5px solid var(--line);border-radius:999px;padding:5px 12px;font-size:12.5px;color:var(--ink-2);cursor:pointer;transition:border-color .15s,background .15s,transform .15s}
+.cm-stats-btn button b{color:var(--ink);font-size:14px}
+.cm-stats-btn button:hover{border-color:var(--blue);transform:translateY(-1px)}
+.cm-stats-btn button.warn{background:var(--amber-soft);border-color:#f3d48a}.cm-stats-btn button.warn b{color:#8a5a00}
+.cm-stats-btn button[aria-pressed="true"]{background:var(--blue);border-color:var(--blue);color:#fff}.cm-stats-btn button[aria-pressed="true"] b{color:#fff}
+.cm-fcount{display:inline-block;font-size:14px;color:var(--blue);background:var(--blue-soft);border-radius:999px;padding:1px 9px;vertical-align:3px;margin-left:4px}
+.bd-cat.ch-peer{color:#7a4fd6;background:#f1ebff}.bd-cat.ch-ask{color:#1b7a4c;background:#e3f6ec}
+.bd-ans.peer{background:var(--bg-soft);color:var(--ink-3)}
+/* 익명 질문방: 게시판 */
+.bd{max-width:900px;gap:12px}
+.bd-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:4px 2px}
+.bd-head h3{margin:0;font-size:20px;letter-spacing:-.3px}
+.bd-head p{margin:2px 0 0;font-size:13.5px;color:var(--ink-3)}.bd-head p b{color:var(--ink)}.bd-head p b.w{color:#b26b00}
+.bd-head .btn{flex:none;display:inline-flex;align-items:center;gap:6px}
+.bd-search{display:grid;gap:8px}
+.bd-search .cm-sbox{background:#fff;border:1.5px solid var(--line);box-shadow:0 6px 18px -14px rgba(0,30,80,.35)}
+.bd-search .cm-sbox:focus-within{border-color:var(--blue)}
+.bd-search .cm-skw{padding-left:4px}
+.bd-list{background:#fff;border:1.5px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:0 14px 34px -28px rgba(0,30,80,.45)}
+.bd-tabs{display:flex;align-items:center;gap:2px;padding:8px 10px 0;border-bottom:1px solid var(--line);background:#fbfcfe}
+.bd-tabs button{border:0;background:none;padding:9px 12px 11px;font-size:13.5px;font-weight:600;color:var(--ink-3);border-bottom:2.5px solid transparent;margin-bottom:-1px;cursor:pointer;border-radius:0}
+.bd-tabs button b{font-weight:700;margin-left:2px}
+.bd-tabs button[aria-pressed="true"]{color:var(--ink);border-bottom-color:var(--blue)}
+.bd-tabs .cm-scount{margin-left:auto;padding-right:6px}
+.bd-row{display:grid;grid-template-columns:92px minmax(0,1fr) auto;align-items:center;gap:14px;width:100%;padding:14px 18px;border:0;border-top:1px solid #eef1f6;background:#fff;text-align:left;font:inherit;color:inherit;cursor:pointer;border-radius:0;box-shadow:none;margin:0;position:relative;transition:background .12s}
+.bd-tabs+.bd-row{border-top:0}
+.bd-row[hidden]{display:none}
+.bd-row:hover{background:#f6f9ff}
+.bd-row:hover::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--blue)}
+.bd-row:hover .bd-title .cm-text{color:var(--blue)}
+.bd-cat{justify-self:start;font-size:12px;font-weight:700;color:var(--blue);background:var(--blue-soft);border-radius:7px;padding:3px 9px;white-space:nowrap}
+.bd-main{display:grid;gap:3px;min-width:0}
+.bd-title{min-width:0;display:flex;align-items:center;gap:6px}
+.bd-title .cm-text{margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:15.5px;font-weight:700;line-height:1.4;color:var(--ink);transition:color .12s}
+.bd-sub{font-size:12.5px;color:var(--ink-3)}
+.bd-new{flex:none;font-style:normal;font-size:10px;font-weight:800;color:#fff;background:#ff6f61;border-radius:4px;padding:0 4px;line-height:16px}
+.bd-mine{flex:none;font-style:normal;font-size:11px;font-weight:600;color:var(--ink-3);border:1px solid var(--line);border-radius:5px;padding:0 5px}
+.bd-ans{justify-self:end;display:inline-flex;align-items:center;gap:4px;font-size:12.5px;font-weight:700;border-radius:999px;padding:4px 11px;white-space:nowrap}
+.bd-ans .ui{width:14px;height:14px}
+.bd-ans.done{background:#e3f6ec;color:#1b7a4c}.bd-ans.wait{background:#fff4dc;color:#a05f00}
+.bd-link{border:0;background:none;color:var(--blue);font-weight:700;cursor:pointer;padding:0;font:inherit}
+.bd-list .cm-empty{border:0;border-top:1px solid #eef1f6;border-radius:0}
+.bd-write{background:#fff;border:1.5px solid var(--blue);border-radius:18px;padding:18px;display:grid;gap:12px;box-shadow:0 18px 36px -26px rgba(0,48,122,.6)}
+.bd-write[hidden]{display:none}
+.bd-write-h{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}.bd-write-h b{font-size:16px}.bd-write-h small{color:var(--ink-3);font-size:12.5px}
+.bd-cats{display:flex;flex-wrap:wrap;gap:6px}
+.bd-cats label{cursor:pointer}.bd-cats input{position:absolute;opacity:0;pointer-events:none}
+.bd-cats span{display:inline-block;border:1.5px solid var(--line);border-radius:999px;padding:5px 13px;font-size:13px;font-weight:600;color:var(--ink-2);background:#fff}
+.bd-cats input:checked+span{border-color:var(--blue);background:var(--blue);color:#fff}
+.bd-cats input:focus-visible+span{outline:2px solid var(--blue);outline-offset:2px}
+.bd-write textarea{width:100%;border-radius:12px;resize:vertical;font-size:15px}
+.bd-write-f{display:flex;align-items:center;gap:8px}.bd-write-f>span{margin-right:auto;font-size:12.5px;color:var(--ink-3);display:inline-flex;align-items:center;gap:4px}
+.bd-nav{display:flex}
+.bd-back{border:0;background:none;padding:4px 2px;font-size:14px;font-weight:700;color:var(--ink-2);cursor:pointer}.bd-back:hover{color:var(--blue)}
+.bd-post{background:#fff;border:1.5px solid var(--line);border-radius:20px;padding:24px 26px;display:grid;gap:10px;box-shadow:0 14px 34px -28px rgba(0,30,80,.45)}
+.bd-post-h{display:flex;gap:6px;align-items:center}
+.bd-post h2{margin:4px 0 0;font-size:22px;line-height:1.4;letter-spacing:-.3px}
+.bd-body{margin:8px 0 4px;font-size:16px;line-height:1.75;color:var(--ink);white-space:pre-wrap;padding-bottom:18px;border-bottom:1px solid var(--line)}
+.bd-answers{display:grid;gap:10px}
+.bd-answers h4{margin:4px 0 2px;font-size:15px}.bd-answers h4 b{color:var(--blue)}
+.bd-a{display:flex;gap:10px;align-items:flex-start;background:var(--bg-soft);border-radius:14px;padding:12px 14px}
+.bd-a.sr{background:#eef4ff;border:1px solid #d6e4ff}
+.bd-a .av.sm{width:36px;height:36px;flex:none}
+.bd-a>div{min-width:0;display:grid;gap:4px}
+.bd-a-h{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.bd-a-h b{font-size:14px}.bd-a-h small{font-size:12px;color:var(--ink-3)}
+.bd-a-tag{font-size:11.5px;font-weight:700;color:var(--blue);background:#fff;border-radius:6px;padding:1px 7px}
+.bd-a p{margin:0;font-size:14.5px;line-height:1.65}
+.bd-a-empty{font-size:14px;color:var(--ink-3);background:var(--bg-soft);border-radius:14px;padding:16px;text-align:center}
+.bd-reply{display:flex;gap:8px;margin-top:4px}.bd-reply input{flex:1;min-width:0;border-radius:999px;background:var(--bg-soft);border-color:transparent;padding:10px 16px}.bd-reply input:focus{background:#fff}
+.bd-prop{display:flex;justify-content:flex-end}
+@media (max-width:640px){
+  .bd-head{align-items:flex-start}.bd-head h3{font-size:18px}
+  .bd-row{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"c a" "m m";row-gap:6px;padding:13px 14px}
+  .bd-cat{grid-area:c}.bd-ans{grid-area:a}.bd-main{grid-area:m}
+  .bd-title .cm-text{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+  .bd-tabs .cm-scount{display:none}
+  .bd-post{padding:18px}.bd-post h2{font-size:19px}.bd-body{font-size:15px}
+}
+/* 익명 질문방 검색 */
+.cm-search{display:grid;gap:10px;background:#fff;border:1.5px solid var(--line);border-radius:16px;padding:14px}
+.cm-sbox{display:flex;align-items:center;gap:8px;background:var(--bg-soft);border:1.5px solid transparent;border-radius:999px;padding:0 14px;transition:border-color .15s,background .15s}
+.cm-sbox:focus-within{border-color:var(--blue);background:#fff}
+.cm-sbox .ui{width:18px;height:18px;color:var(--ink-3)}
+.cm-sbox input{flex:1;min-width:0;border:0;background:transparent;padding:11px 0;font-size:14.5px;outline:none;box-shadow:none}
+.cm-sfil{display:flex;gap:6px;flex-wrap:wrap}
+.cm-sfil button{border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:5px 12px;font-size:12.5px;font-weight:600;color:var(--ink-2);cursor:pointer}
+.cm-sfil button[aria-pressed="true"]{border-color:var(--blue);background:var(--blue-soft);color:var(--blue)}
+.cm-skw{display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-size:12px;color:var(--ink-3)}
+.cm-skw button{border:0;background:var(--bg-soft);border-radius:6px;padding:3px 8px;font-size:12px;color:var(--ink-2);cursor:pointer}
+.cm-skw button:hover{background:var(--blue-soft);color:var(--blue)}
+.cm-scount{margin:0;font-size:13px;font-weight:600;color:var(--blue)}
+.cm-text mark{background:#ffe58a;color:inherit;border-radius:3px;padding:0 1px}
+/* 동기방 오른쪽 대화상대 패널 (카톡 서랍처럼) */
+.chat-room.has-mem{max-width:1140px;grid-template-columns:240px minmax(0,1fr) 230px}
+.chat-mem{border-left:1px solid var(--line);background:#fff;overflow-y:auto;display:flex;flex-direction:column;gap:2px;padding:10px 8px}
+.chat-mem-h{font-size:12px;font-weight:700;color:var(--ink-3);padding:6px 10px 4px;letter-spacing:.04em}
+.chat-mem-h b{color:var(--blue);margin-left:2px}
+.chat-mem-h.sub{margin-top:10px;border-top:1px solid var(--line);padding-top:12px}
+.chat-mem-it{display:flex;align-items:center;gap:10px;border:0;background:none;border-radius:12px;padding:7px 10px;text-align:left;min-width:0;width:100%;font:inherit;color:inherit}
+button.chat-mem-it{cursor:pointer}button.chat-mem-it:hover{background:var(--bg-soft)}
+.chat-mem-it .av.sm{width:34px;height:34px;flex:none}
+.chat-mem-tx{display:grid;min-width:0;flex:1}
+.chat-mem-tx b{font-size:13.5px;display:flex;align-items:center;gap:4px}
+.chat-mem-tx b em{font-style:normal;font-size:10.5px;font-weight:700;color:#fff;background:var(--blue);border-radius:4px;padding:0 5px}
+.chat-mem-tx small{font-size:11.5px;color:var(--ink-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chat-mem-it i{flex:none;width:8px;height:8px;border-radius:50%;background:#c3c9d4}.chat-mem-it i.on{background:#22b573}
+.chat-mem-note{margin:0 6px;font-size:12.5px;line-height:1.5;background:var(--amber-soft);border:1px solid #f3d48a;border-radius:10px;padding:8px 10px;color:#5c4300}
+.chat-mem-link{display:block;margin:0 6px 4px;font-size:12.5px;font-weight:600;color:var(--ink-2);background:var(--bg-soft);border-radius:10px;padding:8px 10px;text-decoration:none}
+.chat-mem-link:hover{background:var(--blue-soft);color:var(--blue)}
+@media (min-width:1061px){.has-mem .chat-faces{display:none}}
+@media (max-width:1060px){.chat-room.has-mem{grid-template-columns:220px minmax(0,1fr)}.chat-mem{display:none}}
+@media (max-width:720px){.chat-room.has-mem{grid-template-columns:minmax(0,1fr)}}
+/* 선배에게 물어보기 */
+.cm-badge.on{background:#e3f6ec;color:#1b7a4c}
+.mt-wrap{display:grid;gap:16px;max-width:960px;width:100%;margin:0 auto}
+.mt-ref{display:flex;gap:10px;align-items:center;background:var(--amber-soft);border:1px solid #f3d48a;border-radius:14px;padding:10px 14px;font-size:13.5px}
+.mt-ref .ui{color:#8a5a00;width:18px;height:18px}
+.mt-intro{display:flex;gap:14px;align-items:center;background:var(--blue-soft);border:1px solid var(--blue-line);border-radius:16px;padding:14px 18px}
+.mt-intro .av{width:50px;height:50px;flex:none}
+.mt-intro b{font-size:15.5px}.mt-intro p{margin:3px 0 0;font-size:13.5px;color:var(--ink-2);line-height:1.5}.mt-intro p b{font-size:inherit;color:var(--blue)}
+.mt-filters{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.mt-chip{border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:6px 14px;font-size:13px;font-weight:600;color:var(--ink-2);cursor:pointer}
+.mt-chip:hover{border-color:var(--blue-line)}
+.mt-chip[aria-pressed="true"]{border-color:var(--blue);background:var(--blue);color:#fff}
+.mt-onl{margin-left:auto;font-size:13px}
+.mt-recent{display:flex;gap:8px;flex-wrap:wrap;align-items:center;font-size:13px;color:var(--ink-3)}
+.mt-recent button{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--blue-line);background:#fff;border-radius:999px;padding:3px 12px 3px 3px;font-size:13px;font-weight:600;color:var(--ink);cursor:pointer}
+.mt-recent .av{width:26px;height:26px}
+.mt-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.mt-card{background:#fff;border:1.5px solid var(--line);border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:10px;transition:border-color .15s,box-shadow .15s,transform .15s}
+.mt-card:hover{border-color:var(--blue-line);box-shadow:0 14px 30px -22px rgba(0,48,122,.55);transform:translateY(-2px)}
+.mt-card.off{background:var(--bg-soft)}
+.mt-card-top{display:flex;gap:12px;align-items:center;position:relative}
+.mt-card-top .av{width:58px;height:58px;flex:none}
+.mt-dot{position:absolute;left:44px;top:44px;width:14px;height:14px;border-radius:50%;background:#b9c0cc;border:2.5px solid #fff}
+.mt-dot.on{background:#22b573}
+.mt-card-top b{display:flex;align-items:center;gap:6px;font-size:16px}
+.mt-card-top b small{font-size:11.5px;font-weight:700;color:var(--blue);background:var(--blue-soft);border-radius:6px;padding:1px 7px}
+.mt-card-top span{font-size:12.5px;color:var(--ink-3)}
+.mt-bio{margin:0;font-size:13.5px;color:var(--ink-2);line-height:1.55}
+.mt-tags{display:flex;flex-wrap:wrap;gap:5px}.mt-tags span{font-size:12px;background:var(--bg-soft);color:var(--ink-2);border-radius:6px;padding:2px 8px}
+.mt-card.off .mt-tags span{background:#fff}
+.mt-foot{display:grid;gap:8px;margin-top:auto;padding-top:2px}
+.mt-foot .btn{width:100%;justify-content:center}
+.mt-resp{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--ink-3)}
+.mt-resp i{width:7px;height:7px;border-radius:50%;background:#b9c0cc}.mt-resp i.on{background:#22b573}
+.mt-shared{display:grid;gap:10px}.mt-shared h3{font-size:15px;margin:6px 0 0}
+.mt-qa{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 14px;display:grid;gap:8px}
+.mt-qa .q{margin:0;font-weight:700;font-size:14px}
+.mt-qa .a{display:flex;gap:8px}.mt-qa .a .av{width:28px;height:28px;flex:none}
+.mt-qa .a p{margin:0;font-size:13.5px;color:var(--ink-2);line-height:1.55}.mt-qa .a small{color:var(--ink-3)}
+.mt-note{align-self:center;display:flex;align-items:center;gap:5px;text-align:center;font-size:12px;color:var(--ink-2);background:rgba(255,255,255,.9);border-radius:12px;padding:6px 12px;margin-bottom:6px;max-width:92%}
+.mt-note .ui{width:13px;height:13px;flex:none}.mt-note b{color:var(--blue)}
+.mt-dot-in{display:inline-block;width:8px;height:8px;border-radius:50%;background:#b9c0cc;vertical-align:2px;margin-left:2px}.mt-dot-in.on{background:#22b573}
+.mt-acts{display:flex;gap:8px;flex-wrap:wrap;padding:8px 12px;border-top:1px solid var(--line);background:#fff}
+.mt-room .chat-head .btn{flex:none}
+.mt-back .chat-it-av{font-size:16px;color:var(--blue)}
+@media (max-width:560px){.mt-onl{margin-left:0}.mt-intro{align-items:flex-start}}
 /* profile popover in the peer room */
 .chat-room{position:relative}
 .cmsg-avbtn,.cmsg-nmbtn,.chat-faces button{border:0;background:none;padding:0;cursor:pointer;border-radius:50%}
@@ -730,6 +903,7 @@ footer img{height:18px;width:auto}
 </footer>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+<script src="hb-items.js"></script>
 <script>
 /* ---------- content ---------- */
 const GAUGES = ['팀장 신뢰','동료 관계','업무 성과','체력'];
@@ -831,16 +1005,20 @@ const UI_P={
   bell:'<path d="M6 16v-5a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/>',
   lock:'<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
   card:'<rect x="5" y="3" width="14" height="18" rx="2.5"/><path d="M9 8h6M9 12h6M9 16h3"/>',
-  pen:'<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/>'
+  pen:'<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/>',
+  search:'<circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/>'
 };
 const UI=(n,c)=>`<svg class="ui${c?' '+c:''}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${UI_P[n]||''}</svg>`;
-const AUTHORS = {'윤채린':{img:'p-yoon'},'최유진':{bri:{c:'#8e6bd8',top:'ribbon',face:'glasses',neck:'badge',ear:'none',eyes:'round'}},'강민호':{bri:{c:'#2b8a6e',top:'sprout',face:'none',neck:'tie',ear:'none',eyes:'smile',mouth:'open'}},'이도현':{img:'p-lee'},'박서연':{img:'p-park'},'정하은':{img:'p-jung'},'한지훈':{img:'p-han'}};
+const AUTHORS = {'윤채린':{img:'p-yoon'},'최유진':{bri:{c:'#8e6bd8',top:'ribbon',face:'glasses',neck:'badge',ear:'none',eyes:'round'}},'강민호':{bri:{c:'#2b8a6e',top:'sprout',face:'none',neck:'tie',ear:'none',eyes:'smile',mouth:'open'}},'이도현':{img:'p-lee'},'박서연':{img:'p-park'},'정하은':{img:'p-jung'},'한지훈':{img:'p-han'},'오정민':{img:'p-oh'},'최민석':{img:'p-choi'},'서지아':{img:'p-seo'},'문하린':{img:'p-moon'}};
 const CAST = [{img:'p-han',n:'한지훈',r:'인사팀장'},{img:'p-park',n:'박서연',r:'채용 5년차 · 사수'},{img:'p-lee',n:'이도현',r:'HRD 4년차'},{img:'p-jung',n:'정하은',r:'평가·보상 7년차'},{img:'p-oh',n:'오정민',r:'개발2팀 팀장'},{img:'p-yoon',n:'윤채린',r:'입사 동기 · 마케팅'}];
-const PARTS = ['채용','교육(HRD)','평가·보상','노무·조직문화'];
+/* 관심 분야: 분야별 상황을 따로 만들고, 통합은 모든 분야의 상황을 섞어서 낸다 */
+const PARTS = ['실무','보고','소통','대처','통합'];
+const PART_DESC = ['업무 처리 · 마감 · 문서','보고 · 공유 · 타이밍','동료 · 선배와의 관계','돌발 상황 · 실수 · 갈등','모든 분야의 상황을 섞어서'];
+const PART_ALL = 4;
 const TYPES = ['채용','교육(HRD)','평가·보상','노무·조직문화','조직 생활'];
 const CHANNELS = [
   {id:'peer',n:'동기방',d:'입사 동기끼리 자유롭게'},
-  {id:'ask',n:'선배에게 물어보기',d:'게임 상황 그대로 질문'},
+  {id:'ask',n:'선배에게 물어보기',d:'선배를 골라 1:1로'},
   {id:'anon',n:'익명 질문방',d:'이름 없이 부담 없이'}
 ];
 const SEED_POSTS = [
@@ -850,14 +1028,19 @@ const SEED_POSTS = [
   {id:'s4',ch:'ask',by:'강민호',tag:'신입 · 채용 · D+30',ref:'D+14 · 겹친 면접',t:'지원자 면접 일정 변경 요청, 몇 번까지 받아 주는 게 보통인가요?',when:'어제',rep:[]},
   {id:'s6',ch:'peer',by:'윤채린',tag:'신입 · 마케팅',t:'다들 첫 주 어땠어? 나는 아직 메신저 채널 이름도 다 못 외웠어 😂',when:'어제',rep:[{by:'최유진',tag:'신입 · 교육(HRD)',t:'나도ㅋㅋ 채널 20개 넘는 거 실화야?'}]},
   {id:'s7',ch:'peer',by:'강민호',tag:'신입 · 채용 · D+30',t:'오늘 점심 같이 먹을 사람? 사내 식당 돈가스 나온대 🍱',when:'오늘',rep:[{by:'윤채린',tag:'신입 · 마케팅',t:'나 콜! 12시에 1층에서 봐'}]},
-  {id:'s5',ch:'anon',by:null,tag:'익명 신입',t:'외부 강사 섭외 메일에서 첫 연락부터 강의료를 물어봐도 실례가 아닐까요?',when:'오늘',rep:[]}
+  {id:'s5',ch:'anon',by:null,tag:'익명 신입',t:'외부 강사 섭외 메일에서 첫 연락부터 강의료를 물어봐도 실례가 아닐까요?',when:'오늘',rep:[]},
+  {id:'s8',ch:'anon',by:null,tag:'익명 신입',t:'입사 2주 차인데 연차를 써도 눈치 안 보일까요? 병원 예약이 평일밖에 안 돼서요.',when:'4일 전',rep:[{by:'서지아',tag:'선배 · 조직문화 3년차',t:'병원·관공서처럼 이유가 있으면 전혀 문제없어요. 일주일 전에 팀 캘린더에 올리고 사수에게 한마디만 해 두면 충분해요.'}]},
+  {id:'s9',ch:'anon',by:null,tag:'익명 신입',t:'팀 회식에 빠지고 싶은데 첫 회식부터 빠지면 이상할까요? 저녁에 수업이 있어요.',when:'6일 전',rep:[{by:'한지훈',tag:'선배 · 인사팀장 12년차',t:'첫 회식은 30분이라도 얼굴 보는 걸 추천하지만, 선약이 있으면 미리 말하면 됩니다. 회식 참석이 평가에 들어가는 일은 없어요.'}]},
+  {id:'s10',ch:'anon',by:null,tag:'익명 신입',t:'메일 보낼 때 참조(CC)에 팀장님을 매번 넣어야 하나요? 너무 많이 넣는 것 같아서요.',when:'1주 전',rep:[{by:'박서연',tag:'선배 · 채용 5년차',t:'외부에 보내는 메일, 일정·비용이 바뀌는 메일은 넣고, 단순 자료 전달은 빼도 돼요. 애매하면 처음 한 달은 넣는 쪽이 안전해요.'},{by:'최민석',tag:'선배 · 노무 6년차',t:'노무·규정 관련 회신은 꼭 참조로 남겨 두세요. 나중에 근거가 돼요.'}]},
+  {id:'s11',ch:'anon',by:null,tag:'익명 신입',t:'보고서를 다 만들었는데 팀장님이 바빠 보이면 언제 보고해야 할까요? 메신저로 먼저 보내도 되나요?',when:'1주 전',rep:[{by:'이도현',tag:'선배 · HRD 4년차',t:'메신저로 "결론 한 줄 + 파일"을 먼저 보내고 "편하실 때 5분만 설명드릴게요"라고 덧붙이면 돼요.'}]},
+  {id:'s12',ch:'anon',by:null,tag:'익명 신입',t:'야근이 잦은데 신입이 업무량 얘기를 꺼내도 될까요? 불평하는 걸로 보일까 봐요.',when:'2주 전',rep:[]}
 ];
 
 /* ---------- state ---------- */
 const KEY='hb100-v1';
 function defaults(){return{role:'junior',channel:'ask',filter:'전체',
-  game:{phase:'setup',name:'',avatar:0,part:0,dayIdx:0,pos:0,g:[50,50,50,50],log:[],last:null,retroText:'',retroShown:false,fail:null},
-  stats:{},runs:0,done:0,posts:[],replies:{},db:[],shared:false,draft:null,dm:'group',dms:{}}}
+  game:{phase:'setup',name:'',avatar:0,part:PART_ALL,dayIdx:0,pos:0,g:[50,50,50,50],log:[],last:null,retroText:'',retroShown:false,fail:null},
+  stats:{},runs:0,done:0,posts:[],replies:{},db:[],shared:false,draft:null,dm:'group',dms:{},mt:null,mts:{},mtNick:null,mtReveal:{},mtFilter:'전체',mtOn:false,mtThanks:{},mtShared:[]}}
 let S=defaults();
 try{const raw=localStorage.getItem(KEY);if(raw){S=Object.assign(defaults(),JSON.parse(raw));}}catch(e){}
 try{if(window.claude?.hot?.data?.S)S=window.claude.hot.data.S}catch(e){}
@@ -877,6 +1060,8 @@ function bri(o={}){
   if(!head)parts.push(`<ellipse cx="100" cy="206" rx="58" ry="7" fill="#0b1a3a" opacity=".08"/>`);
   parts.push(wave?`<path d="M152 128 Q174 112 180 86" stroke="${c}" stroke-width="15" stroke-linecap="round" fill="none"/>`:`<path d="M152 132 Q168 146 172 160" stroke="${c}" stroke-width="15" stroke-linecap="round" fill="none"/>`);
   parts.push(`<path d="M48 132 Q32 146 28 160" stroke="${c}" stroke-width="15" stroke-linecap="round" fill="none"/>`);
+  // back (아이템): 몸 뒤에 그려야 하므로 몸통보다 먼저
+  if(o.back==='cape')parts.push(`<path d="M46 100 Q100 74 154 100 L176 200 Q100 212 24 200 Z" fill="#d7263d"/><path d="M46 100 Q100 80 154 100 L160 128 Q100 108 40 128 Z" fill="#a8152b" opacity=".55"/>`);
   // body: arch-shaped (bridge) with an arch opening between the legs
   parts.push(`<path d="M38 104 A62 62 0 0 1 162 104 L162 186 Q162 198 150 198 L132 198 Q130 166 100 164 Q70 166 68 198 L50 198 Q38 198 38 186 Z" fill="${c}"/>`);
   parts.push(`<path d="M58 80 A48 48 0 0 1 96 54" stroke="#fff" stroke-opacity=".28" stroke-width="7" stroke-linecap="round" fill="none"/>`);
@@ -897,6 +1082,7 @@ function bri(o={}){
   if(neck==='bowtie')parts.push(`<path d="M100 152 L82 142 L82 162 Z M100 152 L118 142 L118 162 Z" fill="#ff6f91"/><circle cx="100" cy="152" r="5" fill="#e0557a"/>`);
   if(neck==='badge')parts.push(`<path d="M78 140 L96 160 M122 140 L104 160" stroke="#ffb400" stroke-width="3.5"/><rect x="88" y="158" width="24" height="30" rx="4" fill="#fff"/><rect x="92" y="164" width="16" height="4" rx="2" fill="${c}"/><rect x="92" y="172" width="11" height="3" rx="1.5" fill="#c9d6ee"/>`);
   if(neck==='scarf')parts.push(`<path d="M44 140 Q100 158 156 140 L156 152 Q100 170 44 152 Z" fill="#ff6f61"/><path d="M128 152 L134 186 L120 186 L116 156 Z" fill="#ff6f61"/><path d="M60 146 L60 156 M76 150 L76 160 M92 152 L92 162 M108 152 L108 162 M124 150 L124 160 M140 146 L140 156" stroke="#fff" stroke-opacity=".5" stroke-width="3"/>`);
+  if(neck==='goldbadge')parts.push(`<path d="M78 140 L96 160 M122 140 L104 160" stroke="#d99a00" stroke-width="3.5"/><rect x="87" y="157" width="26" height="32" rx="4" fill="#ffd54d" stroke="#d99a00" stroke-width="2"/><path d="M100 163 l2.4 5 5.4 .8 -3.9 3.8 .9 5.4 -4.8 -2.6 -4.8 2.6 .9 -5.4 -3.9 -3.8 5.4 -.8z" fill="#fff"/><rect x="92" y="181" width="16" height="3" rx="1.5" fill="#d99a00"/>`);
   // face
   if(face==='glasses')parts.push(`<g fill="none" stroke="${dark}" stroke-width="3.5"><circle cx="80" cy="106" r="17"/><circle cx="120" cy="106" r="17"/><path d="M97 104 Q100 101 103 104"/></g>`);
   if(face==='sunglasses')parts.push(`<path d="M60 96 H140 V104 Q140 122 122 122 Q106 122 104 104 H96 Q94 122 78 122 Q60 122 60 104 Z" fill="${dark}"/><path d="M68 102 l10 0 M110 102 l10 0" stroke="#fff" stroke-opacity=".5" stroke-width="3" stroke-linecap="round"/>`);
@@ -909,8 +1095,16 @@ function bri(o={}){
   if(top==='sprout')parts.push(`<path d="M100 44 L100 30" stroke="#2b8a6e" stroke-width="4" stroke-linecap="round"/><path d="M100 32 Q86 18 76 26 Q88 38 100 32Z" fill="#3fb37f"/><path d="M100 30 Q112 14 124 22 Q112 36 100 30Z" fill="#3fb37f"/>`);
   if(top==='cap')parts.push(`<path d="M46 78 Q50 30 100 30 Q150 30 154 78 Q100 66 46 78Z" fill="${dark}"/><path d="M150 72 Q182 70 188 84 Q166 88 150 80Z" fill="${dark}"/><circle cx="100" cy="30" r="5" fill="#ffb400"/><path d="M92 52 h16" stroke="#ffb400" stroke-width="5" stroke-linecap="round"/>`);
   if(top==='crown')parts.push(`<path d="M74 52 L78 26 L90 40 L100 20 L110 40 L122 26 L126 52 Z" fill="#ffc83d" stroke="#e09a00" stroke-width="2.5" stroke-linejoin="round"/><circle cx="100" cy="42" r="4" fill="#ff6f91"/>`);
+  if(top==='gradcap')parts.push(`<path d="M66 46 L66 60 Q100 74 134 60 L134 46 Z" fill="#1c2a4f"/><path d="M42 40 L100 18 L158 40 L100 62 Z" fill="#0b1a3a"/><path d="M100 40 L146 50 L148 70" stroke="#ffb400" stroke-width="3" fill="none"/><circle cx="148" cy="73" r="4.5" fill="#ffb400"/><circle cx="100" cy="40" r="3.5" fill="#ffb400"/>`);
+  if(top==='bubble')parts.push(`<g transform="translate(136 38) rotate(10)"><path d="M-18 -14 h36 a7 7 0 0 1 7 7 v14 a7 7 0 0 1 -7 7 h-18 l-9 9 v-9 h-9 a7 7 0 0 1 -7 -7 v-14 a7 7 0 0 1 7 -7z" fill="#fff" stroke="#5b8def" stroke-width="3.5"/><circle cx="-8" cy="0" r="2.8" fill="#5b8def"/><circle cx="0" cy="0" r="2.8" fill="#5b8def"/><circle cx="8" cy="0" r="2.8" fill="#5b8def"/></g>`);
   // signature amber dot (the 'i' of Hi / aha moment)
   if(top==='dot'||top==='ribbon')parts.push(`<circle cx="100" cy="24" r="12" fill="#ffb400"/><path d="M78 20 L71 16 M122 20 L129 16 M100 6 L100 0" stroke="#ffb400" stroke-width="3" stroke-linecap="round" opacity=".7"/>`);
+  // hand (아이템): 왼쪽(화면 기준) 손에 든 소품
+  const hand=o.hand;
+  if(hand==='clipboard')parts.push(`<g transform="translate(24 164) rotate(-8)"><rect x="-15" y="-4" width="30" height="38" rx="3" fill="#b7793f"/><rect x="-12" y="2" width="24" height="29" rx="1.5" fill="#fff"/><rect x="-6" y="-8" width="12" height="8" rx="2" fill="#9aa3b5"/><path d="M-8 10 h16 M-8 16 h16 M-8 22 h10" stroke="#9aa3b5" stroke-width="2"/></g>`);
+  if(hand==='briefcase')parts.push(`<g transform="translate(26 180)"><path d="M-8 -8 v-6 a3 3 0 0 1 3 -3 h10 a3 3 0 0 1 3 3 v6" stroke="#5a3a22" stroke-width="3.5" fill="none"/><rect x="-19" y="-8" width="38" height="27" rx="4" fill="#7a4b2a"/><path d="M-19 2 h38" stroke="#5a3a22" stroke-width="2"/><rect x="-3" y="-1" width="6" height="6" rx="1" fill="#ffc83d"/></g>`);
+  if(hand==='notebook')parts.push(`<g transform="translate(24 170) rotate(-10)"><rect x="-13" y="-17" width="26" height="34" rx="3" fill="#5b8def"/><rect x="-10" y="-17" width="3" height="34" fill="#3f6fd0"/><rect x="-3" y="-10" width="12" height="6" rx="1.5" fill="#fff"/><path d="M15 -14 L24 -24" stroke="#0b1a3a" stroke-width="4" stroke-linecap="round"/><path d="M24 -24 l3 -3" stroke="#ffc83d" stroke-width="4" stroke-linecap="round"/></g>`);
+  if(hand==='coffee')parts.push(`<g transform="translate(26 170)"><path d="M-12 -12 h24 l-3 27 h-18 z" fill="#fff" stroke="#c9d6ee" stroke-width="2"/><rect x="-13" y="-17" width="26" height="6" rx="2" fill="#6b3f26"/><rect x="-10" y="-3" width="20" height="8" fill="#004aad"/><path d="M-4 -23 q3 -4 0 -8 M4 -23 q3 -4 0 -8" stroke="#9aa3b5" stroke-width="2" fill="none" stroke-linecap="round"/></g>`);
   if(head)return `<svg viewBox="24 2 152 152" width="100%" height="100%" aria-hidden="true">${parts.join('')}</svg>`;
   return `<svg viewBox="0 -4 200 216" width="${sz}" height="${sz*216/200}" role="img" aria-label="${o.label||'하이브릿지 캐릭터 브리'}">${parts.join('')}</svg>`;
 }
@@ -922,7 +1116,10 @@ const PORTRAITS={
   'p-lee': {bg:['#ecfaf3','#c6ecd9'],skin:'#f7d1b4',hair:'#2a2129',hl:'#4d3f4b',style:'curly',cloth:'#2f8f6f',top:'knit',glasses:1,f:0},
   'p-jung':{bg:['#fff8e6','#fbe2a8'],skin:'#ffdec9',hair:'#231c24',hl:'#463a47',style:'bob',  cloth:'#e2a427',top:'cardigan',glasses:1,f:1},
   'p-oh':  {bg:['#f1f2f7','#d6d9e6'],skin:'#f1c6a4',hair:'#1d1a22',hl:'#3e3a46',style:'short',cloth:'#4b5567',top:'hood',f:0},
-  'p-yoon':{bg:['#eef5ff','#c9ddff'],skin:'#ffe2cf',hair:'#6a3f2c',hl:'#9a6650',style:'pony', cloth:'#5b8def',top:'shirt',f:1}
+  'p-yoon':{bg:['#eef5ff','#c9ddff'],skin:'#ffe2cf',hair:'#6a3f2c',hl:'#9a6650',style:'pony', cloth:'#5b8def',top:'shirt',f:1},
+  'p-choi':{bg:['#eef1fb','#d3daf2'],skin:'#f3c9a8',hair:'#1f1c25',hl:'#3b3646',style:'short',cloth:'#3b4a6b',top:'suit',glasses:1,f:0},
+  'p-seo': {bg:['#f6efff','#e0d2fb'],skin:'#ffe0cc',hair:'#3a2420',hl:'#6b443a',style:'long', cloth:'#8e6bd8',top:'cardigan',f:1},
+  'p-moon':{bg:['#ecfbf8','#c4ede4'],skin:'#ffdcc8',hair:'#2a1f26',hl:'#4e3c49',style:'bob',  cloth:'#2bb5a0',top:'shirt',f:1}
 };
 function shade(hex,amt){const n=parseInt(hex.slice(1),16);const c=[n>>16,(n>>8)&255,n&255].map(v=>Math.max(0,Math.min(255,Math.round(v+amt))));return '#'+c.map(v=>v.toString(16).padStart(2,'0')).join('')}
 function portrait(id,crop){return drawPortrait(PORTRAITS[id],id.replace(/\W/g,''),crop)}
@@ -938,10 +1135,10 @@ const BRI_OPTS={
   ear:[{n:'없음',v:'none'},{n:'헤드셋',v:'headset'},{n:'귀마개',v:'earmuff'}],
   bg:[['#d6e4ff','블루'],['#ffd9cc','피치'],['#c9eedb','민트'],['#ffe7a8','옐로'],['#e2d6ff','라일락'],['#dfe3ec','그레이']]
 };
-const DEFAULT_BRI={c:0,cheek:0,eyes:'round',mouth:'smile',top:'dot',face:'none',neck:'tie',ear:'none',bg:0};
+const DEFAULT_BRI={c:0,cheek:0,eyes:'round',mouth:'smile',top:'dot',face:'none',neck:'tie',ear:'none',hand:'none',back:'none',bg:0};
 const BRI_NUM=['c','cheek','bg'];
 function myBriLook(){return Object.assign({},DEFAULT_BRI,S.game.bri||{})}
-function briOf(L){return {c:(BRI_OPTS.c[L.c]||BRI_OPTS.c[0])[0],cheek:(BRI_OPTS.cheek[L.cheek]||BRI_OPTS.cheek[0])[0],eyes:L.eyes,mouth:L.mouth,top:L.top,face:L.face,neck:L.neck,ear:L.ear}}
+function briOf(L){return {c:(BRI_OPTS.c[L.c]||BRI_OPTS.c[0])[0],cheek:(BRI_OPTS.cheek[L.cheek]||BRI_OPTS.cheek[0])[0],eyes:L.eyes,mouth:L.mouth,top:L.top,face:L.face,neck:L.neck,ear:L.ear,hand:L.hand||'none',back:L.back||'none'}}
 function myBri(){return briOf(myBriLook())}
 function myBg(){return (BRI_OPTS.bg[myBriLook().bg]||BRI_OPTS.bg[0])[0]}
 function drawPortrait(P,k,crop,noBg){
@@ -1023,11 +1220,15 @@ window.addEventListener('message',e=>{
   const G=S.game;
   if(m.type==='progress'){G.progress={day:m.day,phase:m.phase,g:m.gauges};save();return}
   if(m.type==='nav'){location.hash='#'+(VIEWS[m.view]?m.view:'home');return}
+  if(m.type==='equip'&&['top','neck','hand','back'].includes(m.slot)){G.bri={...myBriLook(),[m.slot]:String(m.v)};save();
+    const a=document.querySelector('.gframe-bar .av');if(a)a.innerHTML=bri({...myBri(),head:true,wave:false});return}
+  if(m.type==='item'){const it=typeof hbItem==='function'&&hbItem(m.id);if(it)toast(`🎁 새 아이템: ${it.n}`);return}
   if(m.type==='restart'){G.phase='setup';save();route();window.scrollTo(0,0);return}
+  if(m.type==='ask'&&m.ch!=='anon'){S.draft={ref:m.card.day+' · '+m.card.title,t:String(m.text||'').slice(0,500)};S.mt=null;save();toast('선배에게 물어볼 질문을 담아 뒀어요 · 소통 공간 → 선배에게 물어보기');return}
   if(m.type==='ask'){const anon=m.ch==='anon';
-    S.posts.unshift({id:'p'+Date.now(),ch:anon?'anon':'ask',by:anon?null:myName(),tag:anon?'익명 신입':'신입 · '+(PARTS[G.part]||'')+' · '+(m.card.day||''),ref:m.card.day+' · '+m.card.title,t:String(m.text||'').slice(0,500),when:'방금',mine:true});
+    S.posts.unshift({id:'p'+Date.now(),ch:anon?'anon':'ask',by:anon?null:myName(),tag:anon?'익명 신입':'신입 · 인사팀 · '+(m.card.day||''),ref:m.card.day+' · '+m.card.title,t:String(m.text||'').slice(0,500),when:'방금',mine:true});
     save();toast('소통 공간에 질문이 올라갔어요');return}
-  if(m.type==='share'){S.posts.unshift({id:'p'+Date.now(),ch:'peer',by:myName(),tag:'신입 · '+(PARTS[G.part]||'')+' · D+100',t:String(m.text||'').slice(0,500),when:'방금',mine:true});
+  if(m.type==='share'){S.posts.unshift({id:'p'+Date.now(),ch:'peer',by:myName(),tag:'신입 · 인사팀 · D+100',t:String(m.text||'').slice(0,500),when:'방금',mine:true});
     S.shared=true;S.channel='peer';save();setTimeout(()=>{location.hash='#community'},600);return}
 });
 
@@ -1110,6 +1311,7 @@ function cardHTML(id){
 function deltaChips(d){return d.map((v,i)=>v?`<span class="chip ${v>0?'good':'warn'}">${GAUGES[i]} ${v>0?'+':''}${v}</span>`:'').join('')}
 function gameSrc(){
   const G=S.game,q=new URLSearchParams({name:G.name||'김하이',part:PARTS[G.part]||'',run:String(S.runs),bri:JSON.stringify(myBri()),bg:myBg()});
+  const td=new URLSearchParams(location.search).get('testdrop');if(td)q.set('testdrop',td); // 확인용: 사이트 주소의 ?testdrop= 을 게임에 전달
   return 'game/index.html?'+q.toString();
 }
 function gameFrameHTML(){
@@ -1121,7 +1323,7 @@ function gameFrameHTML(){
   </div>`;
 }
 let CC_TAB='color';
-const CC_TABS=[['color','색상'],['face','표정'],['acc','소품'],['bg','프로필 색']];
+const CC_TABS=[['color','색상'],['face','표정'],['acc','소품'],['items','내 아이템'],['bg','프로필 색']];
 function ccHTML(){
   const G=S.game,L=myBriLook(),bg=myBg();
   const th=over=>`<span class="th" style="background:${bg}">${bri({...briOf({...L,...over}),head:true,wave:false})}</span>`;
@@ -1132,14 +1334,19 @@ function ccHTML(){
     color:sec('몸 색',sw('c',BRI_OPTS.c,c=>c[0]),'cc-sw')+sec('볼 터치',sw('cheek',BRI_OPTS.cheek,c=>c[0]==='none'?'repeating-linear-gradient(45deg,#3a4766 0 4px,#26324f 4px 8px)':c[0]),'cc-sw'),
     face:sec('눈',BRI_OPTS.eyes.map(o=>opt('eyes',o)).join(''),'cc-opts')+sec('입',BRI_OPTS.mouth.map(o=>opt('mouth',o)).join(''),'cc-opts'),
     acc:sec('머리 위',BRI_OPTS.top.map(o=>opt('top',o)).join(''),'cc-opts')+sec('얼굴',BRI_OPTS.face.map(o=>opt('face',o)).join(''),'cc-opts')+sec('목',BRI_OPTS.neck.map(o=>opt('neck',o)).join(''),'cc-opts')+sec('귀',BRI_OPTS.ear.map(o=>opt('ear',o)).join(''),'cc-opts'),
-    bg:sec('프로필 동그라미 색 · 홈, 게임 HUD, 채팅에서 내 프로필 바탕으로 보여요',sw('bg',BRI_OPTS.bg,c=>c[0]),'cc-sw')
+    bg:sec('프로필 동그라미 색 · 홈, 게임 HUD, 채팅에서 내 프로필 바탕으로 보여요',sw('bg',BRI_OPTS.bg,c=>c[0]),'cc-sw'),
+    items:(()=>{const own=typeof hbItemsOwned==='function'?hbItemsOwned():[];const all=typeof HB_ITEMS!=='undefined'?HB_ITEMS:[];
+      return `<div class="cc-sec"><h4>아이템 도감 <b class="cc-cnt">${own.length} / ${all.length}</b> · 100일 게임에서 배우는 행동을 하면 드랍돼요</h4><div class="cc-items">${all.map(it=>{const has=own.includes(it.id),on=has&&L[it.slot]===it.v,tr=HB_TIER[it.tier]||['','#6b7280'];
+        return `<button type="button" class="cc-item${has?'':' locked'}" ${has?`data-item="${it.id}"`:'disabled'} aria-pressed="${on}" title="${esc(has?it.desc:'얻는 법: '+it.how)}">
+          <span class="th" style="background:${bg}">${bri({...briOf({...L,[it.slot]:it.v}),head:it.slot!=='hand'&&it.slot!=='back',wave:false,size:64})}</span>
+          <b>${has?esc(it.n):'???'}</b><small style="color:${tr[1]}">${tr[0]}</small><em>${has?(on?'착용 중':'착용하기'):esc(it.tier==='hidden'?'숨은 아이템':it.how)}</em>${has?'':'<i class="cc-lock">🔒</i>'}</button>`}).join('')}</div></div>`})()
   };
   return `
     <div class="cc-stage">
       <span class="cc-label">MY BRI</span>
       <button type="button" class="cc-dice" id="ccDice" aria-label="랜덤으로 꾸미기">🎲 랜덤</button>
       <div class="cc-fig">${bri({...briOf(L),size:240,label:'내가 꾸민 브리'})}</div>
-      <div class="cc-plate${CC_TAB==='bg'?' hl':''}"><span class="cc-pf" style="background:${bg}" title="내 프로필">${bri({...briOf(L),head:true,wave:false})}</span><span class="cc-pt"><b id="ccName">${esc(G.name||'김하이')}</b><span>㈜하이브릿지 인사팀 · ${esc(PARTS[G.part]||'')} 신입</span></span></div>
+      <div class="cc-plate${CC_TAB==='bg'?' hl':''}"><span class="cc-pf" style="background:${bg}" title="내 프로필">${bri({...briOf(L),head:true,wave:false})}</span><span class="cc-pt"><b id="ccName">${esc(G.name||'김하이')}</b><span>㈜하이브릿지 인사팀 신입 · 관심 분야 ${esc(PARTS[G.part]||'통합')}</span></span></div>
     </div>
     <div class="cc-panel">
       <div><div class="eyebrow" style="color:var(--amber)">STEP 1 · 브리 꾸미기</div><h2 class="cc-title">나만의 브리 만들기</h2></div>
@@ -1148,7 +1355,7 @@ function ccHTML(){
       <div class="cc-foot">
         <div class="eyebrow" style="color:var(--amber)">STEP 2 · 입사 정보</div>
         <label class="f" for="nm">이름 (게임 속에서만 쓰여요)<input type="text" id="nm" maxlength="12" placeholder="예: 김하이" value="${esc(G.name)}"></label>
-        <div class="f">관심 있는 인사 파트<div class="parts">${PARTS.map((p,i)=>`<button type="button" data-part="${i}" aria-pressed="${i===G.part}">${p}</button>`).join('')}</div></div>
+        <div class="f">관심 있는 분야 <small class="f-hint">고른 분야의 상황 위주로 나와요 · 통합은 모든 분야를 섞어요</small><div class="parts">${PARTS.map((p,i)=>`<button type="button" data-part="${i}" aria-pressed="${i===G.part}" class="${i===PART_ALL?'all':''}"><b>${p}</b><small>${PART_DESC[i]}</small></button>`).join('')}</div></div>
         <button class="btn start" id="start" style="width:100%">▶ 이 브리로 입사하기</button>
       </div>
     </div>`;
@@ -1245,8 +1452,8 @@ document.addEventListener('keydown',e=>{
 bind.game=()=>{
   const G=S.game;
   if(G.phase==='world'){
-    $('#gRestart').addEventListener('click',()=>{if(!confirm('처음부터 다시 시작할까요? 지금까지의 게임 진행은 사라져요.'))return;S.runs++;save();route();toast('D+1부터 다시 시작해요')});
-    $('#gReset').addEventListener('click',()=>{if(!confirm('캐릭터를 다시 꾸미면 게임이 처음부터 시작돼요. 계속할까요?'))return;G.phase='setup';save();route();window.scrollTo(0,0)});
+    $('#gRestart').addEventListener('click',()=>{if(!confirm('처음부터 다시 시작할까요? 지금까지의 게임 진행은 사라져요. (도감에 모은 아이템은 남아요)'))return;S.runs++;save();route();toast('D+1부터 다시 시작해요')});
+    $('#gReset').addEventListener('click',()=>{if(!confirm('캐릭터를 다시 꾸미면 게임이 처음부터 시작돼요. 계속할까요? (도감에 모은 아이템은 남아요)'))return;G.phase='setup';save();route();window.scrollTo(0,0)});
     const gf=$('#gframe');gf.addEventListener('load',()=>{try{gf.contentWindow.focus()}catch(e){}});
     return;
   }
@@ -1256,6 +1463,7 @@ bind.game=()=>{
     cc.addEventListener('click',e=>{
       const b=e.target.closest('button');if(!b)return;
       if(b.dataset.tab){CC_TAB=b.dataset.tab;redraw();return}
+      if(b.dataset.item){const it=hbItem(b.dataset.item),L=myBriLook();L[it.slot]=L[it.slot]===it.v?DEFAULT_BRI[it.slot]:it.v;G.bri=L;save();redraw();return}
       if(b.dataset.part!=null){G.part=+b.dataset.part;save();redraw();return}
       if(b.dataset.k){const L=myBriLook(),k=b.dataset.k;L[k]=BRI_NUM.includes(k)?+b.dataset.v:b.dataset.v;G.bri=L;save();redraw();return}
       if(b.id==='ccDice'){const r=a=>Math.floor(Math.random()*a.length),pick=k=>BRI_OPTS[k][r(BRI_OPTS[k])].v;
@@ -1294,13 +1502,13 @@ bind.game=()=>{
   if(G.phase==='ending'){
     $('#again').addEventListener('click',()=>{G.phase='setup';save();route()});
     $('#share')?.addEventListener('click',()=>{const E=endingType();
-      S.posts.unshift({id:'p'+Date.now(),ch:'peer',by:myName(),tag:'신입 · '+PARTS[G.part]+' · D+100',t:`100일 생존 완료! 제 유형은 '${E.t}'이에요. ${E.n||''}`,when:'방금',mine:true});
+      S.posts.unshift({id:'p'+Date.now(),ch:'peer',by:myName(),tag:'신입 · 인사팀 · D+100',t:`100일 생존 완료! 제 유형은 '${E.t}'이에요. ${E.n||''}`,when:'방금',mine:true});
       S.shared=true;S.channel='peer';save();toast('동기방에 공유했어요');location.hash='#community'});
   }
 };
 function askSenior(id){
   const c=CARDS[id],D=DAYS.find(d=>d.cards.includes(id));
-  S.channel='ask';S.draft={ref:`D+${D.day} · ${c.title}`,t:`'${c.title}' 상황에서 선배님들은 실제로 어떻게 하셨나요? `};save();
+  S.channel='ask';S.mt=null;S.draft={ref:`D+${D.day} · ${c.title}`,t:`'${c.title}' 상황에서 선배님들은 실제로 어떻게 하셨나요? `};save();
   location.hash='#community';
 }
 
@@ -1316,36 +1524,128 @@ function community(){
   const dr=S.draft||{};
   const who=S.role==='junior'?`${esc(myName())} · 신입`:S.role==='senior'?'선배 (나)':'HRD 담당자';
   const meAv=S.role==='junior'?avatar({me:true},'av'):avatar({icon:'user'},'av');
-  const waiting=all.filter(p=>p.ch!=='peer'&&!repliesOf(p).length).length;
-  const fresh=all.filter(p=>/방금|오늘/.test(p.when||'')).length;
+  const waiting=all.filter(p=>p.ch==='anon'&&!repliesOf(p).length).length;
+  const anonAll=all.filter(p=>p.ch==='anon'); // 위쪽 숫자는 익명 질문방 글 기준
+  const fresh=anonAll.filter(p=>/방금|오늘/.test(p.when||'')).length;const cmf=['today','wait','all'].includes(S.cmFilter)?S.cmFilter:null;
   const isChat=ch.id==='peer';
   return `
   <section class="cm-hero">
     <div class="cm-hero-copy">
       <h1>소통 공간</h1>
       <p>메신저로 묻기 어려운 것, 여기서 편하게 물어보세요. 좋은 질문과 답변은 다음 신입의 상황 카드가 됩니다.</p>
-      <div class="cm-stats"><span><b>${fresh}</b> 오늘 새 글</span><span class="${waiting?'warn':''}"><b>${waiting}</b> 답변 기다리는 질문</span><span><b>${all.length}</b> 전체 글</span></div>
+      <div class="cm-stats cm-stats-btn" role="group" aria-label="글 모아 보기">
+        <button type="button" data-cmf="today" aria-pressed="${S.cmFilter==='today'}"><b>${fresh}</b> 오늘 새 글</button>
+        <button type="button" data-cmf="wait" class="${waiting?'warn':''}" aria-pressed="${S.cmFilter==='wait'}"><b>${waiting}</b> 답변 기다리는 질문</button>
+        <button type="button" data-cmf="all" aria-pressed="${S.cmFilter==='all'}"><b>${anonAll.length}</b> 전체 글</button></div>
     </div>
     <div class="cm-hero-bri" aria-hidden="true">${bri({size:96})}</div>
   </section>
 
   <div class="cm-tabs" id="chans" role="tablist" aria-label="채널">
     ${CHANNELS.map(c=>{const n=all.filter(p=>p.ch===c.id).length,w=all.filter(p=>p.ch===c.id&&c.id!=='peer'&&!repliesOf(p).length).length;
-      return `<button data-c="${c.id}" role="tab" aria-selected="${c.id===ch.id}" aria-pressed="${c.id===ch.id}">
+      return `<button data-c="${c.id}" role="tab" aria-selected="${!cmf&&c.id===ch.id}" aria-pressed="${!cmf&&c.id===ch.id}">
         <span class="cm-ic">${CH_ICON[c.id]||UI('chat')}</span><span class="cm-tx"><b>${c.n}</b><small>${c.d}</small></span>
-        <span class="cm-badge${w?' warn':''}">${w?`답변 대기 ${w}`:n}</span></button>`}).join('')}
+        ${c.id==='ask'?`<span class="cm-badge on">${MENTORS.filter(x=>x.on).length}명 답변 가능</span>`:`<span class="cm-badge${w?' warn':''}">${w?`답변 대기 ${w}`:n}</span>`}</button>`}).join('')}
   </div>
 
-  ${isChat?chatHTML():feedHTML(ch,posts,canPropose,anonForced,dr,who,meAv)}
+  ${cmf?cmFilterHTML(cmf,anonAll,canPropose):isChat?chatHTML():ch.id==='ask'?askHTML(dr):feedHTML(ch,posts,canPropose,anonForced,dr,who,meAv)}
   </div>`;
 }
+/* ---------- 익명 질문방: 게시판 형식 (목록 → 글 보기 → 답변) ---------- */
+const ANON_CATS=['업무','보고','휴가·근태','평가·보상','회식·관계','기타'];
+function anonCat(p){if(p.cat)return p.cat;const t=p.t||'';
+  return /연차|휴가|병원|근태|반차/.test(t)?'휴가·근태':/평가|등급|연봉|보상/.test(t)?'평가·보상':/회식|동기|관계|눈치|친해/.test(t)?'회식·관계':/메일|참조|CC/.test(t)?'업무':/보고/.test(t)?'보고':/강사|야근|업무|일정/.test(t)?'업무':'기타'}
+function anonTitle(t){const m=String(t||'').match(/^[^?.!\n]{4,58}[?.!]?/);return (m?m[0]:String(t||'').slice(0,50)).trim()}
+function anonViews(p){if(p.mine)return (S.views||{})[p.id]||0;let h=0;for(const c of String(p.id))h=(h*31+c.charCodeAt(0))%997;return 18+h%140+((S.views||{})[p.id]||0)}
+function bdDetailHTML(open,canPropose,back,backLabel){
+  const reps=repliesOf(open),proposed=S.db.some(d=>d.from===open.id);
+  const cat=open.ch==='anon'?anonCat(open):open.ch==='ask'?'선배에게 질문':'동기방';
+  const who=open.ch==='anon'||!open.by?'익명 신입':esc(open.by);
+  return `<div class="cm-feed bd">
+      <div class="bd-nav"><button type="button" class="bd-back" ${back}>${backLabel}</button></div>
+      <article class="bd-post">
+        <div class="bd-post-h"><span class="bd-cat ch-${open.ch}">${esc(cat)}</span><span class="bd-ans ${reps.length?'done':'wait'}">${reps.length?`답변 ${reps.length}`:'답변 대기'}</span>${open.mine?'<span class="bd-mine">내 글</span>':''}</div>
+        <h2>${esc(anonTitle(open.t))}</h2>
+        <div class="bd-sub">${who} · ${esc(open.when||'')} · 조회 ${anonViews(open)}</div>
+        ${open.ref?`<span class="cm-ref">${UI('card')} ${esc(open.ref)}</span>`:''}
+        <p class="bd-body">${esc(open.t)}</p>
+        <section class="bd-answers" aria-label="답변">
+          <h4>답변 <b>${reps.length}</b></h4>
+          ${reps.length?reps.map(r=>{const sr=/^(선배|HRD)/.test(r.tag||'');return `<div class="bd-a${sr?' sr':''}">${avatar(AUTHORS[r.by]||{icon:'user'},'av sm')}
+            <div><div class="bd-a-h"><b>${esc(r.by)}</b>${sr?`<span class="bd-a-tag">${esc(r.tag)}</span>`:`<small>${esc(r.tag||'')}</small>`}</div><p>${esc(r.t)}</p></div></div>`}).join('')
+            :`<div class="bd-a-empty">아직 답변이 없어요. 선배들이 곧 답해 줄 거예요 🙂</div>`}
+        </section>
+        <form class="reply-form bd-reply" data-p="${open.id}"><input type="text" aria-label="답글" placeholder="${S.role==='senior'?'선배로서 답변하기':open.ch==='anon'?'답글 달기 (익명)':'답글 달기'}"><button class="btn sm" type="submit">등록</button></form>
+        ${canPropose?`<div class="bd-prop"><button class="btn sm ghost" data-prop="${open.id}" ${proposed?'disabled':''}>${proposed?'✓ 시나리오 DB에 제안됨':UI('card')+' 상황 카드로 제안'}</button></div>`:''}
+      </article>
+      <p class="sample">예시 글이 섞여 있어요. 내가 쓴 글과 답글은 이 브라우저에만 저장돼요.</p></div>`;
+}
+function anonBoardHTML(ch,posts,canPropose,dr){
+  const open=S.anonOpen&&posts.find(p=>p.id===S.anonOpen);
+  const done=posts.filter(p=>repliesOf(p).length).length, wait=posts.length-done;
+  const compose=`<form class="bd-write" id="compose" ${S.anonWrite?'':'hidden'}>
+    <div class="bd-write-h"><b>익명으로 질문하기</b><small>이름 없이 올라가요 · 첫 문장이 제목이 돼요</small></div>
+    <div class="bd-cats" role="radiogroup" aria-label="말머리">${ANON_CATS.map((c,i)=>`<label><input type="radio" name="acat" value="${c}" ${i===0?'checked':''}><span>${c}</span></label>`).join('')}</div>
+    <textarea id="ptext" rows="4" aria-label="질문 내용" placeholder="예: 입사 2주 차인데 연차를 써도 될까요? 병원 예약이 평일밖에 안 돼서요.">${esc(dr.t||'')}</textarea>
+    <input type="checkbox" id="anon" checked hidden>
+    <div class="bd-write-f"><span>${UI('lock')} 작성자는 '익명 신입'으로만 보여요</span><button type="button" class="btn sm ghost" data-bwcancel>취소</button><button class="btn sm" type="submit">올리기</button></div>
+  </form>`;
+  const meta=p=>`익명 신입 · ${esc(p.when||'')} · 조회 ${anonViews(p)}`;
+  if(open)return bdDetailHTML(open,canPropose,'data-bdback','← 목록으로');
+  return `<div class="cm-feed bd">
+    <header class="bd-head">
+      <div><h3>익명 질문방</h3><p>이름 없이 묻고, 선배들이 답해요 · 질문 <b>${posts.length}</b> · 답변 대기 <b class="w">${wait}</b></p></div>
+      <button type="button" class="btn" data-bwrite>${UI('pen')} 질문하기</button>
+    </header>
+    ${compose}
+    <div class="bd-search" role="search">
+      <label class="cm-sbox">${UI('search')}<input type="search" id="anonQ" placeholder="궁금한 내용을 검색해 보세요 (예: 연차, 회식, 메일)" aria-label="익명 질문 검색" autocomplete="off"></label>
+      <div class="cm-skw">${['연차','회식','메일','보고','평가','야근'].map(k=>`<button type="button" data-akw="${k}">#${k}</button>`).join('')}</div>
+    </div>
+    <div class="bd-list" aria-label="익명 질문 목록">
+      <div class="bd-tabs" role="group" aria-label="답변 상태">
+        <button type="button" data-ast="all" aria-pressed="true">전체 <b>${posts.length}</b></button>
+        <button type="button" data-ast="done" aria-pressed="false">답변 완료 <b>${done}</b></button>
+        <button type="button" data-ast="wait" aria-pressed="false">답변 대기 <b>${wait}</b></button>
+        <span class="cm-scount" id="anonCount" aria-live="polite" hidden></span>
+      </div>
+      ${posts.map(p=>{const reps=repliesOf(p),r=reps.length;
+        return `<button type="button" class="bd-row cm-post" data-bopen="${p.id}" data-s="${esc([p.t,p.tag||'',anonCat(p),...reps.map(x=>x.t+' '+x.by)].join(' ').toLowerCase())}" data-st="${r?'done':'wait'}">
+          <span class="bd-cat">${esc(anonCat(p))}</span>
+          <span class="bd-main"><span class="bd-title"><span class="cm-text">${esc(anonTitle(p.t))}</span>${/방금|오늘/.test(p.when||'')?'<em class="bd-new">N</em>':''}${p.mine?'<em class="bd-mine">내 글</em>':''}</span><span class="bd-sub">${meta(p)}</span></span>
+          <span class="bd-ans ${r?'done':'wait'}">${r?`${UI('chat')} ${r}`:'답변 대기'}</span></button>`}).join('')}
+      <div class="cm-empty" id="anonNone" hidden>${UI('search')}<p>찾는 질문이 없어요. <button type="button" class="bd-link" data-bwrite>익명으로 직접 물어보기</button></p></div>
+    </div>
+    <p class="sample">예시 글이 섞여 있어요. 내가 쓴 글과 답글은 이 브라우저에만 저장돼요.</p></div>`;
+}
+/* ---------- 소통 공간 위 숫자: 오늘 새 글 · 답변 기다리는 질문 · 전체 글 모아 보기 ---------- */
+const CM_F={today:['오늘 새 글','익명 질문방에 오늘 올라온 질문이에요'],wait:['답변 기다리는 질문','선배 답변을 기다리는 익명 질문이에요. 선배라면 답해 주세요!'],all:['전체 글','익명 질문방의 모든 질문이에요']};
+function cmFilterHTML(f,all,canPropose){
+  const list=f==='today'?all.filter(p=>/방금|오늘/.test(p.when||'')):f==='wait'?all.filter(p=>p.ch==='anon'&&!repliesOf(p).length):all;
+  const open=S.cmOpen&&list.find(p=>p.id===S.cmOpen);
+  if(open)return bdDetailHTML(open,canPropose,'data-cmback','← '+CM_F[f][0]+' 목록');
+  const chName={peer:'동기방',ask:'선배에게 질문',anon:'익명 질문방'};
+  return `<div class="cm-feed bd">
+    <header class="bd-head"><div><h3>${CM_F[f][0]} <span class="cm-fcount">${list.length}</span></h3><p>${CM_F[f][1]}</p></div>
+      <button type="button" class="btn ghost" data-cmf="${f}">✕ 닫기</button></header>
+    <div class="bd-list">
+      ${list.map(p=>{const r=repliesOf(p).length;
+        return `<button type="button" class="bd-row" data-cmopen="${p.id}" data-ch="${p.ch}">
+          <span class="bd-cat ch-${p.ch}">${chName[p.ch]||''}</span>
+          <span class="bd-main"><span class="bd-title"><span class="cm-text">${esc(p.ch==='peer'?p.t:anonTitle(p.t))}</span>${/방금|오늘/.test(p.when||'')?'<em class="bd-new">N</em>':''}${p.mine?'<em class="bd-mine">내 글</em>':''}</span>
+          <span class="bd-sub">${p.ch==='anon'?'익명 신입':esc(p.by||'익명')} · ${esc(p.when||'')}${p.ch==='peer'?' · 동기방에서 보기 →':''}</span></span>
+          <span class="bd-ans ${p.ch==='peer'?'peer':r?'done':'wait'}">${p.ch==='peer'?`${UI('chat')} ${r}`:r?`${UI('chat')} ${r}`:'답변 대기'}</span></button>`}).join('')||`<div class="cm-empty">${UI('chat')}<p>${f==='wait'?'답변을 기다리는 질문이 없어요 🎉':'아직 글이 없어요'}</p></div>`}
+    </div>
+    <p class="sample">예시 글이 섞여 있어요. 내가 쓴 글과 답글은 이 브라우저에만 저장돼요.</p></div>`;
+}
 function feedHTML(ch,posts,canPropose,anonForced,dr,who,meAv){
+  if(anonForced)return anonBoardHTML(ch,posts,canPropose,dr);
   return `  <div class="cm-feed">
     <form class="cm-compose" id="compose">
       ${meAv}
       <div class="cm-compose-body">
         ${dr.ref&&ch.id==='ask'?`<span class="cm-ref">${UI('card')} ${esc(dr.ref)}</span>`:''}
-        <textarea id="ptext" rows="2" aria-label="${anonForced?'익명으로 질문하기':ch.n+'에 글쓰기'}" placeholder="${ch.id==='peer'?'동기들과 나누고 싶은 이야기를 적어 보세요':anonForced?'이름 없이 편하게 물어보세요':'언제, 누구와, 무슨 일이 있었는지 적을수록 좋은 답이 와요'}">${esc(ch.id==='ask'?dr.t||'':'')}</textarea>
+        <textarea id="ptext" rows="2" aria-label="${anonForced?'익명으로 질문하기':ch.n+'에 글쓰기'}" placeholder="${ch.id==='peer'?'동기들과 나누고 싶은 이야기를 적어 보세요':anonForced?'이름 없이 편하게 물어보세요':'언제, 누구와, 무슨 일이 있었는지 적을수록 좋은 답이 와요'}">${esc(ch.id!=='peer'?dr.t||'':'')}</textarea>
         <div class="cm-compose-foot">
           <label class="cm-toggle" for="anon"><input type="checkbox" id="anon" ${anonForced?'checked disabled':''}><span></span>익명으로</label>
           <span class="small muted">${anonForced?'익명':who}</span>
@@ -1354,7 +1654,18 @@ function feedHTML(ch,posts,canPropose,anonForced,dr,who,meAv){
       </div>
     </form>
 
+    ${anonForced&&posts.length?`<div class="cm-search" role="search">
+      <label class="cm-sbox">${UI('search')}<input type="search" id="anonQ" placeholder="궁금한 내용 검색 (예: 연차, 회식, 메일)" aria-label="익명 질문 검색" autocomplete="off"></label>
+      <div class="cm-sfil" role="group" aria-label="답변 상태">
+        <button type="button" data-ast="all" aria-pressed="true">전체 ${posts.length}</button>
+        <button type="button" data-ast="done" aria-pressed="false">답변 완료 ${posts.filter(p=>repliesOf(p).length).length}</button>
+        <button type="button" data-ast="wait" aria-pressed="false">답변 대기 ${posts.filter(p=>!repliesOf(p).length).length}</button>
+      </div>
+      <div class="cm-skw"><span>자주 찾는 말</span>${['연차','회식','메일','보고','평가','야근'].map(k=>`<button type="button" data-akw="${k}">#${k}</button>`).join('')}</div>
+      <p class="cm-scount" id="anonCount" aria-live="polite" hidden></p>
+    </div>`:''}
     ${posts.map(p=>postHTML(p,canPropose)).join('')||`<div class="cm-empty">${CH_ICON[ch.id]||UI('chat')}<p>아직 글이 없어요. 첫 글을 남겨 보세요!</p></div>`}
+    ${anonForced?`<div class="cm-empty" id="anonNone" hidden>${UI('search')}<p>찾는 질문이 없어요. 위에서 익명으로 직접 물어보세요!</p></div>`:''}
     <p class="sample">예시 글이 섞여 있어요. 내가 쓴 글과 답글은 이 브라우저에만 저장돼요.</p>`;
 }
 function chatMsgs(){
@@ -1367,7 +1678,7 @@ function chatMsgs(){
   });
   return out;
 }
-const PEERS=[{n:'최유진',part:'교육(HRD) · D+12',bio:'입문교육 자료 정리 장인 📚'},{n:'강민호',part:'채용 · D+30',bio:'채용 박람회 다녀온 사람 🎪'},{n:'윤채린',part:'마케팅팀',bio:'동기 점심 메뉴 담당 🍜'}];
+const PEERS=[{n:'최유진',part:'교육(HRD) · D+12',bio:'입문교육 자료 정리 장인 📚',on:true},{n:'강민호',part:'채용 · D+30',bio:'채용 박람회 다녀온 사람 🎪',on:true},{n:'윤채린',part:'마케팅팀',bio:'동기 점심 메뉴 담당 🍜',on:false}];
 const isPeer=n=>PEERS.some(x=>x.n===n);
 const DM_SEED={
   '최유진':[{by:'최유진',t:'우리 둘 다 HRD 쪽이잖아! 입문교육 자료 나중에 같이 보자 📚',when:'어제'}],
@@ -1414,7 +1725,17 @@ function chatHTML(){
     ?`<div class="chat-head"><span class="cm-ic">${UI('group')}</span><div class="chat-title"><b>2026 하반기 입사 동기방</b><small>${group.length}개의 메시지 · 편하게 이야기해요</small></div><div class="chat-faces">${PEERS.map(x=>`<button type="button" data-prof="${esc(x.n)}" aria-label="${esc(x.n)} 프로필 보기">${avatar(AUTHORS[x.n],'av xs')}</button>`).join('')}${S.role==='junior'?avatar({me:true},'av xs'):''}</div></div>`
     :(()=>{const x=PEERS.find(y=>y.n===room);return `<div class="chat-head">${avatar(AUTHORS[room],'av sm')}<div class="chat-title"><b>${esc(room)}</b><small>1:1 대화 · ${esc(x.part)}</small></div><span class="chip gray">${UI('lock')} 둘만 보여요</span></div>`})();
   const msgs=room==='group'?group:dmMsgs(room);
-  return `<div class="chat-room">
+  const mem=room==='group'?`<aside class="chat-mem" aria-label="대화상대">
+      <div class="chat-mem-h">대화상대 <b>${PEERS.length+1}</b></div>
+      <div class="chat-mem-it me">${S.role==='junior'?avatar({me:true},'av sm'):avatar({icon:'user'},'av sm')}<span class="chat-mem-tx"><b>${esc(S.role==='junior'?myName():'나')} <em>나</em></b><small>${S.role==='junior'?'인사팀 · 신입':'관전 중'}</small></span><i class="on"></i></div>
+      ${PEERS.map(x=>`<button type="button" class="chat-mem-it" data-prof="${esc(x.n)}" aria-label="${esc(x.n)} 프로필 보기">${avatar(AUTHORS[x.n],'av sm')}<span class="chat-mem-tx"><b>${esc(x.n)}</b><small>${esc(x.part)}</small></span><i class="${x.on?'on':''}" title="${x.on?'접속 중':'자리 비움'}"></i></button>`).join('')}
+      <div class="chat-mem-h sub">공지</div>
+      <div class="chat-mem-note">📢 금요일 12시 동기 점심 · 1층 로비에서 만나요</div>
+      <div class="chat-mem-h sub">함께 볼 것</div>
+      <a class="chat-mem-link" href="#game">🎮 100일 게임 이어 하기</a>
+      <a class="chat-mem-link" href="#community" data-goask>🙋 선배에게 1:1로 물어보기</a>
+    </aside>`:'';
+  return `<div class="chat-room${mem?' has-mem':''}">
     ${side}
     <div class="chat-main">
       ${head}
@@ -1425,14 +1746,108 @@ function chatHTML(){
         <button class="btn sm" type="submit">전송</button>
       </form>
     </div>
+    ${mem}
   </div>
-  <p class="sample" style="max-width:960px;width:100%;margin:0 auto">예시 대화가 섞여 있어요. 1:1 답장은 시연용 자동 답장이고, 내가 보낸 메시지는 이 브라우저에만 저장돼요.</p>`;
+  <p class="sample" style="max-width:${mem?1140:960}px;width:100%;margin:0 auto">예시 대화가 섞여 있어요. 1:1 답장은 시연용 자동 답장이고, 내가 보낸 메시지는 이 브라우저에만 저장돼요.</p>`;
+}
+/* ---------- 선배에게 물어보기: 선배 프로필 고르기 → 반익명 1:1 ---------- */
+const MENTORS=[
+  {n:'박서연',img:'p-park',job:'채용',dept:'인사팀 채용파트',rank:'대리',yrs:5,tags:['면접 운영','지원자 응대','채용 박람회'],resp:'보통 1시간 이내',on:true,
+   bio:'면접 일정이 꼬였을 때 제일 먼저 찾는 사람. 신입 사수를 세 번 맡았어요.',greet:'안녕하세요! 편하게 물어보세요 😊 채용 쪽 일이면 웬만한 건 다 겪어 봤어요.',
+   rep:['아 그거 저도 첫해에 똑같이 헤맸어요. 일단 지원자에게는 "확인 후 오늘 안에 다시 연락드릴게요"라고 시간을 먼저 정해 두세요.','면접관 일정은 확정 전에 꼭 한 번 더 메신저로 확인받는 게 안전해요. 구두로 OK한 건 자주 바뀌거든요.','그럴 땐 혼자 결정하지 말고 "선택지 두 개 + 제 의견" 형태로 팀장님께 짧게 여쭤보면 돼요.','좋은 질문이에요! 다음에 비슷한 일 생기면 또 물어봐요 🙌']},
+  {n:'이도현',img:'p-lee',job:'교육(HRD)',dept:'인사팀 HRD파트',rank:'대리',yrs:4,tags:['입문교육','강사 섭외','교육 만족도'],resp:'보통 2시간 이내',on:true,
+   bio:'입문교육 커리큘럼 담당. 숫자로 보고하는 법을 잘 알려 줘요.',greet:'반가워요! HRD 쪽 질문 환영이에요 📚',
+   rep:['교육 만족도 점수는 평균만 보지 말고 "낮게 준 사람들의 주관식"을 먼저 읽어 보세요. 거기에 진짜 개선점이 있어요.','외부 강사님께는 첫 메일에 일정·대상·인원·예산 범위를 같이 적으면 오히려 프로페셔널하게 봐요.','보고는 결론 먼저, 근거는 표 하나. 이것만 지켜도 팀장님 질문이 반으로 줄어요.','도움이 됐다니 다행이에요. 자료 필요하면 공유 폴더 경로 알려 줄게요!']},
+  {n:'정하은',img:'p-jung',job:'평가·보상',dept:'인사팀 평가보상파트',rank:'과장',yrs:7,tags:['평가 등급','연봉 문의','비밀 유지'],resp:'보통 반나절',on:false,
+   bio:'평가·보상 7년차. "원칙은 단단하게, 말투는 가볍게"가 모토예요.',greet:'안녕하세요. 지금 회의가 많아서 답이 조금 늦을 수 있어요 🙏',
+   rep:['평가·보상 정보는 "내가 알고 있어도 말하지 않는다"가 기본이에요. 정중하게, 하지만 분명하게 선을 그으세요.','동료가 등급을 물어보면 "그건 나도 볼 수 없게 되어 있어~"처럼 가볍게 넘기는 게 관계도 지키는 방법이에요.','숫자가 들어간 파일은 메일 첨부 대신 권한이 걸린 폴더 링크로 공유하는 습관을 들이세요.','언제든지요. 애매하면 일단 멈추고 물어보는 게 제일 잘하는 거예요.']},
+  {n:'한지훈',img:'p-han',job:'노무·조직문화',dept:'인사팀',rank:'팀장',yrs:12,tags:['보고 방식','노무 이슈','커리어 고민'],resp:'보통 하루',on:true,
+   bio:'인사팀장. 신입 때 실수담을 제일 많이 들려주는 팀장님이에요.',greet:'어서 와요. 팀장이라고 어려워하지 말고 편하게 물어봐요.',
+   rep:['저는 보고가 완벽한 것보다 빨리 오는 게 좋아요. 70%일 때 한 번 보여 주면 방향을 같이 잡을 수 있어요.','실수했을 때는 "무슨 일이 / 지금 상태 / 제가 할 조치" 세 줄이면 충분해요. 숨기는 게 제일 큰 실수예요.','커리어는 첫해에 정하지 않아도 돼요. 다양한 일을 해 보면서 내가 즐거운 순간을 기록해 두세요.','좋은 질문이었어요. 이런 건 다음 신입에게도 도움이 되겠네요.']},
+  {n:'최민석',img:'p-choi',job:'노무·조직문화',dept:'인사팀 노무파트',rank:'과장',yrs:6,tags:['근태·휴가','노사 협의','규정 해석'],resp:'보통 2시간 이내',on:true,
+   bio:'근태·휴가 규정 해석 담당. 애매한 규정은 이 선배에게 물어보면 끝나요.',greet:'안녕하세요! 규정 관련이면 조항까지 찾아 드릴게요 📖',
+   rep:['휴가 관련 문의는 "규정 몇 조 기준으로는 이렇고, 예외는 팀장 승인"처럼 근거를 붙여 답하면 분쟁이 줄어요.','직원 문의에 바로 답하기 애매하면 "확인 후 내일 오전까지 답드릴게요"라고 기한을 약속하세요.','노사 협의 자료는 초안 단계에서도 외부 공유 금지예요. 파일명에 [대외비]를 꼭 붙이세요.','네네, 또 막히면 언제든 물어보세요!']},
+  {n:'서지아',img:'p-seo',job:'노무·조직문화',dept:'인사팀 조직문화파트',rank:'주임',yrs:3,tags:['사내 행사','동아리','팀 적응'],resp:'보통 30분 이내',on:true,
+   bio:'사내 행사 기획자. 신입 시절이 가장 최근이라 공감 100%예요.',greet:'안녕하세요~ 저도 신입 시절이 엊그제 같아요 ㅎㅎ 뭐든 물어봐요!',
+   rep:['저도 그거 진짜 고민했어요 ㅠㅠ 처음엔 다 어색한 게 정상이에요. 점심 한 번 같이 먹는 것부터 시작해 보세요!','팀 회식은 무조건 끝까지 있을 필요 없어요. 1차까지 즐겁게 있다가 인사하고 가도 괜찮아요.','사내 동아리 하나 들어가면 다른 팀 사람들을 알게 돼서 업무 협조 받기가 훨씬 쉬워져요 🙌','언제든 편하게 연락 주세요! 커피 한잔해요 ☕']},
+  {n:'문하린',img:'p-moon',job:'교육(HRD)',dept:'인사팀 HRD파트',rank:'사원',yrs:2,tags:['신입 적응','엑셀·문서','첫 업무'],resp:'보통 30분 이내',on:true,
+   bio:'바로 위 기수 선배. 엑셀 단축키와 문서 양식은 다 꿰고 있어요.',greet:'오 반가워요!! 저 작년에 입사해서 지금 고민 다 알아요 😆',
+   rep:['엑셀은 Ctrl+Shift+L(필터)이랑 피벗 테이블만 알아도 반은 먹고 들어가요!','문서 양식은 공유 드라이브 "00_양식" 폴더에 다 있어요. 새로 만들기 전에 꼭 먼저 찾아보세요.','모르는 거 물어보는 거 전혀 민폐 아니에요. 오히려 혼자 하다가 늦어지는 걸 더 걱정하세요 ㅎㅎ','화이팅이에요! 저도 작년에 똑같았어요 💪']},
+  {n:'오정민',img:'p-oh',job:'현업',dept:'개발2팀',rank:'팀장',yrs:10,tags:['현업 협업','교육 요청','개발팀 문화'],resp:'보통 하루',on:false,
+   bio:'현업 팀장. 인사팀이 현업과 일할 때 무엇이 고마운지 솔직하게 알려 줘요.',greet:'안녕하세요. 현업 입장에서 솔직하게 말씀드릴게요.',
+   rep:['현업은 "왜 필요한지"보다 "언제까지 무엇을 해 주면 되는지"를 먼저 알고 싶어 해요.','교육 요청은 개발 일정이 몰리는 월말을 피해 주면 참석률이 확 올라가요.','메신저보다 짧은 미팅 10분이 더 빠를 때가 많아요. 편하게 일정 잡아 주세요.','좋은 질문 고마워요. 인사팀이 이런 걸 물어봐 주면 현업도 반가워요.']}
+];
+const MT_FILTERS=['전체','채용','교육(HRD)','평가·보상','노무·조직문화','현업'];
+let MT_TYPING=null;
+function mtNick(){if(!S.mtNick){S.mtNick=10+Math.floor(Math.random()*90);save()}return S.mtNick}
+function mtLabel(){return `인사팀 신입 · 브리 #${mtNick()}`}
+function mtMsgs(n){const x=MENTORS.find(y=>y.n===n);return [{by:n,t:x.greet,when:''},...(S.mts[n]||[])].map(m=>({by:m.me?myName():n,tag:'',t:m.t,when:m.when,me:!!m.me,au:m.me?{me:true}:AUTHORS[n]}))}
+function askHTML(dr){
+  const x=MENTORS.find(y=>y.n===S.mt);
+  return x?mtChatHTML(x,dr):mtListHTML(dr);
+}
+function mtListHTML(dr){
+  const list=MENTORS.filter(x=>(S.mtFilter==='전체'||x.job===S.mtFilter)&&(!S.mtOn||x.on));
+  const mine=MENTORS.filter(x=>(S.mts[x.n]||[]).length);
+  const shared=[...S.mtShared,...SEED_POSTS.filter(p=>p.ch==='ask'&&(p.rep||[]).length).map(p=>({q:p.t,a:p.rep[0].t,by:p.rep[0].by,tag:p.rep[0].tag}))];
+  return `<div class="mt-wrap">
+    ${dr.ref?`<div class="mt-ref">${UI('card')}<span>게임 상황 <b>${esc(dr.ref)}</b>에 대해 물어볼 선배를 골라 주세요. 질문은 미리 적어 둘게요.</span></div>`:''}
+    <div class="mt-intro"><span class="av br" style="background:${myBg()}">${bri({...myBri(),head:true,wave:false})}</span>
+      <div><b>물어보고 싶은 선배를 골라 1:1로 대화해요</b><p>선배에게는 내 이름 대신 <b>'${esc(mtLabel())}'</b>로 보여요. 원할 때 실명을 공개할 수 있어요.</p></div></div>
+    <div class="mt-filters" role="group" aria-label="직무 필터">
+      ${MT_FILTERS.map(f=>`<button type="button" class="mt-chip" data-mtf="${f}" aria-pressed="${S.mtFilter===f}">${f}</button>`).join('')}
+      <label class="cm-toggle mt-onl" for="mtOn"><input type="checkbox" id="mtOn" ${S.mtOn?'checked':''}><span></span>지금 답변 가능만</label>
+    </div>
+    ${mine.length?`<div class="mt-recent"><span>진행 중인 대화</span>${mine.map(x=>`<button type="button" data-mt="${esc(x.n)}">${avatar(AUTHORS[x.n],'av')}${esc(x.n)} ${esc(x.rank)}</button>`).join('')}</div>`:''}
+    <div class="mt-grid">
+      ${list.map(x=>`<article class="mt-card${x.on?'':' off'}">
+        <div class="mt-card-top">${avatar(AUTHORS[x.n],'av')}<span class="mt-dot${x.on?' on':''}" title="${x.on?'지금 답변 가능':'자리 비움'}"></span>
+          <div><b>${esc(x.n)}<small>${esc(x.rank)}</small></b><span>${esc(x.dept)} · ${x.yrs}년차</span></div></div>
+        <p class="mt-bio">${esc(x.bio)}</p>
+        <div class="mt-tags">${x.tags.map(t=>`<span>#${esc(t)}</span>`).join('')}</div>
+        <div class="mt-foot"><span class="mt-resp"><i class="${x.on?'on':''}"></i>${x.on?'지금 답변 가능':'자리 비움'} · ${esc(x.resp)}</span><button type="button" class="btn sm" data-mt="${esc(x.n)}">1:1로 물어보기</button></div>
+      </article>`).join('')||`<div class="cm-empty">${UI('user')}<p>조건에 맞는 선배가 없어요. 필터를 바꿔 보세요.</p></div>`}
+    </div>
+    ${shared.length?`<section class="mt-shared"><h3>다른 신입들이 이름 없이 공유한 Q&amp;A</h3>
+      ${shared.slice(0,4).map(q=>`<div class="mt-qa"><p class="q">Q. ${esc(q.q)}</p><div class="a">${avatar(AUTHORS[q.by]||{icon:'user'},'av')}<p><b>${esc(q.by)}</b> <small>${esc(q.tag||'')}</small><br>${esc(q.a)}</p></div></div>`).join('')}</section>`:''}
+    <p class="sample">예시 선배 프로필이에요. 답장은 시연용 자동 답장이고, 대화는 이 브라우저에만 저장돼요.</p>
+  </div>`;
+}
+function mtChatHTML(x,dr){
+  const msgs=mtMsgs(x.n),mineN=(S.mts[x.n]||[]).filter(m=>m.me).length,srN=(S.mts[x.n]||[]).filter(m=>!m.me).length;
+  const rv=!!S.mtReveal[x.n],shown=rv?`${myName()} (인사팀 신입)`:mtLabel();
+  const chats=MENTORS.filter(y=>y.n===x.n||(S.mts[y.n]||[]).length);
+  const prev=y=>{const a=S.mts[y.n]||[],m=a[a.length-1];return MT_TYPING===y.n?'입력 중…':m?esc((m.me?'나: ':'')+m.t):esc(y.greet)};
+  const pre=dr.ref&&!mineN?dr.t||'':'';
+  const shared=S.mtShared.some(q=>q.by===x.n);
+  return `<div class="chat-room mt-room">
+    <aside class="chat-side" aria-label="선배와의 대화">
+      <button type="button" class="chat-it mt-back" data-mtback><span class="chat-it-av">←</span><span class="chat-it-tx"><b>선배 찾기</b><span>다른 선배 고르기</span></span></button>
+      <div class="chat-side-h">1:1 대화</div>
+      ${chats.map(y=>`<button type="button" class="chat-it" data-mt="${esc(y.n)}" aria-pressed="${y.n===x.n}">${avatar(AUTHORS[y.n],'av sm')}<span class="chat-it-tx"><b>${esc(y.n)} <small>${esc(y.rank)}</small></b><span>${prev(y)}</span></span></button>`).join('')}
+    </aside>
+    <div class="chat-main">
+      <div class="chat-head">${avatar(AUTHORS[x.n],'av sm')}<div class="chat-title"><b>${esc(x.n)} ${esc(x.rank)} <span class="mt-dot-in${x.on?' on':''}"></span></b><small>${esc(x.job)} · ${esc(x.dept)} · ${x.yrs}년차 · ${x.on?'답변 가능':'자리 비움'} (${esc(x.resp)})</small></div>
+        ${rv?`<span class="chip gray">${UI('user')} 실명 공개함</span>`:`<button type="button" class="btn sm ghost" id="mtReveal" title="선배에게 내 이름을 보여 줘요">실명 공개하기</button>`}</div>
+      <div class="chat-log" id="chatLog" role="log" aria-live="polite">
+        <div class="mt-note">${UI('lock')} ${esc(x.n)} 선배와 나만 보는 대화예요. 선배에게 나는 <b>'${esc(shown)}'</b>로 보여요.</div>
+        ${msgsHTML(msgs,MT_TYPING===x.n?x.n:null,false)}
+      </div>
+      ${srN>1?`<div class="mt-acts"><button type="button" class="btn sm ghost" id="mtThanks" ${S.mtThanks[x.n]?'disabled':''}>${S.mtThanks[x.n]?'✓ 고마움을 전했어요':'👍 도움됐어요'}</button><button type="button" class="btn sm ghost" id="mtShare" ${shared?'disabled':''}>${shared?'✓ 이름 없이 공유했어요':UI('card')+' 이름 없이 다른 신입에게 공유'}</button></div>`:''}
+      <form class="chat-input" id="mtForm" data-sr="${esc(x.n)}">
+        ${avatar({me:true},'av sm')}
+        <input type="text" id="chatText" value="${esc(pre)}" placeholder="${esc(x.n)} 선배에게 질문하기 (반익명)" autocomplete="off" aria-label="메시지 입력" maxlength="300">
+        <button class="btn sm" type="submit">전송</button>
+      </form>
+    </div>
+  </div>
+  <p class="sample" style="max-width:960px;width:100%;margin:0 auto">예시 선배 프로필이에요. 답장은 시연용 자동 답장이고, 대화는 이 브라우저에만 저장돼요.</p>`;
 }
 function postHTML(p,canPropose){
   const reps=repliesOf(p);
   const proposed=S.db.some(d=>d.from===p.id);
   const status=p.ch==='peer'?'':reps.length?`<span class="cm-st done">답변 ${reps.length}</span>`:'<span class="cm-st wait">답변 대기</span>';
-  return `<article class="cm-post">
+  return `<article class="cm-post" data-s="${esc([p.t,p.by||'',p.tag||'',p.ref||'',...reps.map(r=>r.t+' '+r.by)].join(' ').toLowerCase())}" data-st="${reps.length?'done':'wait'}">
     <header>${avatar(authorOf(p),'av sm')}<div class="cm-who"><b>${esc(p.by||'익명')}</b>${p.mine?'<span class="chip gray">내 글</span>':''}<small>${esc(p.tag)}</small></div>
       <span class="cm-when">${esc(p.when)}</span>${status}</header>
     ${p.ref?`<span class="cm-ref">${UI('card')} ${esc(p.ref)}</span>`:''}
@@ -1468,12 +1883,12 @@ bind.community=()=>{
     el.querySelector('.prof-go').focus({preventScroll:true});
   });
   if(!bind._profEsc){bind._profEsc=true;document.addEventListener('keydown',e=>{if(e.key==='Escape'){const p2=document.querySelector('.prof-pop');if(p2)p2.remove()}})}
-  document.querySelectorAll('.chat-it').forEach(b=>b.addEventListener('click',()=>{S.dm=b.dataset.room;save();route();setTimeout(()=>{const i=$('#chatText');if(i)i.focus({preventScroll:true})},0)}));
+  document.querySelectorAll('.chat-it[data-room]').forEach(b=>b.addEventListener('click',()=>{S.dm=b.dataset.room;save();route();setTimeout(()=>{const i=$('#chatText');if(i)i.focus({preventScroll:true})},0)}));
   const chf=$('#chatForm');if(chf)chf.addEventListener('submit',e=>{e.preventDefault();const t=$('#chatText').value.trim();if(!t)return;
     const d=new Date(),hm=`${d.getHours()<12?'오전':'오후'} ${((d.getHours()+11)%12)+1}:${String(d.getMinutes()).padStart(2,'0')}`;
     const room=chf.dataset.room,refocus=()=>setTimeout(()=>{const i=$('#chatText');if(i)i.focus({preventScroll:true})},0);
     if(room==='group'){
-      S.posts.unshift({id:'p'+Date.now(),ch:'peer',by:S.role==='junior'?myName():S.role==='senior'?'선배 (나)':'HRD 담당자',tag:S.role==='junior'?`신입 · ${PARTS[S.game.part]}`:S.role==='senior'?'선배':'HRD 담당자',t,when:'오늘 '+hm,mine:true});
+      S.posts.unshift({id:'p'+Date.now(),ch:'peer',by:S.role==='junior'?myName():S.role==='senior'?'선배 (나)':'HRD 담당자',tag:S.role==='junior'?'신입 · 인사팀':S.role==='senior'?'선배':'HRD 담당자',t,when:'오늘 '+hm,mine:true});
       save();route();refocus();return;
     }
     (S.dms[room]=S.dms[room]||[]).push({me:true,t,when:'오늘 '+hm});save();route();refocus();
@@ -1483,15 +1898,69 @@ bind.community=()=>{
       (S.dms[room]=S.dms[room]||[]).push({by:room,t:pool[Math.floor(Math.random()*pool.length)],when:`오늘 ${d2.getHours()<12?'오전':'오후'} ${((d2.getHours()+11)%12)+1}:${String(d2.getMinutes()).padStart(2,'0')}`});
       DM_TYPING=null;save();if(location.hash==='#community'&&S.channel==='peer'){const act=document.activeElement&&document.activeElement.id==='chatText';route();if(act)refocus()}},1900);
   });
-  $('#chans').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;S.channel=b.dataset.c;save();route()});
+  $('#chans').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;S.channel=b.dataset.c;S.cmFilter=null;S.cmOpen=null;save();route()});
+  /* 위쪽 숫자로 모아 보기 */
+  document.querySelectorAll('[data-cmf]').forEach(b=>b.addEventListener('click',()=>{S.cmFilter=S.cmFilter===b.dataset.cmf?null:b.dataset.cmf;S.cmOpen=null;save();route();const t=$('.cm-tabs');if(t)t.scrollIntoView({block:'start',behavior:'smooth'})}));
+  document.querySelectorAll('[data-cmopen]').forEach(b=>b.addEventListener('click',()=>{const id=b.dataset.cmopen;
+    if(b.dataset.ch==='peer'){S.cmFilter=null;S.cmOpen=null;S.channel='peer';S.dm='group';save();route();return}
+    S.cmOpen=id;S.views=S.views||{};S.views[id]=(S.views[id]||0)+1;save();route()}));
+  document.querySelectorAll('[data-cmback]').forEach(b=>b.addEventListener('click',()=>{S.cmOpen=null;save();route()}));
+  $('[data-goask]')?.addEventListener('click',e=>{e.preventDefault();S.channel='ask';S.mt=null;save();route();window.scrollTo(0,0)});
+  /* 익명 질문방 게시판 */
+  const topFeed=()=>{const f=$('.cm-feed');if(f&&f.getBoundingClientRect().top<0)f.scrollIntoView({block:'start'})};
+  document.querySelectorAll('[data-bopen]').forEach(b=>b.addEventListener('click',()=>{S.anonOpen=b.dataset.bopen;S.views=S.views||{};S.views[b.dataset.bopen]=(S.views[b.dataset.bopen]||0)+1;S.anonWrite=false;save();route();topFeed()}));
+  document.querySelectorAll('[data-bdback]').forEach(b=>b.addEventListener('click',()=>{S.anonOpen=null;save();route();topFeed()}));
+  document.querySelectorAll('[data-bwrite]').forEach(b=>b.addEventListener('click',()=>{S.anonWrite=true;save();const f=$('#compose');if(f){f.hidden=false;f.scrollIntoView({block:'nearest'});$('#ptext').focus({preventScroll:true})}}));
+  document.querySelectorAll('[data-bwcancel]').forEach(b=>b.addEventListener('click',()=>{S.anonWrite=false;save();$('#compose').hidden=true}));
+  /* 익명 질문방 검색 */
+  const aq=$('#anonQ');
+  if(aq){
+    let st='all';
+    const posts=[...document.querySelectorAll('.cm-feed .cm-post')];
+    posts.forEach(a=>{const t=a.querySelector('.cm-text');if(t)t.dataset.raw=t.textContent});
+    const reEsc=x=>x.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+    const apply=()=>{const q=aq.value.trim().toLowerCase(),terms=q.split(/\s+/).filter(Boolean);let n=0;
+      posts.forEach(a=>{const ok=terms.every(w=>a.dataset.s.includes(w))&&(st==='all'||a.dataset.st===st);a.hidden=!ok;if(ok)n++;
+        const t=a.querySelector('.cm-text');if(t)t.innerHTML=terms.length?esc(t.dataset.raw).replace(new RegExp(terms.map(w=>reEsc(esc(w))).join('|'),'gi'),'<mark>$&</mark>'):esc(t.dataset.raw)});
+      const c=$('#anonCount');c.hidden=!terms.length&&st==='all';c.textContent=terms.length?`"${aq.value.trim()}" 검색 결과 ${n}개`:`${n}개의 질문`;
+      $('#anonNone').hidden=n>0;bind._anonQ=aq.value};
+    aq.addEventListener('input',apply);
+    document.querySelectorAll('[data-ast]').forEach(b=>b.addEventListener('click',()=>{st=b.dataset.ast;document.querySelectorAll('[data-ast]').forEach(x=>x.setAttribute('aria-pressed',x===b));apply()}));
+    document.querySelectorAll('[data-akw]').forEach(b=>b.addEventListener('click',()=>{aq.value=b.dataset.akw;apply();aq.focus()}));
+    if(bind._anonQ){aq.value=bind._anonQ;apply()}
+  }
+  /* 선배에게 물어보기 */
+  const focusIn=()=>setTimeout(()=>{const i=$('#chatText');if(i){i.focus({preventScroll:true});i.setSelectionRange(i.value.length,i.value.length)}},0);
+  document.querySelectorAll('[data-mt]').forEach(b=>b.addEventListener('click',()=>{S.mt=b.dataset.mt;save();route();focusIn()}));
+  document.querySelectorAll('[data-mtback]').forEach(b=>b.addEventListener('click',()=>{S.mt=null;save();route()}));
+  document.querySelectorAll('[data-mtf]').forEach(b=>b.addEventListener('click',()=>{S.mtFilter=b.dataset.mtf;save();route()}));
+  $('#mtOn')?.addEventListener('change',e=>{S.mtOn=e.target.checked;save();route()});
+  const now=()=>{const d=new Date();return `오늘 ${d.getHours()<12?'오전':'오후'} ${((d.getHours()+11)%12)+1}:${String(d.getMinutes()).padStart(2,'0')}`};
+  const srReply=(n,t,delay)=>{clearTimeout(bind._mtT);clearTimeout(bind._mtT2);MT_TYPING=n;
+    bind._mtT=setTimeout(()=>{if(location.hash==='#community'&&S.mt===n){route();focusIn()}},450);
+    bind._mtT2=setTimeout(()=>{(S.mts[n]=S.mts[n]||[]).push({by:n,t:t(),when:now()});MT_TYPING=null;save();
+      if(location.hash==='#community'&&S.channel==='ask'){const act=document.activeElement&&document.activeElement.id==='chatText';route();if(act)focusIn()}},delay)};
+  const mtf=$('#mtForm');if(mtf)mtf.addEventListener('submit',e=>{e.preventDefault();const t=$('#chatText').value.trim();if(!t)return;
+    const n=mtf.dataset.sr,x=MENTORS.find(y=>y.n===n);
+    (S.mts[n]=S.mts[n]||[]).push({me:true,t,when:now()});S.draft=null;save();route();focusIn();
+    srReply(n,()=>{const k=(S.mts[n]||[]).filter(m=>!m.me).length;return x.rep[k%x.rep.length]},x.on?1900:2600)});
+  $('#mtReveal')?.addEventListener('click',()=>{const n=S.mt;if(!confirm(`${n} 선배에게 내 이름(${myName()})을 공개할까요?`))return;
+    S.mtReveal[n]=true;save();route();srReply(n,()=>`반가워요 ${myName()}님! 🙌 이제 이름으로 부를게요. 오가다 보면 인사해요!`,1500)});
+  $('#mtThanks')?.addEventListener('click',()=>{const n=S.mt;S.mtThanks[n]=true;save();toast(`${n} 선배에게 고마움을 전했어요 · 선배 기여 배지에 반영돼요`);route()});
+  $('#mtShare')?.addEventListener('click',()=>{const n=S.mt,x=MENTORS.find(y=>y.n===n),a=S.mts[n]||[];
+    const q=a.find(m=>m.me),ans=a.find(m=>!m.me);if(!q||!ans)return;
+    S.mtShared.unshift({q:q.t,a:ans.t,by:n,tag:`선배 · ${x.job} ${x.yrs}년차`});
+    S.db.unshift({id:'d'+Date.now(),from:'mt-'+n+'-'+Date.now(),type:x.job==='현업'?'조직 생활':x.job,title:q.t.slice(0,40)+(q.t.length>40?'…':''),src:'선배 1:1 (익명 공유)',status:'검토 대기'});
+    save();toast('이름 없이 공유했어요 · 시나리오 DB에 검토 대기로 추가됐어요');route()});
   const cf=$('#compose');if(cf)cf.addEventListener('submit',e=>{e.preventDefault();const t=$('#ptext').value.trim();if(!t){toast('내용을 입력해 주세요');return}
     const anon=S.channel==='anon'||$('#anon').checked;
-    const tag=S.role==='junior'?`신입 · ${PARTS[S.game.part]}`:S.role==='senior'?'선배':'HRD 담당자';
-    S.posts.unshift({id:'p'+Date.now(),ch:S.channel,by:anon?null:(S.role==='junior'?myName():S.role==='senior'?'선배 (나)':'HRD 담당자'),tag:anon?'익명':tag,t,ref:S.channel==='ask'?S.draft?.ref:undefined,when:'방금',mine:true});
-    S.draft=null;save();toast('올렸어요');route()});
+    const tag=S.role==='junior'?'신입 · 인사팀':S.role==='senior'?'선배':'HRD 담당자';
+    const cat=S.channel==='anon'?(document.querySelector('input[name=acat]:checked')||{}).value:undefined;
+    S.posts.unshift({id:'p'+Date.now(),ch:S.channel,by:anon?null:(S.role==='junior'?myName():S.role==='senior'?'선배 (나)':'HRD 담당자'),tag:anon?'익명':tag,t,cat,ref:S.channel==='ask'?S.draft?.ref:undefined,when:'방금',mine:true});
+    S.draft=null;S.anonWrite=false;S.anonOpen=null;save();toast('올렸어요');route()});
   document.querySelectorAll('.reply-form').forEach(f=>f.addEventListener('submit',e=>{e.preventDefault();const v=f.querySelector('input').value.trim();if(!v)return;
-    const id=f.dataset.p;S.replies[id]=S.replies[id]||[];
-    S.replies[id].push({by:S.role==='junior'?myName():S.role==='senior'?'선배 (나)':'HRD 담당자',tag:S.role==='junior'?'신입':S.role==='senior'?'선배 · 인사팀':'HRD 담당자',t:v});
+    const id=f.dataset.p;S.replies[id]=S.replies[id]||[];const inAnon=(allPosts().find(x=>x.id===id)||{}).ch==='anon';
+    S.replies[id].push({by:S.role==='junior'?(inAnon?'익명 신입':myName()):S.role==='senior'?'선배 (나)':'HRD 담당자',tag:S.role==='junior'?'신입':S.role==='senior'?'선배 · 인사팀':'HRD 담당자',t:v});
     save();route()}));
   document.querySelectorAll('[data-prop]').forEach(b=>b.addEventListener('click',()=>{const p=allPosts().find(x=>x.id===b.dataset.prop);
     S.db.unshift({id:'d'+Date.now(),from:p.id,type:'미분류',title:p.t.slice(0,40)+(p.t.length>40?'…':''),src:'소통 공간',status:'검토 대기'});
@@ -1738,5 +2207,6 @@ bind.hrd=()=>{
 route();
 </script>
 
+<script src="hb-bot.js"></script>
 </body>
 </html>

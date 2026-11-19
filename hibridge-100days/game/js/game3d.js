@@ -78,6 +78,33 @@ const Game3D = (() => {
   // 캐릭터 (관절형 휴머노이드)
   // ---------------------------------------------------------------
 
+  // ---- 드랍 아이템 단독 모형 (떠다니는 줍기용) — 원점 중심, 높이 약 0.5 ----
+  function itemModel(id) {
+    const g = new THREE.Group(), gold = mat("#ffd54d", { metalness: 0.5, roughness: 0.3, emissive: "#7a5a00", emissiveIntensity: 0.25 });
+    if (id === "goldbadge") {
+      addMesh(g, geo("pk-lan", () => new THREE.TorusGeometry(0.17, 0.018, 8, 24, Math.PI)), mat("#d99a00"), 0, 0.12, 0).rotation.z = Math.PI;
+      box(g, 0.26, 0.32, 0.04, gold, 0, -0.32, 0); sph(g, 0.06, 0.06, 0.02, "#ffffff", 0, -0.12, 0.03); box(g, 0.15, 0.03, 0.01, "#d99a00", 0, -0.27, 0.025);
+    } else if (id === "gradcap") {
+      cyl(g, 0.2, 0.12, "#1c2a4f", 0, -0.12, 0); const b = box(g, 0.56, 0.04, 0.56, "#0b1a3a", 0, 0, 0); b.rotation.y = Math.PI / 4;
+      sph(g, 0.035, 0.035, 0.035, "#ffb400", 0, 0.05, 0); const tz = box(g, 0.02, 0.22, 0.02, "#ffb400", 0.3, -0.2, 0); sph(g, 0.04, 0.05, 0.04, "#ffb400", 0.3, -0.21, 0);
+    } else if (id === "bubble") {
+      box(g, 0.44, 0.28, 0.1, "#ffffff", 0, -0.14, 0); const tl = box(g, 0.1, 0.1, 0.1, "#ffffff", -0.12, -0.2, 0); tl.rotation.z = 0.8;
+      [-0.12, 0, 0.12].forEach((x) => sph(g, 0.035, 0.035, 0.02, "#5b8def", x, 0, 0.055));
+    } else if (id === "cape") {
+      const cp = addMesh(g, geo("pk-cape", () => new THREE.CylinderGeometry(0.18, 0.32, 0.5, 20, 1, true, Math.PI * 0.5, Math.PI)), mat("#d7263d", { side: THREE.DoubleSide, roughness: 0.6 }), 0, 0, 0);
+      [-1, 1].forEach((sd) => sph(g, 0.035, 0.035, 0.035, "#ffc83d", 0.17 * sd, 0.24, 0.02));
+    } else if (id === "clipboard") {
+      box(g, 0.3, 0.38, 0.03, "#b7793f", 0, -0.2, 0); box(g, 0.25, 0.3, 0.01, "#ffffff", 0, -0.17, 0.02); box(g, 0.12, 0.05, 0.03, "#9aa3b5", 0, 0.14, 0.02);
+    } else if (id === "briefcase") {
+      box(g, 0.42, 0.3, 0.12, "#7a4b2a", 0, -0.2, 0); addMesh(g, geo("bricase-h", () => new THREE.TorusGeometry(0.07, 0.018, 8, 16, Math.PI)), mat("#5a3a22"), 0, 0.1, 0); box(g, 0.06, 0.05, 0.13, "#ffc83d", 0, -0.04, 0);
+    } else if (id === "notebook") {
+      box(g, 0.26, 0.34, 0.05, "#5b8def", 0, -0.17, 0); box(g, 0.12, 0.05, 0.01, "#ffffff", 0.03, -0.01, 0.03); const pen = cyl(g, 0.018, 0.3, "#0b1a3a", 0.18, -0.2, 0.05); pen.rotation.z = -0.6;
+    } else if (id === "coffee") {
+      addMesh(g, geo("bricup", () => new THREE.CylinderGeometry(0.09, 0.07, 0.22, 20)), mat("#ffffff"), 0, -0.1, 0); cyl(g, 0.095, 0.03, "#6b3f26", 0, 0.01, 0); cyl(g, 0.092, 0.07, "#004aad", 0, -0.14, 0);
+    } else sph(g, 0.15, 0.15, 0.15, gold, 0, 0, 0);
+    return g;
+  }
+
   // ---- 꾸민 브리 (신입 = 나). 사람 캐릭터와 같은 userData 구조로 맞춰 animate()를 그대로 쓴다 ----
   function makeBri(L) {
     const root = new THREE.Group(), body = new THREE.Group(), C = { cast: true };
@@ -130,7 +157,14 @@ const Game3D = (() => {
     if (L.top === "sprout") { cyl(inner, 0.015, 0.16, "#2b8a6e", 0, 1.56, 0); [-1, 1].forEach((sd) => { flat(acc("#3fb37f"), 0.09 * sd, 1.76, 0, 0.1, 0.04, 0.06).rotation.z = -0.5 * sd; }); }
     if (L.top === "cap") { addMesh(inner, geo("bricap", () => new THREE.SphereGeometry(0.68, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2)), acc("#0b1a3a"), 0, 0.95, 0, 1, 0.93, 0.86, C); box(inner, 0.72, 0.04, 0.42, "#0b1a3a", 0, 0.96, 0.62).rotation.x = 0.12; sph(inner, 0.05, 0.05, 0.05, "#ffb400", 0, 1.59, 0); }
     if (L.top === "crown") { addMesh(inner, geo("bricrown", () => new THREE.CylinderGeometry(0.26, 0.3, 0.2, 10, 1, true)), acc("#ffc83d", { side: THREE.DoubleSide, metalness: 0.4 }), 0, 1.6, 0); for (let i = 0; i < 5; i++) { const a = i / 5 * Math.PI * 2; addMesh(inner, geo("bricone2", () => new THREE.ConeGeometry(0.05, 0.14, 10)), acc("#ffc83d", { metalness: 0.4 }), Math.sin(a) * 0.26, 1.77, Math.cos(a) * 0.26); } }
-    if (L.face === "glasses") { [-1, 1].forEach((sd) => onFace(addMesh(inner, geo("briglass", () => new THREE.TorusGeometry(0.15, 0.02, 8, 32)), dark, 0.2 * sd, 0.92, zAt(0.2, 0.92) + 0.03), 0.2 * sd, 0.92)); }
+    if (L.face === "glasses") {
+      // 동그란 얼굴에 평평한 안경테를 대면 코 쪽·아래쪽 테가 얼굴 속으로 묻힘 → 테 둘레에서 가장 튀어나온 얼굴 면보다 살짝 앞에 둔다
+      const R = 0.15 * Math.max(1, k) + 0.012, cy = 0.915;
+      let zMax = 0; for (let i = 0; i < 24; i++) { const a2 = (i / 24) * Math.PI * 2; zMax = Math.max(zMax, zAt(Math.abs(0.2 + Math.cos(a2) * R) - 0.0, cy + Math.sin(a2) * R)); }
+      const zg = zMax + 0.035, frameM = mat("#0b1a3a", { roughness: 0.3 });
+      [-1, 1].forEach((sd) => { const rim = addMesh(inner, geo("briglass2-" + R.toFixed(3), () => new THREE.TorusGeometry(R, 0.022, 10, 40)), frameM, 0.2 * sd, cy, zg); rim.rotation.y = 0.18 * sd; });
+      const br = addMesh(inner, geo("briglass-br", () => new THREE.TorusGeometry(0.05, 0.016, 8, 16, Math.PI)), frameM, 0, cy + 0.01, zg + 0.012);
+    }
     if (L.face === "sunglasses") { [-1, 1].forEach((sd) => flat(dark, 0.2 * sd, 0.92, 0.03, 0.15, 0.12, 0.03)); }
     if (L.face === "star") flat(acc("#ffd54d"), 0.4, 0.58, 0.0, 0.06, 0.06, 0.02);
     if (L.neck === "tie" || L.neck === undefined) { const t = new THREE.Shape(); t.moveTo(-0.06, 0); t.lineTo(0.06, 0); t.lineTo(0.08, -0.06); t.lineTo(0, -0.3); t.lineTo(-0.08, -0.06); t.lineTo(-0.06, 0); const tie = addMesh(inner, geo("britie", () => new THREE.ExtrudeGeometry(t, { depth: 0.03, bevelEnabled: false })), acc("#ffb400"), 0, 0.56, zAt(0, 0.56) - 0.012); tie.rotation.x = 0.22; }
@@ -139,6 +173,16 @@ const Game3D = (() => {
     if (L.neck === "scarf") { const sc = addMesh(inner, geo("briscarf", () => new THREE.TorusGeometry(0.62, 0.08, 12, 48)), acc("#ff6f61"), 0, 0.58, 0); sc.rotation.x = Math.PI / 2; sc.scale.set(1.08, 0.92, 1); }
     if (L.ear === "headset") { addMesh(inner, geo("brihs", () => new THREE.TorusGeometry(0.66, 0.04, 8, 40, Math.PI)), dark, 0, 0.94, 0); [-1, 1].forEach((sd) => { const c = cyl(inner, 0.12, 0.1, "#0b1a3a", 0.66 * sd, 0.89, 0); c.rotation.z = Math.PI / 2; }); }
     if (L.ear === "earmuff") { addMesh(inner, geo("briem", () => new THREE.TorusGeometry(0.66, 0.035, 8, 40, Math.PI)), acc("#ff8fab"), 0, 0.94, 0); [-1, 1].forEach((sd) => sph(inner, 0.15, 0.15, 0.15, "#ffffff", 0.67 * sd, 0.94, 0)); }
+    // ---- 드랍 아이템 ----
+    if (L.top === "gradcap") { cyl(inner, 0.3, 0.14, "#1c2a4f", 0, 1.5, 0); const b = box(inner, 0.86, 0.05, 0.86, "#0b1a3a", 0, 1.64, 0); b.rotation.y = Math.PI / 4; sph(inner, 0.04, 0.04, 0.04, "#ffb400", 0, 1.7, 0); const tz = box(inner, 0.025, 0.3, 0.025, "#ffb400", 0.42, 1.38, 0.0); tz.rotation.z = 0.15; sph(inner, 0.05, 0.06, 0.05, "#ffb400", 0.44, 1.38, 0); }
+    if (L.top === "bubble") { const g2 = new THREE.Group(); g2.position.set(0.36, 1.5, 0.1); g2.rotation.z = -0.25; inner.add(g2); box(g2, 0.42, 0.26, 0.08, "#ffffff", 0, 0, 0); const tail = box(g2, 0.1, 0.1, 0.08, "#ffffff", -0.1, -0.06, 0); tail.rotation.z = 0.8; [-0.11, 0, 0.11].forEach((x) => sph(g2, 0.03, 0.03, 0.02, "#5b8def", x, 0.13, 0.045)); }
+    if (L.neck === "goldbadge") { box(inner, 0.24, 0.3, 0.03, mat("#ffd54d", { metalness: 0.5, roughness: 0.3 }), 0, 0.22, zAt(0, 0.36) + 0.015); sph(inner, 0.05, 0.05, 0.015, "#ffffff", 0, 0.4, zAt(0, 0.4) + 0.04); box(inner, 0.14, 0.03, 0.01, "#d99a00", 0, 0.27, zAt(0, 0.3) + 0.04); }
+    if (L.back === "cape") { const cp = addMesh(inner, geo("bricape", () => new THREE.CylinderGeometry(0.62, 0.86, 1.15, 28, 1, true, Math.PI * 0.62, Math.PI * 0.76)), mat("#d7263d", { side: THREE.DoubleSide, roughness: 0.6 }), 0, 0.62, -0.02, 1, 1, ZS + 0.06, C); cp.rotation.y = 0; [-1, 1].forEach((sd) => sph(inner, 0.05, 0.05, 0.03, "#ffc83d", 0.42 * sd, 1.12, zAt(0.42, 1.12) + 0.01)); }
+    const hd = aL.hand;
+    if (L.hand === "clipboard") { const g2 = new THREE.Group(); g2.position.set(-0.05, 0.02, 0.14); g2.rotation.set(-0.3, 0.2, 0.1); hd.add(g2); g2.scale.setScalar(1.5); box(g2, 0.3, 0.38, 0.03, "#b7793f", 0, -0.2, 0); box(g2, 0.25, 0.3, 0.01, "#ffffff", 0, -0.17, 0.02); box(g2, 0.12, 0.05, 0.03, "#9aa3b5", 0, 0.14, 0.02); }
+    if (L.hand === "briefcase") { const g2 = new THREE.Group(); g2.position.set(-0.04, -0.02, 0.04); hd.add(g2); g2.scale.setScalar(1.5); box(g2, 0.42, 0.3, 0.12, "#7a4b2a", 0, -0.36, 0); addMesh(g2, geo("bricase-h", () => new THREE.TorusGeometry(0.07, 0.018, 8, 16, Math.PI)), mat("#5a3a22"), 0, -0.06, 0); box(g2, 0.06, 0.05, 0.13, "#ffc83d", 0, -0.2, 0); }
+    if (L.hand === "notebook") { const g2 = new THREE.Group(); g2.position.set(-0.05, 0, 0.14); g2.rotation.set(-0.35, 0.25, 0.15); hd.add(g2); g2.scale.setScalar(1.5); box(g2, 0.26, 0.34, 0.05, "#5b8def", 0, -0.2, 0); box(g2, 0.12, 0.05, 0.01, "#ffffff", 0.03, -0.04, 0.03); const pen = cyl(g2, 0.018, 0.3, "#0b1a3a", 0.18, -0.25, 0.05); pen.rotation.z = -0.6; }
+    if (L.hand === "coffee") { const g2 = new THREE.Group(); g2.position.set(-0.04, -0.05, 0.12); hd.add(g2); g2.scale.setScalar(1.5); addMesh(g2, geo("bricup", () => new THREE.CylinderGeometry(0.09, 0.07, 0.22, 20)), mat("#ffffff"), 0, -0.12, 0); cyl(g2, 0.095, 0.03, "#6b3f26", 0, -0.01, 0); cyl(g2, 0.092, 0.07, "#004aad", 0, -0.16, 0); }
     const phone = box(aR.hand, 0.07, 0.15, 0.03, "#1c2333", 0, -0.1, 0.09); phone.visible = false;
     const paper = box(inner, 0.36, 0.46, 0.012, "#ffffff", 0, 0.28, 0.7); paper.visible = false; box(paper, 0.6, 0.04, 0.5, "#e05555", 0, 0.1, 0.6);
     const D = () => new THREE.Group();
@@ -893,6 +937,102 @@ const Game3D = (() => {
       });
     },
     shake() { cam.shake = 0.45; },
+    // 드랍 아이템: 화면에서 브리 오른쪽에 선물 상자가 동동 떠 있음 → 상자를 누르거나 다가가면
+    // 상자가 흔들리다 뚜껑이 날아가고 실제 아이템이 튀어나옴 → 끝나면 resolve
+    spawnGift(it) {
+      return new Promise((resolve) => {
+        if (!W.dyn || !it) return resolve();
+        const col = { common: "#ffffff", rare: "#3d8bff", epic: "#ffc83d", hidden: "#8e6bd8" }[it.tier] || "#ffffff";
+        const rib = it.tier === "common" ? "#ff6f91" : it.tier === "epic" ? "#d7263d" : "#ffffff";
+        // 카메라 기준 오른쪽(+살짝 카메라 쪽)에 두어 항상 브리 옆에 보이게
+        const rx = Math.cos(cam.yaw), rz = -Math.sin(cam.yaw), fx = -Math.sin(cam.yaw), fz = -Math.cos(cam.yaw);
+        const px = player.x + rx * 1.35 - fx * 0.35, pz = player.z + rz * 1.35 - fz * 0.35;
+        const root = new THREE.Group(); root.position.set(px, 0, pz); W.dyn.add(root);
+        const giftG = new THREE.Group(); giftG.position.y = 0.75; root.add(giftG);
+        const bodyM = mat(col, { roughness: 0.35, emissive: col, emissiveIntensity: 0.15 });
+        box(giftG, 0.46, 0.38, 0.46, bodyM, 0, -0.19, 0, { cast: true }); box(giftG, 0.08, 0.385, 0.47, rib, 0, -0.19, 0); box(giftG, 0.47, 0.385, 0.08, rib, 0, -0.19, 0);
+        const lid = new THREE.Group(); lid.position.y = 0.19; giftG.add(lid);
+        box(lid, 0.52, 0.09, 0.52, bodyM, 0, 0, 0); box(lid, 0.085, 0.095, 0.53, rib, 0, 0, 0); box(lid, 0.53, 0.095, 0.085, rib, 0, 0, 0);
+        [-1, 1].forEach((sd) => { const bw = sph(lid, 0.1, 0.06, 0.05, rib, 0.08 * sd, 0.13, 0); bw.rotation.z = 0.5 * sd; });
+        const item = itemModel(it.id); item.scale.setScalar(0.01); item.visible = false; item.position.y = 0.75; root.add(item);
+        const ringM = new THREE.MeshBasicMaterial({ color: it.tier === "common" ? "#ffb400" : col, transparent: true, opacity: 0.5, side: THREE.DoubleSide, depthWrite: false });
+        const ring = new THREE.Mesh(geo("pickring", () => new THREE.RingGeometry(0.34, 0.5, 40)), ringM); ring.rotation.x = -Math.PI / 2; ring.position.y = 0.02; root.add(ring);
+        // 누를 수 있는 영역(상자 위) + 안내 이름표
+        const hit = document.createElement("button"); hit.className = "gift-hit"; hit.type = "button"; hit.setAttribute("aria-label", "선물 상자 열기");
+        hit.innerHTML = `<span class="gift-tag t-${it.tier}">🎁 선물 상자 · 눌러서 열기</span>`;
+        if (labelsEl) labelsEl.appendChild(hit);
+        let t0 = performance.now(), last = t0, phase = "idle", tP = 0, sparks = [];
+        const open = () => { if (phase !== "idle") return; phase = "shake"; tP = performance.now(); hit.remove(); };
+        hit.addEventListener("click", (e) => { e.stopPropagation(); open(); });
+        const step = (now) => {
+          const dt = Math.min(0.05, (now - last) / 1000), k = (now - t0) / 1000; last = now;
+          if (phase === "idle") {
+            const s = Math.min(1, k * 2.4); giftG.scale.setScalar(s < 1 ? s * (1.25 - 0.25 * s) : 1);
+            giftG.position.y = 0.75 + Math.sin(k * 2.6) * 0.1; giftG.rotation.y = Math.sin(k * 0.9) * 0.5;
+            ringM.opacity = 0.35 + Math.sin(k * 3) * 0.15;
+            const sp = toScreen(new THREE.Vector3(px, giftG.position.y, pz));
+            if (sp) { hit.style.display = "block"; hit.style.transform = `translate(${sp.x}px, ${sp.y}px) translate(-50%, -50%)`; } else hit.style.display = "none";
+            if (Math.hypot(player.x - px, player.z - pz) < 0.7) open();
+          } else if (phase === "shake") {
+            const q = (now - tP) / 1000; giftG.rotation.z = Math.sin(q * 34) * 0.12; giftG.position.y = 0.75 + Math.abs(Math.sin(q * 17)) * 0.06;
+            if (q > 0.55) { phase = "pop"; tP = now; giftG.rotation.z = 0; item.visible = true;
+              for (let i = 0; i < 18; i++) { const sp2 = sph(W.dyn, 0.05, 0.05, 0.05, mat(i % 2 ? col : "#ffe58a", { emissive: "#ffe58a", emissiveIntensity: 0.8 }), px, 0.9, pz); const a = (i / 18) * Math.PI * 2; sp2.userData.v = new THREE.Vector3(Math.cos(a) * 1.7, 2.2 + (i % 3) * 0.6, Math.sin(a) * 1.7); sparks.push(sp2); } }
+          } else if (phase === "pop") {
+            const q = (now - tP) / 1000;
+            lid.position.y = 0.19 + q * 2.4; lid.rotation.x = q * 5; lid.rotation.z = q * 3;
+            giftG.scale.setScalar(Math.max(0.01, 1 - Math.max(0, q - 0.25) * 2.5));
+            const e2 = Math.min(1, q / 0.45); item.scale.setScalar(1.5 * (e2 < 1 ? e2 * (1.3 - 0.3 * e2) : 1));
+            item.position.y = 0.75 + Math.min(1, q / 0.45) * 0.75 + (q > 0.45 ? Math.sin((q - 0.45) * 5) * 0.05 : 0); item.rotation.y += dt * 4;
+            ringM.opacity = Math.max(0, 0.5 - q * 0.4);
+            sparks.forEach((s) => { s.userData.v.y -= 6 * dt; s.position.addScaledVector(s.userData.v, dt); s.scale.multiplyScalar(0.985); });
+            if (q > 1.3) { W.dyn.remove(root); sparks.forEach((s) => W.dyn.remove(s)); return resolve(); }
+          }
+          requestAnimationFrame(step);
+        };
+        requestAnimationFrame(step);
+      });
+    },
+    // 드랍 아이템: 브리 앞에 선물 상자가 떨어져 통통 튀고, 뚜껑이 열리며 반짝임 → 끝나면 resolve
+    dropBox(tier) {
+      return new Promise((resolve) => {
+        if (!W.dyn) return resolve();
+        const col = { common: "#ffffff", rare: "#3d8bff", epic: "#ffc83d", hidden: "#8e6bd8" }[tier] || "#ffffff";
+        const rib = tier === "common" ? "#ff6f91" : "#ffffff";
+        const g2 = new THREE.Group(), fx = Math.sin(player.rot), fz = Math.cos(player.rot);
+        const bx = player.x + fx * 1.1, bz = player.z + fz * 1.1; g2.position.set(bx, 3.6, bz); W.dyn.add(g2);
+        const bodyM = mat(col, { roughness: 0.35, emissive: col, emissiveIntensity: 0.18 });
+        box(g2, 0.5, 0.42, 0.5, bodyM, 0, 0, 0, { cast: true }); box(g2, 0.08, 0.425, 0.51, rib, 0, 0, 0); box(g2, 0.51, 0.425, 0.08, rib, 0, 0, 0);
+        const lid = new THREE.Group(); lid.position.y = 0.42; g2.add(lid);
+        box(lid, 0.56, 0.1, 0.56, bodyM, 0, 0, 0); box(lid, 0.09, 0.105, 0.57, rib, 0, 0, 0); box(lid, 0.57, 0.105, 0.09, rib, 0, 0, 0);
+        [-1, 1].forEach((sd) => { const b = sph(lid, 0.1, 0.06, 0.05, rib, 0.08 * sd, 0.14, 0); b.rotation.z = 0.5 * sd; });
+        const ring = addMesh(W.dyn, geo("dropring", () => new THREE.RingGeometry(0.42, 0.56, 40)), mat(col, { transparent: true, opacity: 0.0, side: THREE.DoubleSide, emissive: col, emissiveIntensity: 0.6 }).clone(), bx, 0.02, bz);
+        ring.rotation.x = -Math.PI / 2;
+        const sparks = [];
+        let vy = 0, y = 3.6, bounces = 0, t0 = performance.now(), phase = "fall", tOpen = 0, last = t0;
+        const step = (now) => {
+          const dt = Math.min(0.05, (now - last) / 1000); last = now;
+          if (phase === "fall") {
+            vy -= 14 * dt; y += vy * dt;
+            if (y <= 0) { y = 0; bounces++; vy = bounces < 3 ? -vy * 0.38 : 0; if (bounces === 1) cam.shake = 0.15; if (bounces >= 3) { phase = "wobble"; t0 = now; } }
+            g2.position.y = y; g2.rotation.y += dt * 2.2;
+            ring.material.opacity = Math.min(0.7, ring.material.opacity + dt * 1.2);
+          } else if (phase === "wobble") {
+            const k = (now - t0) / 1000; g2.rotation.z = Math.sin(k * 30) * 0.08 * (1 - k / 0.6);
+            if (k > 0.6) { phase = "open"; tOpen = now; g2.rotation.z = 0;
+              for (let i = 0; i < 16; i++) { const s = sph(W.dyn, 0.05, 0.05, 0.05, mat(i % 2 ? col : "#ffe58a", { emissive: "#ffe58a", emissiveIntensity: 0.8 }), bx, 0.5, bz); const a = (i / 16) * Math.PI * 2; s.userData.v = new THREE.Vector3(Math.cos(a) * 1.6, 2.4 + (i % 3) * 0.6, Math.sin(a) * 1.6); sparks.push(s); } }
+          } else if (phase === "open") {
+            const k = (now - tOpen) / 1000;
+            lid.position.y = 0.42 + k * 2.2; lid.rotation.x = k * 4; lid.rotation.z = k * 2;
+            sparks.forEach((s) => { s.userData.v.y -= 6 * dt; s.position.addScaledVector(s.userData.v, dt); s.scale.multiplyScalar(0.985); });
+            g2.scale.setScalar(Math.max(0.01, 1 - Math.max(0, k - 0.35) * 2.2));
+            ring.material.opacity = Math.max(0, 0.7 - k);
+            if (k > 0.85) { W.dyn.remove(g2); W.dyn.remove(ring); sparks.forEach((s) => W.dyn.remove(s)); return resolve(); }
+          }
+          requestAnimationFrame(step);
+        };
+        requestAnimationFrame(step);
+      });
+    },
     elevator,
     act(card) { const a = CARD_ACT[card.id]; pill(`${(DAYS[card.day - 1] || {}).label || ""} · ${card.category} — ${card.title}`); if (!a) return; setAct(a.m, a.e); if (a.then) setTimeout(() => { if (player.act === a.m) setAct(a.then); }, 1100); },
     react(sum) { const a = sum >= 6 ? ["happy", "✨"] : sum <= -6 ? ["sad", "💧"] : ["nod", "👍"]; setAct(a[0], a[1]); clearTimeout(this._rt); this._rt = setTimeout(() => setAct(null, ""), 2600); },
@@ -996,16 +1136,17 @@ const Game3D = (() => {
   // ---------------------------------------------------------------
   // 루프
   // ---------------------------------------------------------------
-  const perf = { n: 0, sum: 0, level: 0 };
+  const perf = { n: 0, slow: 0, level: 0, t0: performance.now() };
   function adaptQuality(raw) {
-    if (perf.level >= 2) return;
-    perf.n++; perf.sum += raw;
-    if (perf.n < 90) return;
-    const avg = perf.sum / perf.n; perf.n = 0; perf.sum = 0;
-    if (avg > 1 / 28) {
+    if (perf.level >= 2 || performance.now() - perf.t0 < 4000) return;
+    perf.n++; if (raw > 1 / 28) perf.slow++;
+    if (perf.n < 150) return;
+    const slowRatio = perf.slow / perf.n; perf.n = 0; perf.slow = 0;
+    if (slowRatio > 0.6) {   // 2.5초 동안 프레임 대부분이 느릴 때만
       perf.level++;
-      if (perf.level === 1) { renderer.setPixelRatio(1); resize(); }
-      if (perf.level === 2) { W.sun.shadow.autoUpdate = false; W.sun.shadow.needsUpdate = true; perf.staticShadow = true; }
+      if (perf.level === 1 && (window.devicePixelRatio || 1) > 1.05) { renderer.setPixelRatio(1); resize(); }
+      else if (perf.level === 1) perf.level = 2;
+      if (perf.level === 2 && W.sun.shadow.map) { W.sun.shadow.mapSize.set(1024, 1024); W.sun.shadow.map.dispose(); W.sun.shadow.map = null; }
     }
   }
   function loop() {

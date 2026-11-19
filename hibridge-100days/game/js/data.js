@@ -32,7 +32,7 @@ const CARDS = [];
 HB_DAYS.forEach((d, i) => d.cards.forEach((id) => {
   const c = HB_CARDS[id], best = c.seed.indexOf(Math.max(...c.seed));
   CARDS.push({
-    id, day: i + 1, category: c.type, title: c.title, text: c.text, ctx: c.ctx, who: c.who, seed: c.seed,
+    id, day: i + 1, category: c.type, area: c.area || null, title: c.title, text: c.text, ctx: c.ctx, who: c.who, seed: c.seed,
     choices: c.ch.map((x) => ({ text: x.t, effects: x.d, result: x.r })),
     best,
     feedback: c.sr.map((r) => ({ senior: r.s, pick: r.p, text: r.q, why: r.w })),

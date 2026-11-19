@@ -571,3 +571,94 @@ body.embed .ghelp.show { opacity: 1; transform: translateX(-50%); }
 @keyframes emPop { from { transform: translate(-50%, -80%) scale(.6); opacity: 0; } }
 .sitpill { position: absolute; left: 50%; top: 92px; transform: translate(-50%, -8px); background: rgba(11,26,58,.82); color: #fff; font: 700 14px "Noto Sans KR", sans-serif; padding: 8px 18px; border-radius: 999px; opacity: 0; transition: opacity .35s, transform .35s; pointer-events: none; z-index: 4; white-space: nowrap; max-width: calc(100% - 24px); overflow: hidden; text-overflow: ellipsis; }
 .sitpill.on { opacity: 1; transform: translate(-50%, 0); }
+
+/* ---------- 100일 정리 리포트 (엔딩) ---------- */
+.gpanel.report .gbox { width: min(820px, 100%); }
+/* 리포트에서는 축하 효과가 글을 가리지 않게: 두 번만 내리고 사라짐 */
+.gpanel.report .confetti i { animation-iteration-count: 2; animation-fill-mode: forwards; }
+.rp-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin: 22px 0 10px; flex-wrap: wrap; }
+.rp-head h2 { margin: 0; font-size: 20px; }
+.rp-sum { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.rp-sum > div { background: var(--primary-soft); border-radius: 14px; padding: 12px 14px; display: grid; gap: 2px; }
+.rp-sum span { font-size: 12px; color: var(--muted); }
+.rp-sum b { font-size: 17px; }
+.rp-sum small { font-size: 12px; color: var(--primary); font-weight: 700; }
+.rp-gauges { display: grid; gap: 8px; margin: 14px 0 6px; }
+.rp-g { display: grid; grid-template-columns: 110px 1fr 34px 86px; align-items: center; gap: 10px; font-size: 13px; }
+.rp-g b { text-align: right; font-size: 15px; }
+.rp-g small { color: var(--muted); font-size: 12px; }
+.rp-bar { height: 10px; background: #eef1f6; border-radius: 99px; overflow: hidden; }
+.rp-bar i { display: block; height: 100%; border-radius: 99px; }
+.rp-h3 { margin: 22px 0 8px; font-size: 17px; }
+.rp-day { border: 1px solid var(--line); border-radius: 16px; padding: 14px; margin-bottom: 12px; background: #fff; break-inside: avoid; }
+.rp-day-h { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+.rp-day-h b { font-size: 15px; }
+.rp-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.rp-it { border-left: 4px solid #2f9e6b; background: #f7faf8; border-radius: 0 12px 12px 0; padding: 10px 12px; display: grid; gap: 5px; }
+.rp-it.diff { border-left-color: #e8a33d; background: #fffaf1; }
+.rp-it-h { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.rp-it-h b { font-size: 14.5px; }
+.rp-mark { margin-left: auto; font-size: 12px; font-weight: 700; color: #2f9e6b; }
+.rp-it.diff .rp-mark { color: #9a6215; }
+.rp-mine, .rp-best, .rp-retro { margin: 0; font-size: 13.5px; line-height: 1.55; }
+.rp-mine em, .rp-best em, .rp-retro em { font-style: normal; font-weight: 700; font-size: 12px; margin-right: 6px; padding: 1px 7px; border-radius: 6px; background: var(--primary-soft); color: var(--primary); }
+.rp-best { color: var(--muted); }
+.rp-best em { background: #fdf0da; color: #9a6215; }
+.rp-retro { margin-top: 10px; padding: 10px 12px; background: #f5f3ff; border-radius: 10px; }
+.rp-retro em { background: #e7e1ff; color: #5a3fc0; }
+.rp-chips { display: flex; flex-wrap: wrap; gap: 5px; }
+.rp-chip { font-size: 11.5px; font-weight: 700; border-radius: 6px; padding: 1px 7px; background: #eee; color: #555; }
+.rp-chip.up { background: #e3f4ea; color: #1f7a4d; }
+.rp-chip.dn { background: #fbe4e2; color: #b03a32; }
+.rp-lessons ol { margin: 8px 0 0; padding-left: 20px; display: grid; gap: 6px; font-size: 13.5px; line-height: 1.55; }
+@media (max-width: 560px) {
+  .rp-sum { grid-template-columns: 1fr; }
+  .rp-g { grid-template-columns: 92px 1fr 30px; }
+  .rp-g small { display: none; }
+  .rp-mark { margin-left: 0; }
+}
+/* 정리본 저장(PDF): 리포트만 인쇄 */
+@media print {
+  html, body { height: auto !important; overflow: visible !important; }
+  body *:has(.gpanel.report) { overflow: visible !important; height: auto !important; max-height: none !important; position: static !important; transform: none !important; }
+  body * { visibility: hidden !important; }
+  .gpanel.report, .gpanel.report * { visibility: visible !important; }
+  .gpanel.report { position: absolute !important; inset: 0 auto auto 0 !important; width: 100%; padding: 0 !important; background: #fff !important; display: block !important; }
+  .gpanel.report .gbox { width: 100% !important; max-height: none !important; overflow: visible !important; box-shadow: none !important; border: 0 !important; }
+  .gpanel.report .rp-actions, .gpanel.report .confetti { display: none !important; }
+  .ending-card, .rp-sum > div, .rp-bar i, .rp-it, .rp-chip, .tag { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+
+/* ---------- 드랍 아이템: 획득 카드 · 도감 ---------- */
+.itemget { position: absolute; left: 50%; top: 84px; transform: translateX(-50%); z-index: 4; display: flex; gap: 14px; align-items: center;
+  width: min(440px, calc(100% - 24px)); background: #fff; border-radius: 18px; padding: 14px 16px; box-shadow: 0 18px 44px -12px rgba(0,20,60,.45);
+  border: 2px solid #e3e8f0; font-family: "Noto Sans KR", sans-serif; animation: igIn .45s cubic-bezier(.2,1.4,.4,1) both; }
+.itemget.t-rare { border-color: #3d8bff; } .itemget.t-epic { border-color: #ffc83d; box-shadow: 0 0 0 4px rgba(255,200,61,.25), 0 18px 44px -12px rgba(0,20,60,.45); } .itemget.t-hidden { border-color: #8e6bd8; }
+.itemget.out { animation: igOut .3s ease forwards; }
+@keyframes igIn { from { opacity: 0; transform: translate(-50%, -16px) scale(.9); } }
+@keyframes igOut { to { opacity: 0; transform: translate(-50%, -10px) scale(.96); } }
+.ig-pic { flex: none; width: 86px; height: 86px; border-radius: 16px; display: grid; place-items: center; overflow: hidden; }
+.ig-pic svg { width: 86px; height: auto; max-height: 86px; }
+.ig-tx { display: grid; gap: 3px; min-width: 0; }
+.ig-tag { justify-self: start; color: #fff; font-size: 11px; font-weight: 800; border-radius: 6px; padding: 2px 8px; }
+.ig-tx b { font-size: 17px; } .ig-tx small { font-size: 13px; color: #3b4252; } .ig-tx em { font-style: normal; font-size: 11.5px; color: #6b7280; }
+.ig-acts { display: flex; gap: 6px; margin-top: 4px; } .ig-acts .btn { padding: 6px 12px; font-size: 13px; }
+.rp-items { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 8px; }
+.rp-item { border: 1px solid var(--line); border-radius: 14px; padding: 10px 8px; display: grid; justify-items: center; gap: 2px; text-align: center; background: #fff; break-inside: avoid; }
+.rp-item-pic { width: 56px; height: 56px; border-radius: 50%; display: grid; place-items: center; overflow: hidden; margin-bottom: 4px; }
+.rp-item-pic svg { width: 56px; height: auto; max-height: 56px; }
+.rp-item b { font-size: 13px; } .rp-item small { font-size: 11px; font-weight: 800; } .rp-item em { font-style: normal; font-size: 11px; color: var(--muted); line-height: 1.35; }
+.rp-item.locked .rp-item-pic { filter: grayscale(1) brightness(.4); opacity: .55; }
+.rp-item.past { opacity: .6; } .rp-item.past .rp-item-pic { filter: grayscale(.6); }
+@media print { .rp-item-pic, .rp-item small { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
+/* 떠다니는 아이템 이름표 */
+.pick-tag { position: absolute; left: 0; top: 0; padding: 3px 10px; border-radius: 99px; white-space: nowrap; font-size: 12px; font-weight: 800; color: #fff;
+  background: rgba(31,36,48,.82); box-shadow: 0 0 0 2px rgba(255,255,255,.7); animation: bobT 1.2s ease-in-out infinite; pointer-events: none; }
+.pick-tag.t-rare { background: #2f6fd6; } .pick-tag.t-epic { background: #d99a00; } .pick-tag.t-hidden { background: #7a4fd6; }
+/* 선물 상자: 누를 수 있는 영역 + 안내 */
+.gift-hit { position: absolute; left: 0; top: 0; width: 76px; height: 76px; border-radius: 50%; border: 0; padding: 0; background: transparent; cursor: pointer; pointer-events: auto; }
+.gift-hit:focus-visible { outline: 3px solid #ffb400; }
+.gift-tag { position: absolute; left: 50%; bottom: 100%; transform: translateX(-50%); margin-bottom: 4px; padding: 4px 11px; border-radius: 99px; white-space: nowrap;
+  font-size: 12px; font-weight: 800; color: #fff; background: #ff6f91; box-shadow: 0 0 0 2px rgba(255,255,255,.8), 0 6px 14px -6px rgba(0,0,0,.4); animation: bobT 1.1s ease-in-out infinite; }
+.gift-tag.t-rare { background: #2f6fd6; } .gift-tag.t-epic { background: #d99a00; } .gift-tag.t-hidden { background: #7a4fd6; }
+.gift-hit:hover .gift-tag { filter: brightness(1.1); }

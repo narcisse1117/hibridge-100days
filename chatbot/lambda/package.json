@@ -1,0 +1,11 @@
+{
+  "name": "hibridge-bri-bot",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "브리 도우미: 선배 경험 기반 온보딩 챗봇 (AWS Lambda → Claude API)",
+  "main": "index.mjs",
+  "dependencies": {
+    "@anthropic-ai/sdk": "1.10.0"
+  }
+}
