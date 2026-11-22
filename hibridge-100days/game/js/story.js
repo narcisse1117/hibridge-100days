@@ -283,6 +283,7 @@ const Story = (() => {
       const f = choiceHandler; if (!f) return; choiceHandler = null; sfx("select"); f(+b.dataset.c);
     }));
     const ask = $id("dask"); if (ask) ask.addEventListener("click", () => openAsk(World.curCard()));
+    bindHint(World.curCard());
   }
   function say(who, text, after) { openDlg(who, text, { after, cancel: true, talkTo: who && (who.look || who.p3) ? who : null }); }
   // 선택 전 대화에서 빠져나가기 (카드는 그대로 남아 다시 말 걸면 이어서 진행)
@@ -310,8 +311,20 @@ const Story = (() => {
     openDlg(speaker, card.text, {
       head, talkTo: who, card, cancel: true,
       choices: order.map((oi) => card.choices[oi].text),
-      extra: `<button class="dask" id="dask">🙋 선배에게 물어보기</button>`,
+      extra: `${card.hint ? '<button class="dask dhint" id="dhint">💡 선배 찬스</button>' : ""}<button class="dask" id="dask">🙋 선배에게 물어보기</button>`,
       onPick: (k) => pick(card, order[k], who),
+    });
+  }
+  function bindHint(card) {
+    const hb = $id("dhint");
+    if (hb && card && card.hint) hb.addEventListener("click", () => {
+      if ($id("hintbox")) return;
+      const h = card.hint, s = SENIORS[h.senior] || { name: "선배", role: "" }, lk = SENIOR_LOOK[h.senior];
+      const box = document.createElement("div"); box.className = "hintbox"; box.id = "hintbox";
+      box.innerHTML = `${lk ? R.portrait(LOOKS[lk], 40) : ""}<div><b>💡 ${esc(s.name)}의 선배 찬스</b><p>${esc(h.text)}</p><small>정답이 아니라 생각해 볼 질문이에요</small></div>`;
+      const ch = $id("dchoices"); if (ch) ch.parentNode.insertBefore(box, ch);
+      hb.disabled = true; sfx("select");
+      const gm = g(); gm.hints = gm.hints || {}; gm.hints[card.id] = true; save();
     });
   }
 
@@ -388,10 +401,11 @@ const Story = (() => {
       ${card.feedback.map((f) => {
         const s = seniorOf(f), lk = SENIOR_LOOK[f.senior];
         return `<div class="senior-fb">${lk ? R.portrait(LOOKS[lk], 52) : `<div class="portrait emoji">${s.emoji}</div>`}
-          <div><span class="who">${esc(s.name)}</span> <span class="muted small">${esc(s.role)}</span>
+          <div><span class="who">${esc(s.name)}</span> <span class="muted small">${esc(f.role || s.role)}</span>
           <span class="tag ${f.pick === mine ? "" : "gray"}">${letter(f.pick)}번 선택</span><div>${esc(f.text)}</div>${f.why ? `<div class="why">${esc(f.why)}</div>` : ""}</div></div>`;
       }).join("")}
-      <div class="insight"><strong>💡 판단 근거 (우리 회사 암묵지)</strong><br/>${esc(card.insight)}</div>
+      ${card.why && card.why.length ? `<div class="insight why-box"><strong>🧭 생각해 볼 기준</strong><ul>${card.why.map((w) => `<li>${esc(w)}</li>`).join("")}</ul></div>`
+        : `<div class="insight"><strong>💡 판단 근거 (우리 회사 암묵지)</strong><br/>${esc(card.insight)}</div>`}
       <div class="row" style="justify-content:space-between;margin-top:14px">
         <button class="btn soft" id="fask">🙋 더 물어보기</button>
         <button class="btn" id="fok">${g().failKey ? "결과 보기 →" : "계속하기 ▶"}</button>
@@ -409,7 +423,7 @@ const Story = (() => {
     R.resetPlayer(); R.sync();
     const p = panel(`
       <div class="day-intro"><div class="muted">Day ${d.day} / ${DAYS.length}</div><div class="big">${d.label}</div>
-      <h2>${d.title}</h2><p class="muted">${d.sub} · 오늘의 상황 ${World.dayCards().length}개</p>
+      <h2>${d.title}</h2><p class="muted">${typeof myArea === "function" && myArea() !== "통합" ? `관심 분야 · ${myArea()}` : "실무 · 보고 · 소통 · 대처"} · 오늘의 상황 ${World.dayCards().length}개</p>
       <button class="btn" id="dgo">출근하기 ☀️</button></div>`, "intro");
     p.querySelector("#dgo").addEventListener("click", () => {
       gm.phase = "play"; save(); closePanel(); updateHUD(); R.sync();
@@ -418,32 +432,42 @@ const Story = (() => {
     });
   }
 
+  // 선배 중 누구라도 나와 같은 선택을 했는지 (정답이 아니라 '같은 판단을 한 선배'가 있는지)
+  const sameSr = (h) => { const c = findCard(h.cardId); return c ? c.feedback.filter((f) => f.pick === h.choice) : []; };
   function showRetro() {
-    const gm = g(), d = DAYS[gm.day - 1], r = RETRO[gm.day] || RETRO[DAYS.length], s = SENIORS[r.senior];
-    const todays = gm.history.filter((h) => h.day === gm.day), match = todays.filter((h) => h.choice === h.best).length;
+    const gm = g(), d = DAYS[gm.day - 1], r = RETRO[gm.day] || RETRO[DAYS.length];
+    const todays = gm.history.filter((h) => h.day === gm.day && findCard(h.cardId)), match = todays.filter((h) => sameSr(h).length).length;
     const revealed = gm.revealed[gm.day];
+    const asks = todays.map((h) => findCard(h.cardId)).filter((c) => c.ask && c.ask.length);
     updateHUD();
     const p = panel(`
       <span class="tag amber">🌙 퇴근 회고 · ${d.label}</span>
       <h2 style="margin-top:10px">오늘 하루 수고했어요</h2>
-      <p class="muted small">오늘 ${todays.length}개 상황 중 ${match}개에서 선배 다수와 같은 선택을 했어요.</p>
+      <p class="muted small">오늘 ${todays.length}개 상황 중 ${match}개에서 나와 같은 판단을 한 선배가 있었어요.</p>
       <label>✏️ ${esc(r.q)}</label>
       <textarea id="rt" placeholder="나라면…" ${revealed ? "disabled" : ""}>${esc(gm.retro[gm.day] || "")}</textarea>
-      ${revealed ? `<div class="senior-fb" style="margin-top:12px">${R.portrait(LOOKS[SENIOR_LOOK[r.senior]], 52)}
-          <div><span class="who">${s.name}</span> <span class="muted small">${s.role} · 실제 경험</span>${r.story ? `<dl class="story">${["가장 당황했던 순간", "실제로 한 행동", "판단 근거", "후배에게 한마디"].map((q, i) => `<div><dt>${q}</dt><dd>${esc(r.story[i])}</dd></div>`).join("")}</dl>` : `<div>${esc(r.tip)}</div>`}</div></div>
-        <div class="row" style="justify-content:flex-end;margin-top:8px"><button class="btn" id="rnext">${gm.day >= DAYS.length ? "🏁 100일 엔딩 보기" : "집에 가서 쉬기 →"}</button></div>`
-      : `<div class="row" style="justify-content:flex-end;margin-top:12px"><button class="btn" id="rrev">작성하고 선배 팁 보기</button></div>`}`, "night");
+      ${revealed ? `<div class="ask-box"><strong>📝 사수에게 들고 갈 질문</strong><p class="muted small">게임에서 겪은 상황을 실제 회사에서 확인해 보세요. 사수님께 이렇게 여쭤보면 돼요.</p>
+          ${asks.map((c) => `<div class="ask-card"><span class="tag gray">${esc(c.category)}</span> <b>${esc(c.title)}</b><ul>${c.ask.map((q) => `<li>Q. ${esc(q)}</li>`).join("")}</ul></div>`).join("") || '<p class="muted small">오늘은 들고 갈 질문이 없어요.</p>'}
+          <button class="btn soft" id="rcopy">📋 질문 복사하기</button></div>
+        <div class="row" style="justify-content:flex-end;margin-top:8px"><button class="btn" id="rnext">${gm.day >= DAYS.length ? "🏁 수습 종료 · 엔딩 보기" : "집에 가서 쉬기 →"}</button></div>`
+      : `<div class="row" style="justify-content:flex-end;margin-top:12px"><button class="btn" id="rrev">작성하고 사수에게 들고 갈 질문 보기</button></div>`}`, "night");
     if (!revealed) p.querySelector("#rrev").addEventListener("click", () => {
       const t = p.querySelector("#rt").value.trim();
       if (t.length < 5) return toast("한두 문장이라도 적어보세요 ✍️");
       gm.retro[gm.day] = t; gm.revealed[gm.day] = true; save(); sfx("select"); giveItem("notebook"); showRetro();
     });
-    else p.querySelector("#rnext").addEventListener("click", () => {
-      if (typeof HB_DAY_ITEM !== "undefined" && HB_DAY_ITEM[gm.day - 1]) giveItem(HB_DAY_ITEM[gm.day - 1]);
-      if (gm.day >= DAYS.length) { gm.phase = "ending"; save(); R.sync(); return showEnding(); }
-      gm.day++; gm.idx = 0; gm.gauges.hp = clamp(gm.gauges.hp + 10); gm.phase = "dayIntro"; save();
-      toast("🔋 푹 쉬고 왔어요. 체력 +10"); updateHUD(); showDayIntro();
-    });
+    else {
+      p.querySelector("#rcopy").addEventListener("click", () => {
+        const txt = asks.map((c) => `[${c.title}]\n` + c.ask.map((q) => `Q. ${q}`).join("\n")).join("\n\n");
+        try { navigator.clipboard.writeText(txt).then(() => toast("질문을 복사했어요 📋"), () => toast("복사가 안 됐어요. 직접 적어 두세요")); } catch (e) { toast("복사가 안 됐어요. 직접 적어 두세요"); }
+      });
+      p.querySelector("#rnext").addEventListener("click", () => {
+        if (typeof HB_DAY_ITEM !== "undefined" && HB_DAY_ITEM[gm.day - 1]) giveItem(HB_DAY_ITEM[gm.day - 1]);
+        if (gm.day >= DAYS.length) { gm.phase = "ending"; save(); R.sync(); return showEnding(); }
+        gm.day++; gm.idx = 0; gm.gauges.hp = clamp(gm.gauges.hp + 10); gm.phase = "dayIntro"; save();
+        toast("🔋 푹 쉬고 왔어요. 체력 +10"); updateHUD(); showDayIntro();
+      });
+    }
   }
 
   function showEnding() {
@@ -455,7 +479,7 @@ const Story = (() => {
     }
     updateHUD();
     const H = gm.history.filter((h) => findCard(h.cardId));
-    const match = H.filter((h) => h.choice === h.best).length;
+    const match = H.filter((h) => sameSr(h).length).length;
     const pctM = H.length ? Math.round((match / H.length) * 100) : 0;
     // 상황별 게이지 변화 (예전 기록은 선택지 효과로 계산)
     const dOf = (h) => h.delta || Object.fromEntries(GAUGES.map((x, k) => [x.key, findCard(h.cardId).choices[h.choice].effects[k] || 0]));
@@ -487,7 +511,7 @@ const Story = (() => {
 
       <div class="rp-head"><h2>📋 ${esc(gm.name)}의 100일 정리</h2><span class="muted small">${days.length}일 · 상황 ${H.length}개</span></div>
       <div class="rp-sum">
-        <div><span>선배 다수와 같은 선택</span><b>${match} / ${H.length}</b><small>${pctM}%</small></div>
+        <div><span>나와 같은 판단을 한 선배가 있던 상황</span><b>${match} / ${H.length}</b><small>정답률이 아니에요</small></div>
         <div><span>가장 많이 성장한 역량</span><b>${up.icon} ${up.label}</b><small>${tot[up.key] >= 0 ? "+" : ""}${tot[up.key]}</small></div>
         <div><span>더 신경 쓰면 좋을 역량</span><b>${low.icon} ${low.label}</b><small>${tot[low.key] >= 0 ? "+" : ""}${tot[low.key]}</small></div>
       </div>
@@ -497,17 +521,18 @@ const Story = (() => {
       ${days.map(({ d, items }) => `<section class="rp-day">
         <div class="rp-day-h"><span class="tag">${d.label}</span><b>${esc(d.title)}</b></div>
         <ol class="rp-list">${items.map((h) => {
-          const c = findCard(h.cardId), same = h.choice === h.best;
+          const c = findCard(h.cardId), sr = sameSr(h), same = sr.length > 0;
           return `<li class="rp-it ${same ? "ok" : "diff"}">
-            <div class="rp-it-h"><span class="tag gray">${esc(c.category)}</span><b>${esc(c.title)}</b><span class="rp-mark">${same ? "✓ 선배 다수와 같음" : "△ 선배들과 다른 선택"}</span></div>
+            <div class="rp-it-h"><span class="tag gray">${esc(c.category)}</span><b>${esc(c.title)}</b><span class="rp-mark">${same ? "✓ " + sr.map((f) => (SENIORS[f.senior] || {}).name || "").join(", ") + "와 같은 판단" : "△ 선배들이 고르지 않은 선택"}</span></div>
             <p class="rp-mine"><em>내 선택</em>${esc(c.choices[h.choice].text)}</p>
-            ${same ? "" : `<p class="rp-best"><em>선배 다수</em>${esc(c.choices[h.best].text)}</p>`}
+            ${same ? "" : `<p class="rp-best"><em>선배들은</em>${esc([...new Set(c.feedback.map((f) => f.pick))].map((k) => c.choices[k].text).join(" / "))}</p>`}
             <div class="rp-chips">${chips(dOf(h))}</div>
           </li>`;
         }).join("")}</ol>
         ${gm.retro[d.day] ? `<p class="rp-retro"><em>📔 퇴근 회고</em>${esc(gm.retro[d.day])}</p>` : ""}
       </section>`).join("")}
 
+      ${(() => { const cs = H.map((h) => findCard(h.cardId)).filter((c) => c.ask && c.ask.length); return cs.length ? `<h3 class="rp-h3">📝 사수에게 들고 갈 질문</h3><div class="rp-asks">${cs.map((c) => `<div><b>${esc(c.title)}</b>${c.goal ? `<small>연습한 판단 · ${esc(c.goal)}</small>` : ""}<ul>${c.ask.map((q) => `<li>Q. ${esc(q)}</li>`).join("")}</ul></div>`).join("")}</div>` : ""; })()}
       ${itemsHTML}
       ${lessons.length ? `<div class="insight rp-lessons"><strong>💡 다음에 기억할 것</strong><ol>${lessons.map((c) => `<li><b>${esc(c.title)}</b> — ${esc(c.insight)}</li>`).join("")}</ol></div>` : ""}
       ${e.fail ? `<div class="insight"><strong>다시 도전할 때 팁</strong><br/>${esc(failTip(gm.failKey))}</div>` : ""}
