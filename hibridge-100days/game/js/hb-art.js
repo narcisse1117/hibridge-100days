@@ -65,7 +65,10 @@ const PORTRAITS={
   'p-lee': {bg:['#ecfaf3','#c6ecd9'],skin:'#f7d1b4',hair:'#2a2129',hl:'#4d3f4b',style:'curly',cloth:'#2f8f6f',top:'knit',glasses:1,f:0},
   'p-jung':{bg:['#fff8e6','#fbe2a8'],skin:'#ffdec9',hair:'#231c24',hl:'#463a47',style:'bob',  cloth:'#e2a427',top:'cardigan',glasses:1,f:1},
   'p-oh':  {bg:['#f1f2f7','#d6d9e6'],skin:'#f1c6a4',hair:'#1d1a22',hl:'#3e3a46',style:'short',cloth:'#4b5567',top:'hood',f:0},
-  'p-yoon':{bg:['#eef5ff','#c9ddff'],skin:'#ffe2cf',hair:'#6a3f2c',hl:'#9a6650',style:'pony', cloth:'#5b8def',top:'shirt',f:1}
+  'p-yoon':{bg:['#eef5ff','#c9ddff'],skin:'#ffe2cf',hair:'#6a3f2c',hl:'#9a6650',style:'pony', cloth:'#5b8def',top:'shirt',f:1},
+  'p-choi':{bg:['#eef1fb','#d3daf2'],skin:'#f3c9a8',hair:'#1f1c25',hl:'#3b3646',style:'short',cloth:'#3b4a6b',top:'suit',glasses:1,f:0},
+  'p-seo': {bg:['#f6efff','#e0d2fb'],skin:'#ffe0cc',hair:'#3a2420',hl:'#6b443a',style:'long', cloth:'#8e6bd8',top:'cardigan',f:1},
+  'p-moon':{bg:['#ecfbf8','#c4ede4'],skin:'#ffdcc8',hair:'#2a1f26',hl:'#4e3c49',style:'bob',  cloth:'#2bb5a0',top:'shirt',f:1}
 };
 function shade(hex,amt){const n=parseInt(hex.slice(1),16);const c=[n>>16,(n>>8)&255,n&255].map(v=>Math.max(0,Math.min(255,Math.round(v+amt))));return '#'+c.map(v=>v.toString(16).padStart(2,'0')).join('')}
 function portrait(id,crop){return drawPortrait(PORTRAITS[id],id.replace(/\W/g,''),crop)}

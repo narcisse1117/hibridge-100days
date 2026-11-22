@@ -18,8 +18,9 @@
     // ① 상황 카드: 선배들의 실제 선택과 이유
     Object.entries(CARDS).forEach(([id, c]) => (c.sr || []).forEach((r, k) => {
       const s = SENIORS[r.s]; if (!s) return;
-      kb.push({ id: `card-${id}-${k}`, who: s.n, role: s.m, src: "상황 카드 피드백", title: `${c.title} (${c.type})`,
-        text: `상황: ${c.text}\n${s.n}의 선택: ${c.ch[r.p] ? c.ch[r.p].t : ""}\n경험: ${r.q}\n${r.w || ""}` });
+      const oo = (t) => String(t || "").replace(/OO/g, "신입");
+      kb.push({ id: `card-${id}-${k}`, who: s.n, role: r.r || s.m, src: "상황 카드 피드백", title: `${c.title} (${c.type})`,
+        text: `상황: ${oo(c.text)}\n${s.n}의 선택: ${c.ch[r.p] ? oo(c.ch[r.p].t) : ""}\n경험: ${oo(r.q)}\n판단 근거: ${r.w || ""}${c.why ? "\n생각해 볼 기준: " + c.why.map(oo).join(" ") : ""}` });
     }));
     // ② 퇴근 회고: 선배의 실제 실수담 (4문항)
     DAYS.forEach((d) => {

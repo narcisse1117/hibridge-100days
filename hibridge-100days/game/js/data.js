@@ -23,28 +23,35 @@ const SENIORS = {
   lee: { name: "이도현 선배", role: "HRD 4년차", emoji: "🧑‍🏫" },
   jung: { name: "정하은 선배", role: "평가·보상 7년차", emoji: "👩‍💻" },
   kim: { name: "한지훈 팀장님", role: "인사팀장 · 노무·조직문화 12년차", emoji: "👨‍💼" },
+  choi: { name: "최민석 선배", role: "노무 6년차", emoji: "🧑‍💼" },
+  seo: { name: "서지아 선배", role: "조직문화 3년차", emoji: "👩" },
+  yujin: { name: "최유진", role: "먼저 들어온 신입 · HRD", emoji: "🙂" },
+  minho: { name: "강민호", role: "먼저 들어온 신입 · 채용", emoji: "🙂" },
 };
 
-const DAY_SUBS = ["모든 게 낯선 첫날", "지원자와 면접관 사이에서", "처음 맡은 교육, 처음 받은 숫자", "사람의 일, 숫자의 일"];
-const DAYS = HB_DAYS.map((d, i) => ({ day: i + 1, label: "D+" + d.day, title: d.label, sub: DAY_SUBS[i] || "" }));
+// 5일 과정: 하루에 실무·보고·소통·대처 카드가 한 장씩 (관심 분야를 고르면 그 분야 한 장, 통합이면 네 장)
+const DAYS = HB_DAYS.map((d, i) => ({ day: i + 1, label: d.label, title: d.title, sub: `${d.label} · 하루 상황 ${d.cards.length}개` }));
+const PLAYER_NAME = (() => { try { return new URLSearchParams(location.search).get("name") || "신입"; } catch (e) { return "신입"; } })();
+const nm = (t) => String(t || "").replace(/OO/g, PLAYER_NAME);
 
 const CARDS = [];
 HB_DAYS.forEach((d, i) => d.cards.forEach((id) => {
-  const c = HB_CARDS[id], best = c.seed.indexOf(Math.max(...c.seed));
+  const c = HB_CARDS[id], votes = [0, 0, 0]; c.sr.forEach((r) => votes[r.p]++);
   CARDS.push({
-    id, day: i + 1, category: c.type, area: c.area || null, title: c.title, text: c.text, ctx: c.ctx, who: c.who, seed: c.seed,
-    choices: c.ch.map((x) => ({ text: x.t, effects: x.d, result: x.r })),
-    best,
-    feedback: c.sr.map((r) => ({ senior: r.s, pick: r.p, text: r.q, why: r.w })),
-    insight: (c.sr[0].w || "").replace(/^판단 근거:\s*/, ""),
+    id, day: i + 1, category: c.hr ? `${c.field} · ${c.hr}` : c.field, area: c.field, time: c.time,
+    title: c.title, text: nm(c.text), ctx: c.ctx, who: c.who, seed: c.seed, goal: c.goal, dilemma: c.dilemma,
+    hint: c.hint && { senior: c.hint.s, text: nm(c.hint.q) },
+    choices: c.ch.map((x) => ({ text: nm(x.t), effects: x.d, result: nm(x.r) })),
+    best: votes.indexOf(Math.max(...votes)),
+    feedback: c.sr.map((r) => ({ senior: r.s, role: r.r, pick: r.p, text: nm(r.q), why: r.w })),
+    why: (c.why || []).map(nm), ask: c.ask || [],
+    insight: (c.why && c.why[0]) || "",
   });
 }));
 
+// 퇴근 회고: 오늘 겪은 상황을 돌아보고, '사수에게 들고 갈 질문'을 챙긴다
 const RETRO = {};
-HB_DAYS.forEach((d, i) => {
-  const c = HB_CARDS[d.retro.card];
-  RETRO[i + 1] = { q: `오늘 '${c.title}' 상황, 나라면 어떻게 했을까?`, senior: d.retro.by, story: d.retro.story, tip: d.retro.story[3] };
-});
+HB_DAYS.forEach((d, i) => { RETRO[i + 1] = { q: "오늘 겪은 상황 중 가장 고민된 순간은 언제였나요? 다음에 비슷한 일이 오면 어떻게 해 볼까요?" }; });
 
 const ENDINGS = {
   success: {

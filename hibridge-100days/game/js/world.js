@@ -11,10 +11,14 @@ const LOOKS = {
   han: { skin: "#f5cdb0", hair: "#55555f", shirt: "#25324d", pants: "#22262f", style: "short", tie: "#ffb400", pid: "p-han" },
   yoon: { skin: "#ffe2cf", hair: "#6a3f2c", shirt: "#5b8def", pants: "#3d5a80", style: "long", pid: "p-yoon" },
   oh: { skin: "#f1c6a4", hair: "#1d1a22", shirt: "#4b5567", pants: "#2b2d42", style: "short", pid: "p-oh" },
+  choi: { skin: "#f3c9a8", hair: "#1f1c25", shirt: "#3b4a6b", pants: "#22262f", style: "short", glasses: true, pid: "p-choi" },
+  seo: { skin: "#ffe0cc", hair: "#3a2420", shirt: "#8e6bd8", pants: "#3a3f55", style: "long", pid: "p-seo" },
+  yujin: { bri: { c: "#8e6bd8", top: "ribbon", face: "glasses", neck: "badge", ear: "none", eyes: "round" }, bg: "#efe7ff" },
+  minho: { bri: { c: "#2b8a6e", top: "sprout", face: "none", neck: "tie", ear: "none", eyes: "smile", mouth: "open" }, bg: "#e3f6ec" },
 };
 // 신입(나)은 사이트에서 꾸민 브리. skin/shirt는 컷씬 속 내 손 색으로 쓰인다.
 const DEFAULT_LOOK = { bri: { c: "#004aad" }, skin: "#004aad", shirt: "#004aad", hair: "#1d1a22", pants: "#00307a", style: "short" };
-const SENIOR_LOOK = { park: "park", lee: "lee", jung: "jung", kim: "han" };
+const SENIOR_LOOK = { park: "park", lee: "lee", jung: "jung", kim: "han", choi: "choi", seo: "seo", yujin: "yujin", minho: "minho" };
 
 // x, y = 2D 발 위치 / iy = 2D 말 거는 지점 / p3 = 3D 배치(의자 · 방향)
 const NPCS = [
@@ -46,16 +50,8 @@ const OBJECTS = [
   { id: "door", name: "엘리베이터", icon: "🛗", x: 3, y: 16.4, r: 44, p3: { ix: 3, iz: 16.3, r: 1.3 }, idle: null },
 ];
 // 상황 카드 → 말을 걸 대상 (사람 또는 장소)
-const CARD_NPC = {
-  c1: "mydesk", c2: "park", c3: "mydesk",
-  c4: "mydesk", c5: "mydesk", c6: "yoon",
-  c7: "han", c8: "meeting", c9: "park",
-  c10: "oh", c11: "mydesk", c12: "mydesk",
-};
-const CARD_SPEAKER = {
-  c1: "💬 #인사팀 채널", c3: "🕕 인사팀 사무실 · 오후 6시", c4: "📞 지원자의 전화", c5: "💻 면접관의 메신저",
-  c8: "📱 외부 강사의 문자", c11: "📨 익명 고충 접수함", c12: "🌙 오후 9시 · 내 자리",
-};
+const CARD_NPC = {"work4":"han","work3":"han","work1":"mydesk","work2":"yoon","work5":"han","rep1":"han","rep5":"park","rep2":"han","rep4":"han","rep3":"meeting","talk1":"mydesk","talk2":"park","talk3":"mydesk","talk4":"yoon","talk5":"mydesk","cope1":"jung","cope2":"meeting","cope3":"mydesk","cope4":"mydesk","cope5":"mydesk"};
+const CARD_SPEAKER = {"work1":"💬 현업 부서 3곳의 메신저","work2":"🍽️ 퇴근 후 저녁 · 윤채린","rep3":"🗣️ 월간 팀장 회의 · 오정민 팀장님","talk1":"🪑 내 자리 · 오전 9시 10분","talk3":"🕕 인사팀 사무실 · 오후 6시","talk4":"🍱 구내식당 · 다른 팀 동기들","talk5":"💻 IT지원팀 노하린 님 (메신저)","cope2":"📞 외부 강사의 전화","cope3":"📨 메신저 세 통","cope4":"📧 방금 보낸 전 직원 메일","cope5":"🌙 오후 6시 30분 · 내 자리"};
 
 // 충돌 영역 [x, y, w, h]
 const SOLIDS = [
@@ -88,8 +84,24 @@ const World = {
 
 // 상황이 시작될 때 3D 사무실 안에서 브리가 하는 모션 (팝업 컷씬 대신)
 const CARD_ACT = {
-  c1: { m: "type", e: "💬" }, c2: { m: "surprised", then: "think", e: "❗" }, c3: { m: "nervous", e: "💦" },
-  c4: { m: "phone", e: "📞" }, c5: { m: "type", e: "❗" }, c6: { m: "think", e: "❓" },
-  c7: { m: "present", e: "📉" }, c8: { m: "phone", e: "⏰" }, c9: { m: "read", e: "✏️" },
-  c10: { m: "bow", e: "🙇" }, c11: { m: "surprised", then: "think", e: "📨" }, c12: { m: "tired", e: "💤" },
+  work4: { m: "think", e: "❓" },
+  work3: { m: "surprised", e: "📧", then: "think" },
+  work1: { m: "nervous", e: "💦" },
+  work2: { m: "think", e: "🤫" },
+  work5: { m: "read", e: "📋" },
+  rep1: { m: "surprised", e: "❗", then: "think" },
+  rep5: { m: "type", e: "🤖" },
+  rep2: { m: "read", e: "📊" },
+  rep4: { m: "think", e: "🤔" },
+  rep3: { m: "present", e: "🙋" },
+  talk1: { m: "think", e: "😶" },
+  talk2: { m: "think", e: "❓" },
+  talk3: { m: "nervous", e: "💦" },
+  talk4: { m: "surprised", e: "😅", then: "think" },
+  talk5: { m: "type", e: "💬" },
+  cope1: { m: "surprised", e: "❗", then: "think" },
+  cope2: { m: "phone", e: "⏰" },
+  cope3: { m: "nervous", e: "📨" },
+  cope4: { m: "surprised", e: "😱", then: "think" },
+  cope5: { m: "tired", e: "💤" }
 };

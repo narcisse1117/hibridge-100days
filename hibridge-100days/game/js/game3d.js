@@ -1363,12 +1363,12 @@ const Game3D = (() => {
       W.ring.material.opacity = 0.45 + Math.sin(t * 4) * 0.2;
     }
     // 전화 벨 · 새 메일 · 문 · 게시판 강조
-    const ringing = card && card.id === "c4" && !talkTarget;
+    const ringing = card && card.id === "cope2" && !talkTarget;
     W.phoneLight.emissiveIntensity = ringing ? (Math.sin(t * 12) > 0 ? 2 : 0) : 0;
     W.handset.position.y = 0.06 + (ringing && Math.sin(t * 30) > 0 ? 0.012 : 0); W.handset.rotation.z = ringing ? Math.sin(t * 40) * 0.08 : 0;
     W.handset.matrixAutoUpdate = true;
     if (ringing && Story.mode === "walk") { ringT -= dt; if (ringT <= 0) { ringT = 1.6; if (Math.hypot(player.x - 12.5, player.z - 9) < 9) { Story.sfx("blip"); setTimeout(() => Story.sfx("blip"), 120); } } }
-    const mail = card && ["c1", "c5", "c11"].includes(card.id);
+    const mail = card && ["work3", "work1", "talk5", "cope3", "cope4"].includes(card.id);
     W.myScreen.map = W.myScreen.emissiveMap = mail ? W.texs.notify : W.texs.mail;
     if (mail) W.myScreen.emissiveIntensity = env.screen + 0.25 + Math.sin(t * 5) * 0.2;
     const doorOn = target === "door" && Story.mode === "walk";
