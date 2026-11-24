@@ -79,10 +79,13 @@ function report() {
   const g = S.game; if (!g) return;
   toParent({ type: "progress", day: DAYS[g.day - 1] && DAYS[g.day - 1].label, phase: g.phase, gauges: GAUGES.map((x) => g.gauges[x.key]) });
 }
-function openAsk(card) {
+function openAsk(card, list) {
+  const many = list && list.length > 1;
   openModal(`
     <h3>🙋 선배에게 물어보기</h3>
-    <p class="muted small"><span class="card-ref">🃏 ${esc(card.title)}</span> 상황에서 궁금한 점을 남기면 소통 공간에서 선배들이 답해줘요.</p>
+    ${many ? `<p class="muted small">어떤 상황에 대해 물어볼까요? 궁금한 점을 남기면 소통 공간에서 선배들이 답해줘요.</p>
+    <select id="acard">${list.map((c, i) => `<option value="${i}">🃏 ${esc(c.title)}</option>`).join("")}</select>`
+    : `<p class="muted small"><span class="card-ref">🃏 ${esc(card.title)}</span> 상황에서 궁금한 점을 남기면 소통 공간에서 선배들이 답해줘요.</p>`}
     <label>어디에 물어볼까요?</label>
     <select id="ach"><option value="anon">🎭 익명 질문방에 바로 올리기</option><option value="ask">🙋 선배를 골라 1:1로 묻기 (소통 공간에서 선배 선택)</option></select>
     <label>질문</label>
@@ -90,6 +93,9 @@ function openAsk(card) {
     <div class="row" style="justify-content:flex-end;margin-top:14px">
       <button class="btn ghost" id="ac">취소</button><button class="btn" id="as">질문 올리기</button>
     </div>`);
+  const tip = (c) => { const q = $("#aq"); if (q && c.ask && c.ask[0]) q.placeholder = "예: " + c.ask[0]; };
+  tip(card);
+  if (many) $("#acard").addEventListener("change", (e) => { card = list[+e.target.value]; tip(card); });
   $("#ac").addEventListener("click", closeModal);
   $("#as").addEventListener("click", () => {
     const text = $("#aq").value.trim(), ch = $("#ach").value;
@@ -119,15 +125,17 @@ function myLook() {
   b = b || { c: "#004aad" }; const c = b.c || "#004aad";
   return { bri: b, bg: Q.get("bg") || "#eef3fc", skin: c, shirt: c, hair: "#1d1a22", pants: shadeHex(c, -0.35), style: "short" };
 }
+// 상황 카드가 바뀌면 예전 진행 기록(회고 포함)을 이어 쓰지 않도록
+const CONTENT_VER = HB_DAYS.map((d) => d.cards.join(",")).join("|");
 function newGame() {
   S.game = { name: Q.get("name") || "김하이", run: Q.get("run") || "", look: myLook(), day: 1, idx: 0, gauges: { ...START_GAUGES },
-    phase: "dayIntro", order: {}, history: [], retro: {}, revealed: {}, last: null, failKey: null, counted: false };
+    phase: "dayIntro", order: {}, history: [], retro: {}, revealed: {}, last: null, failKey: null, counted: false, ver: CONTENT_VER };
   S.stats.learners++; save();
 }
 const use3D = () => S.mode !== "2d" && typeof Game3D !== "undefined" && Game3D.supported;
 function render() {
   const app = $("#app");
-  if (!S.game || S.game.run !== (Q.get("run") || "")) newGame();
+  if (!S.game || S.game.run !== (Q.get("run") || "") || S.game.ver !== CONTENT_VER) newGame();
   else { S.game.look = myLook(); S.game.name = Q.get("name") || S.game.name; }
   use3D() ? Game3D.mount(app) : Game2D.mount(app);
 }

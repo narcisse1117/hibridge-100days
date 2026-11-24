@@ -437,7 +437,6 @@ const Story = (() => {
   function showRetro() {
     const gm = g(), d = DAYS[gm.day - 1], r = RETRO[gm.day] || RETRO[DAYS.length];
     const todays = gm.history.filter((h) => h.day === gm.day && findCard(h.cardId)), match = todays.filter((h) => sameSr(h).length).length;
-    const revealed = gm.revealed[gm.day];
     const asks = todays.map((h) => findCard(h.cardId)).filter((c) => c.ask && c.ask.length);
     updateHUD();
     const p = panel(`
@@ -445,23 +444,25 @@ const Story = (() => {
       <h2 style="margin-top:10px">오늘 하루 수고했어요</h2>
       <p class="muted small">오늘 ${todays.length}개 상황 중 ${match}개에서 나와 같은 판단을 한 선배가 있었어요.</p>
       <label>✏️ ${esc(r.q)}</label>
-      <textarea id="rt" placeholder="나라면…" ${revealed ? "disabled" : ""}>${esc(gm.retro[gm.day] || "")}</textarea>
-      ${revealed ? `<div class="ask-box"><strong>📝 사수에게 들고 갈 질문</strong><p class="muted small">게임에서 겪은 상황을 실제 회사에서 확인해 보세요. 사수님께 이렇게 여쭤보면 돼요.</p>
+      <textarea id="rt" placeholder="나라면…">${esc(gm.retro[gm.day] || "")}</textarea>
+      <div class="ask-box" style="margin-top:12px"><strong>📝 사수에게 들고 갈 질문</strong><p class="muted small">게임에서 겪은 상황을 실제 회사에서 확인해 보세요. 사수님께 이렇게 여쭤보면 돼요.</p>
           ${asks.map((c) => `<div class="ask-card"><span class="tag gray">${esc(c.category)}</span> <b>${esc(c.title)}</b><ul>${c.ask.map((q) => `<li>Q. ${esc(q)}</li>`).join("")}</ul></div>`).join("") || '<p class="muted small">오늘은 들고 갈 질문이 없어요.</p>'}
-          <button class="btn soft" id="rcopy">📋 질문 복사하기</button></div>
-        <div class="row" style="justify-content:flex-end;margin-top:8px"><button class="btn" id="rnext">${gm.day >= DAYS.length ? "🏁 수습 종료 · 엔딩 보기" : "집에 가서 쉬기 →"}</button></div>`
-      : `<div class="row" style="justify-content:flex-end;margin-top:12px"><button class="btn" id="rrev">작성하고 사수에게 들고 갈 질문 보기</button></div>`}`, "night");
-    if (!revealed) p.querySelector("#rrev").addEventListener("click", () => {
-      const t = p.querySelector("#rt").value.trim();
-      if (t.length < 5) return toast("한두 문장이라도 적어보세요 ✍️");
-      gm.retro[gm.day] = t; gm.revealed[gm.day] = true; save(); sfx("select"); giveItem("notebook"); showRetro();
-    });
-    else {
+          <div class="row" style="gap:8px;flex-wrap:wrap"><button class="btn soft" id="rcopy">📋 질문 복사하기</button>${todays.length ? '<button class="btn soft" id="rask">🙋 선배에게 질문하기</button>' : ""}</div></div>
+        <div class="row" style="justify-content:flex-end;margin-top:8px"><button class="btn" id="rnext">${gm.day >= DAYS.length ? "🏁 수습 종료 · 엔딩 보기" : "집에 가서 쉬기 →"}</button></div>`, "night");
+    const rt = p.querySelector("#rt");
+    rt.addEventListener("input", () => { gm.retro[gm.day] = rt.value.trim(); save(); });
+    {
       p.querySelector("#rcopy").addEventListener("click", () => {
         const txt = asks.map((c) => `[${c.title}]\n` + c.ask.map((q) => `Q. ${q}`).join("\n")).join("\n\n");
         try { navigator.clipboard.writeText(txt).then(() => toast("질문을 복사했어요 📋"), () => toast("복사가 안 됐어요. 직접 적어 두세요")); } catch (e) { toast("복사가 안 됐어요. 직접 적어 두세요"); }
       });
+      const ra = p.querySelector("#rask");
+      if (ra) ra.addEventListener("click", () => { const cs = todays.map((h) => findCard(h.cardId)); openAsk(cs[0], cs); });
       p.querySelector("#rnext").addEventListener("click", () => {
+        const t = rt.value.trim();
+        if (t.length < 5) { rt.focus(); return toast("한두 문장이라도 적어보세요 ✍️"); }
+        gm.retro[gm.day] = t; save();
+        if (!gm.revealed[gm.day]) { gm.revealed[gm.day] = true; save(); giveItem("notebook"); }
         if (typeof HB_DAY_ITEM !== "undefined" && HB_DAY_ITEM[gm.day - 1]) giveItem(HB_DAY_ITEM[gm.day - 1]);
         if (gm.day >= DAYS.length) { gm.phase = "ending"; save(); R.sync(); return showEnding(); }
         gm.day++; gm.idx = 0; gm.gauges.hp = clamp(gm.gauges.hp + 10); gm.phase = "dayIntro"; save();
