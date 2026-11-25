@@ -305,7 +305,9 @@
     const ch = CHANNELS.find((c) => c.id === S.channel) || CHANNELS[1];
     const others = L.users.filter((u) => u.uid !== L.me.uid).length;
     const unread = L.threads.filter((t) => t.kind === "mentor" && !t.mine && t.lastT && !t.lastMe).length;
-    return `
+    // 채팅 화면(동기방 · 1:1 대화)에서는 위 소개 상자를 빼고 채팅방을 화면 높이에 맞춘다
+    const chatView = (ch.id === "peer" && !isSr()) || (ch.id === "ask" && L.mtid && L.threads.some((t) => t.tid === L.mtid));
+    return `${chatView ? "" : `
     <section class="cm-hero">
       <div class="cm-hero-copy">
         <h1>소통 공간</h1>
@@ -316,7 +318,7 @@
           <button type="button" data-laf="all" aria-pressed="${S.channel === "anon" && L.af === "all" && !L.aopen}"><b>${anon.length}</b> 전체 글</button></div>
       </div>
       <div class="cm-hero-bri" aria-hidden="true">${bri({ size: 96 })}</div>
-    </section>
+    </section>`}
     <div class="cm-tabs" id="chans" role="tablist" aria-label="채널">
       ${CHANNELS.map((c) => {
         const badge = c.id === "ask" ? (unread ? `<span class="cm-badge warn">받은 질문 ${unread}</span>` : `<span class="cm-badge on">${others}명</span>`)
@@ -376,7 +378,7 @@
       <a class="chat-mem-link" href="#game">🎮 100일 게임 이어 하기</a>
       <button type="button" class="chat-mem-link" data-c2="ask">🙋 선배에게 1:1로 물어보기</button>
     </aside>`;
-    return `<div class="chat-room has-mem">${side}
+    return `<div class="chat-room has-mem lv-fit">${side}
       <div class="chat-main">${head}
         <div class="chat-log" id="chatLog" role="log" aria-live="polite">${msgs ? logHTML(msgs, room === "group") : `<div class="lv-loading sm">불러오는 중…</div>`}</div>
         <form class="chat-input" id="lvChat" data-room="${room}">${meAv("av sm")}
@@ -433,7 +435,7 @@
     const shown = asker ? (t.revealed ? `${L.me.name} (${L.me.dept})` : t.myNick || L.me.nick) : "";
     const pre = asker && cur && !cur.msgs.some((m) => m.me) ? dr.t || "" : "";
     const oAv = o.anon ? avatar({ bri: { c: "#9aa3b5" } }, "av sm") : uAv(o, "av sm");
-    return `<div class="chat-room mt-room">
+    return `<div class="chat-room mt-room lv-fit">
       <aside class="chat-side" aria-label="1:1 대화">
         <button type="button" class="chat-it mt-back" data-lmtback><span class="chat-it-av">←</span><span class="chat-it-tx"><b>목록으로</b><span>다른 사람 찾기 · 받은 질문</span></span></button>
         <div class="chat-side-h">1:1 대화</div>
@@ -778,6 +780,19 @@
   .lv-ghostbtn{border:1px solid var(--line,#e3e8f0);background:#fff;color:var(--ink,#1c2333)}.lv-ghostbtn:hover{background:var(--bg-soft,#f6f8fc)}
   @media (max-width:760px){.lv-user-tx,.lv-chev{display:none}.lv-user{padding:3px}}
   @media (max-width:560px){.lv-ghostbtn{display:none}.lv-solidbtn{padding:6px 12px;font-size:13px}.lv-user .av{width:30px;height:30px}}
+  .chat-room.lv-fit{height:max(440px,calc(100vh - 250px));height:max(440px,calc(100dvh - 250px))}
+  @media (max-width:900px){.chat-room.lv-fit{height:max(420px,calc(100dvh - 290px))}}
+  @media (max-width:720px){
+    .cm-tabs{grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:6px!important}
+    .cm-tabs button{padding:10px 6px!important;justify-content:center;gap:0!important;position:relative}
+    .cm-tabs .cm-ic,.cm-tabs .cm-tx small{display:none}.cm-tabs .cm-tx b{font-size:13.5px;white-space:nowrap}
+    .cm-tabs .cm-badge{position:absolute;top:-7px;right:-4px;font-size:10px;padding:1px 6px}
+    .chat-room.lv-fit{height:calc(100dvh - 235px);min-height:380px}
+  }
+  /* 채팅 화면에서는 '브리에게 물어보기' 버튼이 전송 버튼을 가리지 않게 위로 */
+  body:has(.chat-room.lv-fit) #hbBot{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
+  body:has(.chat-room.lv-fit) .hbb-fab:not(.on) .hbb-fab-tx{display:none}body:has(.chat-room.lv-fit) .hbb-fab:not(.on){padding:6px}
+  @media (max-width:720px){body:has(.chat-room.lv-fit) #hbBot{bottom:calc(84px + env(safe-area-inset-bottom,0px))}}
   .cmsg-meta{display:flex;flex-direction:column;align-items:flex-end;justify-content:flex-end;gap:1px;flex:none}.cmsg.me .cmsg-meta{align-items:flex-end}
   .cmsg-unread{font-size:11px;font-weight:800;color:#e0a100;line-height:1}
   .lv-boxes{display:grid;grid-template-columns:1fr 1fr;gap:14px}.lv-boxes h3{font-size:14.5px;margin:0 0 8px}.lv-boxes h3 b{color:var(--blue,#004aad)}
