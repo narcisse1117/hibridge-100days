@@ -27,14 +27,14 @@
   color-scheme: light;
   --blue:#004aad; --blue-deep:#00307a; --blue-soft:#eef3fc; --blue-line:#cfdcf3;
   --ink:#1c2333; --ink-2:#4a5468; --ink-3:#7c8597;
-  --line:#e3e8f0; --bg:#ffffff; --bg-soft:#f6f8fc;
+  --line:#e3e8f0; --bg:#ffffff; --bg-soft:#f6f8fc; --bg-app:#f5f7fb;
   --amber:#ffb400; --amber-soft:#fff6de;
   --good:#17804f; --good-soft:#e7f5ee; --warn:#c2410c; --warn-soft:#fdeee6;
   --sans:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
   --r:14px;
 }
 *{box-sizing:border-box}
-html,body{background:var(--bg)}
+html,body{background:var(--bg-app)}
 body{font-family:var(--sans);color:var(--ink);font-size:15px;line-height:1.65;-webkit-font-smoothing:antialiased;word-break:keep-all;overflow-wrap:anywhere}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
 button,input,select,textarea{font:inherit;color:inherit}
@@ -44,23 +44,27 @@ h1,h2,h3{text-wrap:balance;margin:0}
 p{margin:0}
 .wrap{max-width:1120px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 
-/* header */
-.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);border-bottom:1px solid var(--line)}
-.top-row{display:flex;align-items:center;gap:16px;padding-block:12px;flex-wrap:wrap}
-.brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:inherit;min-width:0}
-.brand img{height:28px;width:auto;display:block}
-.brand .svc{border-left:1px solid var(--line);padding-left:12px;font-weight:700;color:var(--blue);font-size:15px;white-space:nowrap}
-.roles{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink-3)}
-.seg{display:inline-flex;background:var(--bg-soft);border:1px solid var(--line);border-radius:999px;padding:3px}
-.seg button{border:0;background:none;border-radius:999px;padding:5px 12px;font-size:13px;color:var(--ink-2)}
-.seg button[aria-pressed="true"]{background:var(--blue);color:#fff}
-.tabs{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+/* header — 사내 서비스형 상단 바: 로고 · 메뉴 · 계정 메뉴 */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:rgba(255,255,255,.92);backdrop-filter:saturate(1.6) blur(10px);-webkit-backdrop-filter:saturate(1.6) blur(10px);border-bottom:1px solid var(--line);box-shadow:0 1px 2px rgba(16,24,40,.04)}
+.top-row{display:flex;align-items:center;gap:8px 56px;height:76px}
+.brand{display:flex;align-items:center;gap:16px;text-decoration:none;color:inherit;min-width:0;flex:none}
+.brand img{height:32px;width:auto;display:block}
+.brand .svc{border-left:1px solid var(--line);padding-left:16px;font-weight:700;color:var(--ink);font-size:16.5px;letter-spacing:-.01em;white-space:nowrap}
+.tabs{display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;margin-right:auto;align-items:center}
 .tabs::-webkit-scrollbar{display:none}
-.tabs a{flex:none;text-decoration:none;color:var(--ink-2);padding:10px 14px;border-bottom:2px solid transparent;font-weight:500;font-size:14px;white-space:nowrap}
+.tabs a{flex:none;display:flex;align-items:center;text-decoration:none;color:var(--ink-2);padding:10px 18px;border-radius:10px;font-weight:600;font-size:15.5px;white-space:nowrap;transition:background .12s,color .12s}
+.tabs a:hover{background:var(--bg-soft);color:var(--ink)}
+.tabs a[aria-current="page"]{color:var(--blue);background:var(--blue-soft)}
 .tabs a small{font-size:11px;color:var(--ink-3);margin-left:4px;font-weight:400}
-.tabs a[aria-current="page"]{color:var(--blue);border-bottom-color:var(--blue)}
+@media (max-width:1100px){.top-row{gap:8px 32px}.tabs{gap:4px}.tabs a{padding:9px 14px}}
+@media (max-width:900px){
+  .top-row{height:auto;flex-wrap:wrap;padding-top:12px;gap:0 12px}
+  .tabs{order:3;flex-basis:100%;margin:8px -8px 0;padding:0 0 10px}
+  .tabs a{padding:8px 12px;font-size:14.5px}
+}
+@media (max-width:560px){.brand{gap:8px}.brand img{height:24px}.brand .svc{font-size:13.5px;padding-left:8px}}
 
-main{padding-block:28px 64px}
+main{padding-block:36px 72px}
 .view{display:grid;gap:28px}
 .eyebrow{font-size:12px;letter-spacing:.08em;color:var(--blue);font-weight:700;text-transform:uppercase}
 .h1{font-family:var(--sans);font-size:clamp(30px,4.6vw,46px);line-height:1.25;color:var(--blue);font-weight:800;letter-spacing:-.02em}
@@ -863,6 +867,18 @@ footer img{height:18px;width:auto}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 .enter{animation:enter .35s ease both}
 @keyframes enter{from{opacity:.4;transform:translateY(8px)}to{opacity:1;transform:none}}
+/* ---------- 화면 전체 폭 사용 (양옆 여백만) ---------- */
+.wrap{max-width:none;padding-left:max(16px,env(safe-area-inset-left,0px),3.5vw);padding-right:max(16px,env(safe-area-inset-right,0px),3.5vw)}
+.game.wide{max-width:none}
+/* 게임은 16:9라 폭만 늘리면 세로가 화면을 넘으므로, 화면 높이에 맞춘 만큼만 넓힌다 */
+.game.wide.world,.gframe-wrap{max-width:max(1040px,calc((100vh - 230px) * 16 / 9))}
+.cm-feed,.bd,.mt-wrap{max-width:none}
+.chat-room,.chat-room.has-mem{max-width:none;height:min(820px,calc(100vh - 200px))}
+.chat-room{grid-template-columns:300px minmax(0,1fr)}
+.chat-room.has-mem{grid-template-columns:300px minmax(0,1fr) 280px}
+@media (max-width:1060px){.chat-room.has-mem{grid-template-columns:220px minmax(0,1fr)}}
+@media (max-width:720px){.chat-room,.chat-room.has-mem{grid-template-columns:minmax(0,1fr);height:78vh}}
+.bd-body{max-width:80ch}
 </style>
 
 <style>html{-webkit-text-size-adjust:100%}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
@@ -874,22 +890,14 @@ footer img{height:18px;width:auto}
       <img src="assets/logo-h.png" alt="HiBridge ㈜하이브릿지">
       <span class="svc">신입 100일 생존기</span>
     </a>
-    <div class="roles">
-      <span>지금 나는</span>
-      <div class="seg" id="roleSeg" role="group" aria-label="사용자 역할">
-        <button data-role="junior">신입사원</button>
-        <button data-role="senior">시니어</button>
-        <button data-role="hrd">HRD 담당자</button>
-      </div>
-    </div>
+    <nav class="tabs" id="tabs" aria-label="메뉴">
+      <a href="#home">홈</a>
+      <a href="#game">100일 게임</a>
+      <a href="#community">소통 공간</a>
+      <a href="#register">경험 등록</a>
+      <a href="#hrd">운영 대시보드</a>
+    </nav>
   </div>
-  <nav class="wrap tabs" id="tabs" aria-label="메뉴">
-    <a href="#home">홈</a>
-    <a href="#game">100일 게임</a>
-    <a href="#community">소통 공간</a>
-    <a href="#register">경험 등록</a>
-    <a href="#hrd">운영 대시보드</a>
-  </nav>
 </header>
 
 <main class="wrap" id="app"></main>
@@ -1195,15 +1203,13 @@ function route(){
   const v=(location.hash||'#home').slice(1);
   const name=VIEWS[v]?v:'home';
   document.querySelectorAll('#tabs a').forEach(a=>a.setAttribute('aria-current',a.getAttribute('href')==='#'+name?'page':'false'));
-  document.querySelectorAll('#roleSeg button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.role===S.role));
+  S.role={register:'senior',hrd:'hrd'}[name]||'junior'; // '지금 나는' 대신 화면에 따라 역할이 정해짐
   const same=route._last===name;route._last=name;
   $('#app').innerHTML=`<div class="view${same?'':' enter'}">${VIEWS[name]()}</div>`;
   bind[name]?.();
 }
 window.addEventListener('hashchange',()=>{route();window.scrollTo(0,0)});
-$('#roleSeg').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;S.role=b.dataset.role;save();
-  const go={junior:'#game',senior:'#register',hrd:'#hrd'}[S.role];
-  if(location.hash===go)route();else location.hash=go;});
+
 const bind={};
 window.addEventListener('message',e=>{
   const m=e.data;if(!m||m.src!=='hb-game')return;
@@ -1214,6 +1220,7 @@ window.addEventListener('message',e=>{
     const a=document.querySelector('.gframe-bar .av');if(a)a.innerHTML=bri({...myBri(),head:true,wave:false});return}
   if(m.type==='item'){const it=typeof hbItem==='function'&&hbItem(m.id);if(it)toast(`🎁 새 아이템: ${it.n}`);return}
   if(m.type==='restart'){G.phase='setup';save();route();window.scrollTo(0,0);return}
+  if(window.HBLive&&HBLive.handleGameMsg(m))return; // 실사용 모드: 로그인한 소통 공간으로
   if(m.type==='ask'&&m.ch!=='anon'){S.draft={ref:m.card.day+' · '+m.card.title,t:String(m.text||'').slice(0,500)};S.mt=null;save();toast('선배에게 물어볼 질문을 담아 뒀어요 · 소통 공간 → 선배에게 물어보기');return}
   if(m.type==='ask'){const anon=m.ch==='anon';
     S.posts.unshift({id:'p'+Date.now(),ch:anon?'anon':'ask',by:anon?null:myName(),tag:anon?'익명 신입':'신입 · 인사팀 · '+(m.card.day||''),ref:m.card.day+' · '+m.card.title,t:String(m.text||'').slice(0,500),when:'방금',mine:true});
@@ -1738,7 +1745,7 @@ function chatHTML(){
     </div>
     ${mem}
   </div>
-  <p class="sample" style="max-width:${mem?1140:960}px;width:100%;margin:0 auto">예시 대화가 섞여 있어요. 1:1 답장은 시연용 자동 답장이고, 내가 보낸 메시지는 이 브라우저에만 저장돼요.</p>`;
+  <p class="sample" style="width:100%;margin:0 auto">예시 대화가 섞여 있어요. 1:1 답장은 시연용 자동 답장이고, 내가 보낸 메시지는 이 브라우저에만 저장돼요.</p>`;
 }
 /* ---------- 선배에게 물어보기: 선배 프로필 고르기 → 반익명 1:1 ---------- */
 const MENTORS=[
@@ -1831,7 +1838,7 @@ function mtChatHTML(x,dr){
       </form>
     </div>
   </div>
-  <p class="sample" style="max-width:960px;width:100%;margin:0 auto">예시 선배 프로필이에요. 답장은 시연용 자동 답장이고, 대화는 이 브라우저에만 저장돼요.</p>`;
+  <p class="sample" style="width:100%;margin:0 auto">예시 선배 프로필이에요. 답장은 시연용 자동 답장이고, 대화는 이 브라우저에만 저장돼요.</p>`;
 }
 function postHTML(p,canPropose){
   const reps=repliesOf(p);
@@ -2197,6 +2204,7 @@ bind.hrd=()=>{
 route();
 </script>
 
+<script src="hb-live.js"></script>
 <script src="hb-bot.js"></script>
 </body>
 </html>
