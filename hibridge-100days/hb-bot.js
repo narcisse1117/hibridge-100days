@@ -31,7 +31,7 @@
     });
     // ③ 소통 공간: 질문 + 선배 답변
     const reps = (p) => [...(p.rep || []), ...((S.replies || {})[p.id] || [])];
-    [...(S.posts || []), ...SEED_POSTS].forEach((p) => {
+    [...(S.posts || []), ...SEED_POSTS, ...((window.HBLive && HBLive.kbPosts()) || [])].forEach((p) => {
       if (p.ch === "peer") return;
       reps(p).filter((r) => /^(선배|HRD)/.test(r.tag || "")).forEach((r, k) => {
         kb.push({ id: `post-${p.id}-${k}`, who: r.by, role: (r.tag || "").replace(/^선배 · /, ""), src: p.ch === "anon" ? "익명 질문방 답변" : "선배 답변",
