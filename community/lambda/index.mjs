@@ -61,6 +61,10 @@ async function profiles(subs) {
   return out;
 }
 
+/* ---------- 읽음 표시: 방마다 사람별로 마지막으로 본 시각 ---------- */
+const markRead = (room, sub) => put({ pk: `READ#${room}`, sk: sub, at: now() });
+async function readsOf(room) { return Object.fromEntries((await query(`READ#${room}`, { limit: 1000, desc: false })).map((r) => [r.sk, r.at])); }
+
 /* ---------- 프로필 ---------- */
 const ROLES = ["신입", "선배", "HRD"];
 const RANKS = ["인턴", "사원", "주임", "대리", "과장", "차장", "부장", "팀장"];
@@ -133,16 +137,17 @@ const OPS = {
   // 동기방 (단체) — 내 입사 반기 방
   async "peer.list"(me, a) {
     const u = await get("USER", me.sub); if (!u) return { error: "프로필이 없어요" };
-    const pk = `PEER#${cohortKey(u)}`;
-    const items = a.after ? await query(pk, { after: a.after, desc: false }) : (await query(pk, { limit: 150 })).reverse();
+    const room = cohortKey(u), pk = `PEER#${room}`;
+    if (a.read) await markRead(room, me.sub);
+    const [items, reads] = await Promise.all([a.after ? query(pk, { after: a.after, desc: false }) : query(pk, { limit: 150 }).then((x) => x.reverse()), readsOf(room)]);
     const ps = await profiles(items.map((m) => m.from));
-    return { msgs: items.map((m) => ({ id: m.sk, t: m.t, at: m.at, by: ps[m.from]?.name || "알 수 없음", uid: m.from, tag: ps[m.from] ? label(ps[m.from]) : "", bri: ps[m.from]?.bri, me: m.from === me.sub })) };
+    return { reads, msgs: items.map((m) => ({ id: m.sk, t: m.t, at: m.at, by: ps[m.from]?.name || "알 수 없음", uid: m.from, tag: ps[m.from] ? label(ps[m.from]) : "", bri: ps[m.from]?.bri, me: m.from === me.sub })) };
   },
   async "peer.send"(me, a) {
     const t = clip(a.t, 500); if (!t) return { error: "내용을 입력해 주세요" };
     const u = await get("USER", me.sub); if (!u) return { error: "프로필이 없어요" };
     if (u.role !== "신입") return { error: "동기방은 신입·인턴끼리 쓰는 공간이에요" };
-    const at = now(); await put({ pk: `PEER#${cohortKey(u)}`, sk: `${at}#${rid()}`, from: me.sub, t, at }); return {};
+    const at = now(); await put({ pk: `PEER#${cohortKey(u)}`, sk: `${at}#${rid()}`, from: me.sub, t, at }); await markRead(cohortKey(u), me.sub); return {};
   },
 
   // 기수 · 초대 링크 (HRD가 만들고, 신입은 초대 코드로 들어감)
@@ -189,14 +194,16 @@ const OPS = {
   },
   async "dm.get"(me, a) {
     const m = await member(me, a.tid); if (!m) return { error: "대화를 찾을 수 없어요" };
+    if (a.read) await markRead(`TH#${a.tid}`, me.sub);
     const items = a.after ? await query(`TH#${a.tid}`, { after: a.after, desc: false }) : (await query(`TH#${a.tid}`, { limit: 200 })).reverse();
-    const ps = await profiles([m.a, m.b]);
-    return { thread: threadView(m, me.sub, ps), msgs: items.filter((x) => x.sk !== "META").map((x) => ({ id: x.sk, t: x.t, at: x.at, me: x.from === me.sub })) };
+    const ps = await profiles([m.a, m.b]), reads = await readsOf(`TH#${a.tid}`);
+    // 상대가 마지막으로 읽은 시각만 (상대가 누구인지는 보내지 않음)
+    return { otherRead: reads[m.a === me.sub ? m.b : m.a] || 0, thread: threadView(m, me.sub, ps), msgs: items.filter((x) => x.sk !== "META").map((x) => ({ id: x.sk, t: x.t, at: x.at, me: x.from === me.sub })) };
   },
   async "dm.send"(me, a) {
     const m = await member(me, a.tid); if (!m) return { error: "대화를 찾을 수 없어요" };
     const t = clip(a.t, 1000); if (!t) return { error: "내용을 입력해 주세요" };
-    const at = now(); await put({ pk: `TH#${a.tid}`, sk: `MSG#${at}#${rid()}`, from: me.sub, t, at });
+    const at = now(); await put({ pk: `TH#${a.tid}`, sk: `MSG#${at}#${rid()}`, from: me.sub, t, at }); await markRead(`TH#${a.tid}`, me.sub);
     await db.send(new UpdateCommand({ TableName: TABLE, Key: { pk: `TH#${a.tid}`, sk: "META" }, UpdateExpression: "SET lastAt = :a, lastT = :t, lastFrom = :f",
       ExpressionAttributeValues: { ":a": at, ":t": t.slice(0, 80), ":f": me.sub } }));
     return {};

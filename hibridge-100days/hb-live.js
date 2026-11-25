@@ -7,9 +7,9 @@
 (function () {
   const HB_LIVE = {
     region: "ap-southeast-2",
-    pool: "",     // Cognito 사용자 풀 ID   (setup.sh 출력의 POOL)
-    client: "",   // Cognito 앱 클라이언트 ID (setup.sh 출력의 CLIENT)
-    api: "",      // Lambda 함수 URL         (setup.sh 출력의 URL)
+    pool: "ap-southeast-2_pC4kw55uW",                                                  // Cognito 사용자 풀 ID   (setup.sh 출력의 POOL)
+    client: "5l7rh0ff9jhjlalf7rock4eunt",                                              // Cognito 앱 클라이언트 ID (setup.sh 출력의 CLIENT)
+    api: "https://udrxtzxtlrzsw7kbw5ohyto7440hqzoa.lambda-url.ap-southeast-2.on.aws/", // Lambda 함수 URL         (setup.sh 출력의 URL)
   };
   try { Object.assign(HB_LIVE, JSON.parse(localStorage.getItem("hb-live-cfg") || "{}")); } catch (e) {}
   if (!HB_LIVE.pool || !HB_LIVE.client || !HB_LIVE.api) return;   // 설정 전: 시연 모드 유지
@@ -125,9 +125,12 @@
     const jobs = [];
     if (all || ch === "anon") jobs.push(api("anon.list").then((j) => (L.anon = j.posts)));
     if (all || ch === "peer" || ch === "ask") jobs.push(api("dm.threads").then((j) => (L.threads = j.threads)));
-    if (ch === "peer" && L.room === "group") jobs.push(api("peer.list").then((j) => (L.peer = j.msgs)));
+    // 보고 있는 방은 '읽음'으로 표시 (10초에 한 번까지만 서버에 알림)
+    L.marked = L.marked || {};
+    const read = (room) => { const v = !document.hidden && Date.now() - (L.marked[room] || 0) > 10e3; if (v) L.marked[room] = Date.now(); return v; };
+    if (ch === "peer" && L.room === "group") jobs.push(api("peer.list", { read: read("group") }).then((j) => { L.peer = j.msgs; L.peerReads = j.reads || {}; }));
     const tid = ch === "peer" && L.room !== "group" ? L.room : ch === "ask" ? L.mtid : null;
-    if (tid) jobs.push(api("dm.get", { tid }).then((j) => (L.th[tid] = j)));
+    if (tid) jobs.push(api("dm.get", { tid, read: read(tid) }).then((j) => (L.th[tid] = j)));
     await Promise.all(jobs);
   }
 
@@ -158,7 +161,7 @@
     try {
       if (Date.now() - (L.usersAt || 0) > 30e3) await loadUsers();
       await loadChannel(false);
-      const s = JSON.stringify([L.peer, L.threads, L.anon, L.th, L.users.map((u) => u.uid + u.on)]);
+      const s = JSON.stringify([L.peer, L.peerReads, L.threads, L.anon, L.th, L.users.map((u) => u.uid + u.on)]);
       if (s !== sig) { sig = s; rerender(); }
     } catch (e) {}
   }, 4000);
@@ -334,7 +337,7 @@
       const cont = prev && (prev.uid || prev.me) === (m.uid || m.me) && prev.me === m.me && !div && m.at - prev.at < 5 * 60e3;
       const av = m.me ? "" : cont ? '<span class="cmsg-sp"></span>' : m.av;
       return `${div}<div class="cmsg${m.me ? " me" : ""}${cont ? " cont" : ""}">${av}<div class="cmsg-col">${!m.me && !cont && group ? `<span class="cmsg-nm">${esc(m.by)}${m.tag ? ` <small>${esc(m.tag.replace(/^신입 · /, ""))}</small>` : ""}</span>` : ""}
-        <div class="cmsg-row"><p class="cmsg-bub">${esc(m.t)}</p><span class="cmsg-tm">${hm(new Date(m.at))}</span></div></div></div>`;
+        <div class="cmsg-row"><p class="cmsg-bub">${esc(m.t)}</p><span class="cmsg-meta">${m.unread ? `<b class="cmsg-unread" title="아직 안 읽은 사람 ${m.unread}명">${m.unread}</b>` : ""}<span class="cmsg-tm">${hm(new Date(m.at))}</span></span></div></div></div>`;
     }).join("") || `<div class="cm-empty">${UI("chat")}<p>첫 인사를 남겨 보세요!</p></div>`;
   }
 
@@ -354,11 +357,13 @@
     let head, msgs;
     if (room === "group") {
       head = `<div class="chat-head"><span class="cm-ic">${UI("group")}</span><div class="chat-title"><b>${esc(roomName())} 동기방</b><small>신입·인턴 ${peers.length + 1}명 · 편하게 이야기해요</small></div></div>`;
-      msgs = L.peer.map((m) => ({ ...m, av: `<button type="button" class="cmsg-avbtn" data-lprof="${m.uid}" aria-label="${esc(m.by)} 프로필">${uAv(m, "av sm")}</button>` }));
+      // 동기방: 보낸 사람과 나를 빼고, 그 메시지 이후로 아직 방을 열지 않은 동기 수
+      const mem = L.users.filter((u) => u.role === "신입" && u.ckey === L.me.ckey && u.uid !== L.me.uid), rd = L.peerReads || {};
+      msgs = L.peer.map((m) => ({ ...m, unread: mem.filter((u) => u.uid !== m.uid && (rd[u.uid] || 0) < m.at).length, av: `<button type="button" class="cmsg-avbtn" data-lprof="${m.uid}" aria-label="${esc(m.by)} 프로필">${uAv(m, "av sm")}</button>` }));
     } else {
       const t = dms.find((x) => x.tid === room);
       head = `<div class="chat-head">${uAv(t.other, "av sm")}<div class="chat-title"><b>${esc(t.other.name)}</b><small>1:1 대화 · ${esc(t.other.dept || "")}</small></div><span class="chip gray">${UI("lock")} 둘만 보여요</span></div>`;
-      msgs = cur ? cur.msgs.map((m) => ({ ...m, av: uAv(t.other, "av sm") })) : null;
+      msgs = cur ? cur.msgs.map((m) => ({ ...m, unread: m.me && (cur.otherRead || 0) < m.at ? 1 : 0, av: uAv(t.other, "av sm") })) : null;
     }
     const mem = `<aside class="chat-mem" aria-label="대화상대">
       <div class="chat-mem-h">대화상대 <b>${peers.length + 1}</b></div>
@@ -440,7 +445,7 @@
           ${asker ? (t.revealed ? `<span class="chip gray">${UI("user")} 실명 공개함</span>` : `<button type="button" class="btn sm ghost" data-lreveal title="상대에게 내 이름을 보여 줘요">실명 공개하기</button>`) : t.revealed ? `<span class="chip gray">실명 공개</span>` : ""}</div>
         <div class="chat-log" id="chatLog" role="log" aria-live="polite">
           <div class="mt-note">${UI("lock")} ${asker ? `${esc(o.name)} 님과 나만 보는 대화예요. 상대에게 나는 <b>'${esc(shown)}'</b>로 보여요.` : `질문한 사람과 나만 보는 대화예요. 질문한 사람이 실명을 공개하기 전까지는 별명으로 보여요. 답이 어려우면 "확인하고 언제까지 답할게요"처럼 기한을 알려 주세요.`}</div>
-          ${cur ? logHTML(cur.msgs.map((m) => ({ ...m, av: oAv })), false) : `<div class="lv-loading sm">불러오는 중…</div>`}
+          ${cur ? logHTML(cur.msgs.map((m) => ({ ...m, unread: m.me && (cur.otherRead || 0) < m.at ? 1 : 0, av: oAv })), false) : `<div class="lv-loading sm">불러오는 중…</div>`}
         </div>
         <form class="chat-input" id="lvMt" data-tid="${tid}">${meAv("av sm")}
           <input type="text" id="chatText" value="${esc(pre)}" placeholder="${asker ? `${esc(o.name)} 님에게 질문하기 (반익명)` : "답장 보내기"}" autocomplete="off" aria-label="메시지 입력" maxlength="1000">
@@ -773,6 +778,8 @@
   .lv-ghostbtn{border:1px solid var(--line,#e3e8f0);background:#fff;color:var(--ink,#1c2333)}.lv-ghostbtn:hover{background:var(--bg-soft,#f6f8fc)}
   @media (max-width:760px){.lv-user-tx,.lv-chev{display:none}.lv-user{padding:3px}}
   @media (max-width:560px){.lv-ghostbtn{display:none}.lv-solidbtn{padding:6px 12px;font-size:13px}.lv-user .av{width:30px;height:30px}}
+  .cmsg-meta{display:flex;flex-direction:column;align-items:flex-end;justify-content:flex-end;gap:1px;flex:none}.cmsg.me .cmsg-meta{align-items:flex-end}
+  .cmsg-unread{font-size:11px;font-weight:800;color:#e0a100;line-height:1}
   .lv-boxes{display:grid;grid-template-columns:1fr 1fr;gap:14px}.lv-boxes h3{font-size:14.5px;margin:0 0 8px}.lv-boxes h3 b{color:var(--blue,#004aad)}
   .lv-boxes .bd-row{grid-template-columns:auto minmax(0,1fr) auto}.lv-boxes .bd-title small{font-weight:500;color:var(--ink-3,#7c8597)}
   .lv-none{margin:0;padding:16px;color:var(--ink-3,#7c8597);font-size:13.5px}
