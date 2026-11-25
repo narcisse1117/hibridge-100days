@@ -717,7 +717,7 @@
   /* ---------- 연결 ---------- */
   VIEWS.community = liveCommunity;
   bind.community = liveBind;
-  window.HBLive = { handleGameMsg, kbPosts, logout, state: L };
+  window.HBLive = { handleGameMsg, kbPosts, logout, state: L, isHrd: () => !!(auth && isHrd()) };
   // 로그인 상태면 챗봇 자료를 위해 미리 한 번 불러 둔다
   if (auth) { api("anon.list").then((j) => { L.anon = j.posts; }).catch(() => {});
     if ((location.hash || "#home") !== "#community") api("me.get").then((j) => { if (L.me === undefined && j.me) { L.me = j.me; updateTop(); if (location.hash === "#hrd") route(); } }).catch(() => {}); }
@@ -824,5 +824,5 @@
   @media (max-width:820px){.lv-auth{grid-template-columns:minmax(0,1fr)}.lv-mecard{max-width:none;width:100%}.cm-hero{flex-wrap:wrap}}
   @media (max-width:520px){.lv-row{grid-template-columns:minmax(0,1fr)}}`;
   const style = document.createElement("style"); style.textContent = css; document.head.appendChild(style);
-  if ((location.hash || "#home") === "#community") route();
+  if (["#community", "#hrd"].includes(location.hash || "#home")) route();   // 처음 그린 화면을 실사용 모드로 다시 그림
 })();
