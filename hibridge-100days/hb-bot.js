@@ -40,8 +40,8 @@
     });
     // ④ 선배 1:1 대화 중 신입이 '이름 없이 공유'한 Q&A
     (S.mtShared || []).forEach((q, k) => kb.push({ id: `mt-${k}`, who: q.by, role: (q.tag || "").replace(/^선배 · /, ""), src: "선배 1:1 공유", title: q.q.slice(0, 40), text: `신입 질문: ${q.q}\n${q.by} 선배 답변: ${q.a}` }));
-    // ⑤ 경험 등록 (시연: 이 브라우저에서 등록한 것)
-    (S.db || []).filter((d) => d.full && d.full.q1).forEach((d) => {
+    // ⑤ 경험 등록: HRD 대시보드에서 '게시'한 것만 (검토 대기·보류는 쓰지 않음)
+    (S.db || []).filter((d) => d.full && d.full.q1 && d.status === "게시").forEach((d) => {
       const f = d.full;
       kb.push({ id: `reg-${d.id}`, who: f.who || "익명 선배", role: `${f.part || ""} ${f.year || ""}`.trim(), src: "경험 등록", title: d.title,
         text: `상황: ${f.rel || ""} ${f.when || ""} ${f.before || ""}\n가장 당황했던 순간: ${f.q1}\n실제로 한 행동: ${f.q2}\n판단 근거: ${f.q3}\n후배에게 한마디: ${f.q4 || ""}` });
@@ -63,7 +63,7 @@
   /* ---------- 사이트 안내 (형식지) ---------- */
   const NAV = [
     { k: /경험\s*등록|경험을?\s*남기|등록하는\s*법/, a: "경험 등록은 위쪽 메뉴 **경험 등록**에서 4문항(당황했던 순간 · 실제 행동 · 판단 근거 · 조언)으로 5분이면 남길 수 있어요. HRD 검토 후 다음 신입의 상황 카드와 제 답변 자료가 돼요.", go: ["#register", "경험 등록 열기"] },
-    { k: /게임|100일|상황\s*카드/, a: "**100일 게임**에서 하이브릿지 인사팀 신입이 되어 D+1부터 D+80까지의 상황을 겪어 볼 수 있어요. 고를 때마다 선배들은 실제로 어떻게 했는지 보여 줘요.", go: ["#game", "100일 게임 하러 가기"] },
+    { k: /게임|100일|상황\s*카드/, a: "**100일 게임**에서 하이브릿지 인사팀 신입이 되어 D+3부터 D+90까지 5일 동안 실무·보고·소통·대처 상황을 겪어 볼 수 있어요. 고를 때마다 선배들은 실제로 어떻게 했는지 보여 줘요.", go: ["#game", "100일 게임 하러 가기"] },
     { k: /대시보드|통계|HRD/, a: "**운영 대시보드**는 HRD 담당자용이에요. 신입들이 어떤 상황에서 많이 막히는지, 등록된 경험을 검토하는 화면이 있어요.", go: ["#hrd", "대시보드 보기"] },
     { k: /익명/, a: "**익명 질문방**에서는 이름 없이 질문할 수 있고, 검색으로 비슷한 질문과 선배 답변을 먼저 찾아볼 수 있어요.", go: ["anon", "익명 질문방 열기"] },
   ];
@@ -72,7 +72,27 @@
   const st = { open: false, busy: false, msgs: [] };
   try { st.msgs = JSON.parse(sessionStorage.getItem("hb-bot") || "[]"); } catch (e) {}
   const keep = () => { try { sessionStorage.setItem("hb-bot", JSON.stringify(st.msgs.slice(-30))); } catch (e) {} };
-  const SUGGEST = ["면접 일정이 겹치면 어떻게 해요?", "팀장님께 보고는 언제 해요?", "입사 초에 연차 써도 될까요?", "동료가 평가 등급을 물어보면?"];
+  // 범주별 예시 질문 (실무 · 보고 · 소통 · 대처). 기본은 범주마다 맨 앞 질문 (발표·시연 때 고정)
+  const SUGGEST_POOL = {
+    실무: ["품의 올릴 때 전결권자는 어디서 봐요?", "인수인계 없이 맡은 채용, 뭐부터 봐요?", "교육 대리 참석 요청, 받아 줘도 돼요?", "강사님께 강의료, 첫 메일에 물어도 돼요?"],
+    보고: ["팀장님은 메신저 보고 몇 줄을 좋아하세요?", "사수님보다 팀장님께 먼저 보고해도 돼요?", "\"좀 더 다듬어 봐\"는 어디를 고치라는 걸까요?", "메일마다 팀장님을 참조로 넣어야 해요?"],
+    소통: ["아직 맡은 일이 없을 때 뭘 하면 좋아요?", "다른 본부에 안건, 어디까지 말해도 돼요?", "동기가 평가 등급을 물어보면요?", "첫 회식, 1차만 있다 가도 될까요?", "입사 2주 차인데 연차 써도 될까요?"],
+    대처: ["\"오늘 중으로\"는 정확히 언제까지예요?", "지원자에게 면접 시간을 잘못 보냈어요", "교육 당일 강사님이 늦는대요", "면접관 일정이 갑자기 바뀌었어요"],
+  };
+  const SUGGEST = Object.values(SUGGEST_POOL).map((a) => a[0]);
+  // 열 때마다 바꾸려면: Object.values(SUGGEST_POOL).map((a) => a[Math.floor(Math.random() * a.length)])
+
+  // ② 브리 답 끝의 [[선배:이름]] [[이동:…]] 태그를 떼어 버튼 정보로 바꾼다
+  const GO = { 게임: ["#game", "100일 게임 하러 가기"], 익명: ["anon", "익명 질문방 열기"], 경험등록: ["#register", "경험 등록 열기"], 소통: ["#community", "소통 공간 열기"] };
+  function pullTags(text) {
+    const out = { text: "", mentors: [], go: null };
+    out.text = String(text || "").replace(/\[\[(선배|이동)\s*:\s*([^\]]+?)\s*\]\]/g, (_, k, v) => {
+      if (k === "선배" && mentorOf(v) && out.mentors.length < 2 && !out.mentors.includes(v)) out.mentors.push(v);
+      if (k === "이동" && !out.go && GO[v]) out.go = GO[v];
+      return "";
+    }).trim();
+    return out;
+  }
 
   /* ---------- 답변 만들기 ---------- */
   function demoAnswer(q, docs) {
@@ -89,14 +109,20 @@
       go: nav ? nav.go : null,
     };
   }
+  // ③ 이름 · 고른 범주 · 게임 진행 · 보고 있는 화면 (맞춤 답변용)
+  function userCtx() {
+    const G = S.game || {};
+    return { name: G.name || "", part: (typeof PARTS !== "undefined" && PARTS[G.part]) || "", day: (G.progress && G.progress.day) || "", page: location.hash || "#home" };
+  }
   async function apiAnswer(q, docs) {
     const history = st.msgs.filter((m) => !m.err).slice(-6, -1).map((m) => ({ role: m.me ? "user" : "assistant", text: m.text }));
     const res = await fetch(HB_BOT_API, { method: "POST", headers: { "content-type": "application/json" },
-      body: JSON.stringify({ question: q, history, docs: docs.map((d) => ({ title: `${d.who} · ${d.role} · ${d.src} · ${d.title}`, text: d.text })) }) });
+      body: JSON.stringify({ question: q, history, docs: docs.map((d) => ({ title: `${d.who} · ${d.role} · ${d.src} · ${d.title}`, text: d.text })), ctx: userCtx() }) });
     if (!res.ok) throw new Error("HTTP " + res.status);
     const j = await res.json();   // { text, cites:[{doc, quote}] }
     const used = [...new Set((j.cites || []).map((c) => c.doc))].filter((i) => docs[i]);
-    return { text: j.text, sources: used.map((i) => ({ who: docs[i].who, role: docs[i].role, src: docs[i].src, title: docs[i].title, quote: (j.cites.find((c) => c.doc === i) || {}).quote || "" })), ask: !used.length, ai: true };
+    const t = pullTags(j.text);
+    return { text: t.text, sources: used.map((i) => ({ who: docs[i].who, role: docs[i].role, src: docs[i].src, title: docs[i].title, quote: (j.cites.find((c) => c.doc === i) || {}).quote || "" })), ask: !used.length, ai: true, go: t.go, connect: t.mentors };
   }
   async function ask(q) {
     q = q.trim(); if (!q || st.busy) return;
@@ -120,7 +146,10 @@
     return `<div class="hbb-m">${briHead()}<div class="hbb-bub">
       <p>${md(m.text)}</p>${m.note ? `<small class="hbb-note">${esc(m.note)}</small>` : ""}
       ${srcs ? `<div class="hbb-srcs"><span class="hbb-srch">참고한 선배 경험</span>${srcs}</div>` : ""}
-      <div class="hbb-acts">${m.go ? `<button type="button" data-bgo="${esc(m.go[0])}">${esc(m.go[1])}</button>` : ""}${m.ask || (m.sources && m.sources.length) ? `<button type="button" data-banon="${esc(m.q || "")}">익명 질문방에 물어보기</button>` : ""}</div>
+      <div class="hbb-acts">${(m.connect || []).filter((n) => !(m.sources || []).some((s) => s.who === n)).map((n) => {
+        const t = (mentorOf(n) || {}).rank === "팀장" ? "팀장님께" : "선배에게";
+        return `<button type="button" data-bmt="${esc(n)}" data-bq="${esc(m.q || "")}">${esc(n)} ${t} 1:1로 물어보기 →</button>`;
+      }).join("")}${m.go ? `<button type="button" data-bgo="${esc(m.go[0])}">${esc(m.go[1])}</button>` : ""}${m.ask || (m.sources && m.sources.length) ? `<button type="button" data-banon="${esc(m.q || "")}">익명 질문방에 물어보기</button>` : ""}</div>
     </div></div>`;
   }
   function draw() {
