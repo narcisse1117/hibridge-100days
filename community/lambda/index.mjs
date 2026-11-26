@@ -66,10 +66,10 @@ const markRead = (room, sub) => put({ pk: `READ#${room}`, sk: sub, at: now() });
 async function readsOf(room) { return Object.fromEntries((await query(`READ#${room}`, { limit: 1000, desc: false })).map((r) => [r.sk, r.at])); }
 
 /* ---------- 프로필 ---------- */
-const ROLES = ["신입", "선배", "HRD"];
+// 구분은 HRD 담당자만 따로 둔다. 신입·인턴·선배는 직급·연차·입사 시기로 보인다.
 const RANKS = ["인턴", "사원", "주임", "대리", "과장", "차장", "부장", "팀장"];
 function cleanProfile(p, old) {
-  let role = ROLES.includes(p.role) ? p.role : old?.role || "신입";
+  let role = p.role === "HRD" ? "HRD" : "멤버";
   // HRD 담당자는 인증 코드가 맞을 때만 (이미 HRD면 유지)
   if (role === "HRD" && old?.role !== "HRD" && !(HRD_CODE && String(p.hrdCode || "").trim() === HRD_CODE)) role = "HRD?";
   return {
@@ -88,10 +88,10 @@ const cohortKey = (u) => (u.cohortId ? `C#${u.cohortId}` : `H#${halfOf(u)}`);
 // 다른 사람에게 보여도 되는 프로필 필드
 const pub = (u) => u && { uid: u.sk, name: u.name, dept: u.dept, job: u.job, rank: u.rank, yrs: u.yrs, role: u.role, bio: u.bio, tags: u.tags || [], bri: u.bri,
   joined: u.joined || (u.created ? ym(u.created) : ""), cohort: u.name ? cohortOf(u) : "", ckey: u.name ? cohortKey(u) : "", on: now() - (u.seen || 0) < 5 * 60e3 };
-const label = (u) => (u.role === "선배" ? `선배 · ${u.dept}${u.yrs ? ` ${u.yrs}년차` : ""}` : u.role === "HRD" ? `HRD 담당자 · ${u.dept}` : `신입 · ${u.dept}`);
+const label = (u) => (u.role === "HRD" ? `HRD 담당자 · ${u.dept}` : `${u.dept}${u.rank === "인턴" ? " 인턴" : u.yrs ? ` ${u.yrs}년차` : " 신입"}`);
 const isAdmin = (u) => u && u.role === "HRD";
-// 선배에게 보이는 별명: 큰 부서 이름만 (예: "인사팀 신입 · 브리 #27") — 파트까지 보이면 누군지 짐작되기 쉬움
-const nickOf = (u) => `${String(u.dept || "").split(/\s+/)[0] || "하이브릿지"}${u.role === "신입" ? " 신입" : ""} · 브리 #${u.nick}`;
+// 1:1 질문을 받은 사람에게 보이는 별명: 큰 부서 이름만 (예: "인사팀 · 브리 #27") — 파트까지 보이면 누군지 짐작되기 쉬움
+const nickOf = (u) => `${String(u.dept || "").split(/\s+/)[0] || "하이브릿지"} · 브리 #${u.nick}`;
 
 /* ---------- 익명 질문방 첫 질문: 신입·인턴 설문과 현직자 인터뷰에서 나온 고민 (비어 있을 때 한 번만 넣음) ---------- */
 const SEED_Q = [
@@ -146,11 +146,10 @@ const OPS = {
   async "peer.send"(me, a) {
     const t = clip(a.t, 500); if (!t) return { error: "내용을 입력해 주세요" };
     const u = await get("USER", me.sub); if (!u) return { error: "프로필이 없어요" };
-    if (u.role !== "신입") return { error: "동기방은 신입·인턴끼리 쓰는 공간이에요" };
     const at = now(); await put({ pk: `PEER#${cohortKey(u)}`, sk: `${at}#${rid()}`, from: me.sub, t, at }); await markRead(cohortKey(u), me.sub); return {};
   },
 
-  // 기수 · 초대 링크 (HRD가 만들고, 신입은 초대 코드로 들어감)
+  // 기수 · 초대 링크 (HRD가 만들고, 받은 사람은 초대 코드로 들어감)
   async "cohort.create"(me, a) {
     const u = await get("USER", me.sub); if (!isAdmin(u)) return { error: "HRD 담당자만 기수를 만들 수 있어요" };
     const name = clip(a.name, 30); if (name.length < 2) return { error: "기수 이름을 입력해 주세요" };
@@ -166,12 +165,11 @@ const OPS = {
   async "cohort.join"(me, a) {
     const c = await get("CODE", clip(a.code, 20).toUpperCase()); if (!c) return { error: "초대 코드가 맞지 않아요" };
     const u = await get("USER", me.sub); if (!u) return { error: "프로필을 먼저 만들어 주세요" };
-    if (u.role !== "신입") return { error: "동기방 초대는 신입·인턴 계정만 쓸 수 있어요" };
     await db.send(new UpdateCommand({ TableName: TABLE, Key: { pk: "USER", sk: me.sub }, UpdateExpression: "SET cohortId = :i, cohortName = :n", ExpressionAttributeValues: { ":i": c.id, ":n": c.name } }));
     return { name: c.name };
   },
 
-  // 1:1 대화 (동기끼리 peer · 신입→선배 mentor). 선배에게는 신입의 별명만 보인다.
+  // 1:1 대화 (동기끼리 peer · 누구에게나 질문하는 mentor). 질문을 받은 사람에게는 질문한 사람의 별명만 보인다.
   async "dm.threads"(me) {
     const idx = await query(`UTH#${me.sub}`, { limit: 100, desc: false });
     const metas = await Promise.all(idx.map((x) => get(`TH#${x.sk}`, "META")));
@@ -208,8 +206,8 @@ const OPS = {
       ExpressionAttributeValues: { ":a": at, ":t": t.slice(0, 80), ":f": me.sub } }));
     return {};
   },
-  async "dm.reveal"(me, a) {   // 신입이 선배에게 실명 공개
-    const m = await member(me, a.tid); if (!m || m.kind !== "mentor" || m.a !== me.sub) return { error: "실명 공개는 질문한 신입만 할 수 있어요" };
+  async "dm.reveal"(me, a) {   // 질문한 사람이 실명 공개
+    const m = await member(me, a.tid); if (!m || m.kind !== "mentor" || m.a !== me.sub) return { error: "실명 공개는 질문한 사람만 할 수 있어요" };
     await db.send(new UpdateCommand({ TableName: TABLE, Key: { pk: `TH#${a.tid}`, sk: "META" }, UpdateExpression: "SET revealed = :r", ExpressionAttributeValues: { ":r": true } }));
     return {};
   },
@@ -254,16 +252,18 @@ async function member(me, tid) {
 }
 function threadView(m, mySub, ps) {
   const otherSub = m.a === mySub ? m.b : m.a, o = ps[otherSub], iAmAsker = m.a === mySub;
-  // 선배 쪽에서 본 신입: 실명 공개 전에는 별명만
+  // 질문을 받은 쪽에서 본 질문자: 실명 공개 전에는 별명만
   const hide = m.kind === "mentor" && !iAmAsker && !m.revealed;
   return { tid: m.tid, kind: m.kind, mine: iAmAsker, revealed: !!m.revealed, lastAt: m.lastAt, lastT: m.lastT, lastMe: m.lastFrom === mySub,
-    other: hide ? { name: o ? nickOf(o) : "익명 신입", anon: true, role: "신입" } : { ...pub(o || { sk: otherSub, name: "알 수 없음" }) },
+    other: hide ? { name: o ? nickOf(o) : "익명", anon: true } : { ...pub(o || { sk: otherSub, name: "알 수 없음" }) },
     myNick: m.kind === "mentor" && iAmAsker && ps[mySub] ? nickOf(ps[mySub]) : undefined };
 }
 function anonView(p, mySub, ps) {
   return { id: p.sk, t: p.t, cat: p.cat, ref: p.ref, at: p.at, views: p.views || 0, mine: p.from === mySub, survey: p.from === "seed",
-    reps: (p.reps || []).map((r) => { const u = ps[r.from], sr = u?.role === "선배" || u?.role === "HRD", isAuthor = r.from === p.from;
-      return { id: r.id, t: r.t, at: r.at, mine: r.from === mySub, sr, by: sr ? u.name : isAuthor ? "질문자" : "익명 신입", tag: sr ? label(u) : "신입", bri: sr ? u.bri : null }; }) };
+    // 답변도 모두 익명: 질문자 / 익명 1, 익명 2 … (같은 글 안에서 같은 사람은 같은 번호)
+    reps: (() => { const no = {}; let k = 0;
+      return (p.reps || []).map((r) => { const isAuthor = r.from === p.from; if (!isAuthor && !no[r.from]) no[r.from] = ++k;
+        return { id: r.id, t: r.t, at: r.at, mine: r.from === mySub, au: isAuthor, by: isAuthor ? "질문자" : `익명 ${no[r.from]}` }; }); })() };
 }
 
 /* ---------- 진입점 ---------- */
