@@ -137,6 +137,7 @@ const OPS = {
   // 동기방 (단체) — 내 입사 반기 방
   async "peer.list"(me, a) {
     const u = await get("USER", me.sub); if (!u) return { error: "프로필이 없어요" };
+    if (isAdmin(u)) return { error: "HRD 담당자 계정은 동기방에 들어가지 않아요" };
     const room = cohortKey(u), pk = `PEER#${room}`;
     if (a.read) await markRead(room, me.sub);
     const [items, reads] = await Promise.all([a.after ? query(pk, { after: a.after, desc: false }) : query(pk, { limit: 150 }).then((x) => x.reverse()), readsOf(room)]);
@@ -146,6 +147,7 @@ const OPS = {
   async "peer.send"(me, a) {
     const t = clip(a.t, 500); if (!t) return { error: "내용을 입력해 주세요" };
     const u = await get("USER", me.sub); if (!u) return { error: "프로필이 없어요" };
+    if (isAdmin(u)) return { error: "HRD 담당자 계정은 동기방에 들어가지 않아요" };
     const at = now(); await put({ pk: `PEER#${cohortKey(u)}`, sk: `${at}#${rid()}`, from: me.sub, t, at }); await markRead(cohortKey(u), me.sub); return {};
   },
 
@@ -165,6 +167,7 @@ const OPS = {
   async "cohort.join"(me, a) {
     const c = await get("CODE", clip(a.code, 20).toUpperCase()); if (!c) return { error: "초대 코드가 맞지 않아요" };
     const u = await get("USER", me.sub); if (!u) return { error: "프로필을 먼저 만들어 주세요" };
+    if (isAdmin(u)) return { error: "HRD 담당자 계정은 기수 동기방에 들어가지 않아요" };
     await db.send(new UpdateCommand({ TableName: TABLE, Key: { pk: "USER", sk: me.sub }, UpdateExpression: "SET cohortId = :i, cohortName = :n", ExpressionAttributeValues: { ":i": c.id, ":n": c.name } }));
     return { name: c.name };
   },

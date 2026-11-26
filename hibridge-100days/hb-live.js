@@ -126,6 +126,7 @@
     // 보고 있는 방은 '읽음'으로 표시 (10초에 한 번까지만 서버에 알림)
     L.marked = L.marked || {};
     const read = (room) => { const v = !document.hidden && Date.now() - (L.marked[room] || 0) > 10e3; if (v) L.marked[room] = Date.now(); return v; };
+    if (ch === "peer" && isHrd()) { await Promise.all(jobs); return; }   // HRD 담당자는 동기방 없음
     if (ch === "peer" && L.room === "group") jobs.push(api("peer.list", { read: read("group") }).then((j) => { L.peer = j.msgs; L.peerReads = j.reads || {}; }));
     const tid = ch === "peer" && L.room !== "group" ? L.room : ch === "ask" ? L.mtid : null;
     if (tid) jobs.push(api("dm.get", { tid, read: read(tid) }).then((j) => (L.th[tid] = j)));
@@ -303,7 +304,7 @@
     const others = L.users.filter((u) => u.uid !== L.me.uid).length;
     const unread = L.threads.filter((t) => t.kind === "mentor" && !t.mine && t.lastT && !t.lastMe).length;
     // 채팅 화면(동기방 · 1:1 대화)에서는 위 소개 상자를 빼고 채팅방을 화면 높이에 맞춘다
-    const chatView = ch.id === "peer" || (ch.id === "ask" && L.mtid && L.threads.some((t) => t.tid === L.mtid));
+    const chatView = (ch.id === "peer" && !isHrd()) || (ch.id === "ask" && L.mtid && L.threads.some((t) => t.tid === L.mtid));
     return `${chatView ? "" : `
     <section class="cm-hero">
       <div class="cm-hero-copy">
@@ -319,8 +320,8 @@
     <div class="cm-tabs" id="chans" role="tablist" aria-label="채널">
       ${CHANNELS.map((c) => {
         const badge = c.id === "ask" ? (unread ? `<span class="cm-badge warn">받은 질문 ${unread}</span>` : `<span class="cm-badge on">${others}명</span>`)
-          : c.id === "anon" ? `<span class="cm-badge${wait ? " warn" : ""}">${wait ? `답변 대기 ${wait}` : anon.length}</span>` : `<span class="cm-badge">${L.users.filter((u) => u.ckey === L.me.ckey).length}명</span>`;
-        return `<button data-c="${c.id}" role="tab" aria-selected="${c.id === ch.id}" aria-pressed="${c.id === ch.id}"><span class="cm-ic">${UI(c.id === "peer" ? "chat" : c.id)}</span><span class="cm-tx"><b>${c.n}</b><small>${c.id === "ask" ? "누구에게나 1:1로 · 받은 질문도 여기서" : c.id === "peer" ? `${esc(roomName())} 동기끼리` : c.d}</small></span>${badge}</button>`;
+          : c.id === "anon" ? `<span class="cm-badge${wait ? " warn" : ""}">${wait ? `답변 대기 ${wait}` : anon.length}</span>` : `<span class="cm-badge">${isHrd() ? "HRD 제외" : `${L.users.filter((u) => u.role !== "HRD" && u.ckey === L.me.ckey).length}명`}</span>`;
+        return `<button data-c="${c.id}" role="tab" aria-selected="${c.id === ch.id}" aria-pressed="${c.id === ch.id}"><span class="cm-ic">${UI(c.id === "peer" ? "chat" : c.id)}</span><span class="cm-tx"><b>${c.n}</b><small>${c.id === "ask" ? "누구에게나 1:1로 · 받은 질문도 여기서" : c.id === "peer" && !isHrd() ? `${esc(roomName())} 동기끼리` : c.d}</small></span>${badge}</button>`;
       }).join("")}
     </div>
     ${L.err ? `<p class="lv-err wide" role="alert">${esc(L.err)} <button type="button" class="lv-link" data-lretry>다시 시도</button></p>` : ""}
@@ -342,7 +343,9 @@
 
   /* 동기방 */
   function peerHTML() {
-    const peers = L.users.filter((u) => u.uid !== L.me.uid && u.ckey === L.me.ckey);
+    if (isHrd()) return `<div class="lv-panel">${UI("group")}<div><b>HRD 담당자 계정은 동기방에 들어가지 않아요</b><p>동기방은 같은 시기에 입사한 사람들이 편하게 이야기하는 공간이라 HRD 담당자에게는 보이지 않아요. <b>운영 대시보드</b>에서 기수를 만들고 초대 링크를 보낼 수 있어요.</p>
+      <div class="row"><a class="btn sm" href="#hrd">운영 대시보드로</a><button type="button" class="btn sm ghost" data-c2="anon">익명 질문방</button></div></div></div>`;
+    const peers = L.users.filter((u) => u.role !== "HRD" && u.uid !== L.me.uid && u.ckey === L.me.ckey);
     const dms = L.threads.filter((t) => t.kind === "peer");
     const room = L.room !== "group" && dms.some((t) => t.tid === L.room) ? L.room : "group";
     const cur = room === "group" ? null : L.th[room];
@@ -355,7 +358,7 @@
     if (room === "group") {
       head = `<div class="chat-head"><span class="cm-ic">${UI("group")}</span><div class="chat-title"><b>${esc(roomName())} 동기방</b><small>${peers.length + 1}명 · 같은 시기에 입사한 동료들이에요</small></div></div>`;
       // 동기방: 보낸 사람과 나를 빼고, 그 메시지 이후로 아직 방을 열지 않은 동기 수
-      const mem = L.users.filter((u) => u.ckey === L.me.ckey && u.uid !== L.me.uid), rd = L.peerReads || {};
+      const mem = L.users.filter((u) => u.role !== "HRD" && u.ckey === L.me.ckey && u.uid !== L.me.uid), rd = L.peerReads || {};
       msgs = L.peer.map((m) => ({ ...m, unread: mem.filter((u) => u.uid !== m.uid && (rd[u.uid] || 0) < m.at).length, av: `<button type="button" class="cmsg-avbtn" data-lprof="${m.uid}" aria-label="${esc(m.by)} 프로필">${uAv(m, "av sm")}</button>` }));
     } else {
       const t = dms.find((x) => x.tid === room);
