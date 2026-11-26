@@ -1039,7 +1039,7 @@ const PART_ALL = 4;
 const TYPES = ['채용','교육(HRD)','평가·보상','노무·조직문화','조직 생활'];
 const CHANNELS = [
   {id:'peer',n:'동기방',d:'입사 동기끼리 자유롭게'},
-  {id:'ask',n:'선배에게 물어보기',d:'선배를 골라 1:1로'},
+  {id:'ask',n:'1:1 질문하기',d:'누구에게나 익명으로'},
   {id:'anon',n:'익명 질문방',d:'이름 없이 부담 없이'}
 ];
 const SEED_POSTS = [
@@ -1244,7 +1244,7 @@ window.addEventListener('message',e=>{
   if(m.type==='item'){const it=typeof hbItem==='function'&&hbItem(m.id);if(it)toast(`🎁 새 아이템: ${it.n}`);return}
   if(m.type==='restart'){G.phase='setup';save();route();window.scrollTo(0,0);return}
   if(window.HBLive&&HBLive.handleGameMsg(m))return; // 실사용 모드: 로그인한 소통 공간으로
-  if(m.type==='ask'&&m.ch!=='anon'){S.draft={ref:m.card.day+' · '+m.card.title,t:String(m.text||'').slice(0,500)};S.mt=null;save();toast('선배에게 물어볼 질문을 담아 뒀어요 · 소통 공간 → 선배에게 물어보기');return}
+  if(m.type==='ask'&&m.ch!=='anon'){S.draft={ref:m.card.day+' · '+m.card.title,t:String(m.text||'').slice(0,500)};S.mt=null;save();toast('물어볼 질문을 담아 뒀어요 · 소통 공간 → 1:1 질문하기');return}
   if(m.type==='ask'){const anon=m.ch==='anon';
     S.posts.unshift({id:'p'+Date.now(),ch:anon?'anon':'ask',by:anon?null:myName(),tag:anon?'익명 신입':'신입 · 인사팀 · '+(m.card.day||''),ref:m.card.day+' · '+m.card.title,t:String(m.text||'').slice(0,500),when:'방금',mine:true});
     save();toast('소통 공간에 질문이 올라갔어요');return}
@@ -1258,7 +1258,7 @@ function home(){
   const ic=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
   const FEATS=[
     {h:'#game',n:'100일 게임',who:'신입사원',d:'선배들이 실제로 겪은 상황 카드에 대응하고, 선배의 선택과 비교해요.',i:`<span class="fi br" style="background:${myBg()}">${bri({...myBri(),head:true,wave:false})}</span>`,hot:true},
-    {h:'#community',n:'소통 공간',who:'모두',d:'동기방, 선배에게 물어보기, 익명 질문방에서 편하게 물어봐요.',i:`<span class="fi">${ic(ICON_PATHS.msg)}</span>`},
+    {h:'#community',n:'소통 공간',who:'모두',d:'동기방, 1:1 질문하기, 익명 질문방에서 편하게 물어봐요.',i:`<span class="fi">${ic(ICON_PATHS.msg)}</span>`},
     {h:'#register',n:'경험 등록',who:'시니어',d:'질문 4개, 5분이면 내 경험이 후배의 상황 카드가 돼요.',i:`<span class="fi">${ic('<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/>')}</span>`},
     {h:'#hrd',n:'운영 대시보드',who:'HRD 담당자',d:'신입들이 어떤 상황에서 막히는지 한눈에 확인해요.',i:`<span class="fi">${ic('<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>')}</span>`}
   ];

@@ -83,7 +83,6 @@
   const DEPTS = ["인사팀 채용파트", "인사팀 HRD파트", "인사팀 평가보상파트", "인사팀 노무파트", "인사팀 조직문화파트", "경영지원본부", "개발본부", "마케팅팀", "영업팀"];
   const JOBS = ["채용", "교육(HRD)", "평가·보상", "노무", "조직문화", "개발", "마케팅", "영업", "기획"];
   const RANKS = ["인턴", "사원", "주임", "대리", "과장", "차장", "부장", "팀장"];
-  const isSr = () => L.me && L.me.role !== "신입";   // 선배 · HRD 담당자
   const isHrd = () => L.me && L.me.role === "HRD";
   // 동기방 이름: HRD가 만든 기수면 그 이름 그대로, 아니면 "2026 하반기 입사"
   const roomName = () => (L.me && L.me.ckey && L.me.ckey.startsWith("C#") ? L.me.cohort : `${L.me.cohort} 입사`);
@@ -115,7 +114,6 @@
   async function joinPending() {
     const j = ls.get(JOIN, null); if (!j || !L.me) return;
     ls.set(JOIN, null);
-    if (L.me.role !== "신입") { toast("기수 초대 링크는 신입·인턴 계정만 쓸 수 있어요"); return; }
     try { const r = await api("cohort.join", { code: j.code }); L.me = (await api("me.get")).me; S.channel = "peer"; L.room = "group"; save(); toast(`'${r.name}' 동기방에 들어왔어요 🎉`); }
     catch (e) { toast(e.message); }
   }
@@ -185,7 +183,7 @@
           <div class="lv-row"><label>비밀번호<input type="password" name="pw" required minlength="8" autocomplete="new-password" placeholder="8자 이상, 숫자 포함"></label>
           <label>비밀번호 확인<input type="password" name="pw2" required minlength="8" autocomplete="new-password"></label></div>
         </fieldset>
-        ${profileFields({ role: "신입", rank: "사원", yrs: 0 })}
+        ${profileFields({ rank: "사원", yrs: 0 })}
         <label class="lv-agree"><input type="checkbox" name="agree" required><span>익명 질문방의 글은 다른 사람에게 이름이 보이지 않아요. 다만 욕설·괴롭힘처럼 문제가 되는 글은 운영자가 작성자를 확인할 수 있다는 것에 동의해요.</span></label>
         ${err}<button class="btn lv-wide" type="submit" ${L.loading ? "disabled" : ""}>${L.loading ? "가입 중…" : "가입하고 인증 메일 받기"}</button>
       </form>`;
@@ -222,26 +220,25 @@
         <h3>로그인하면 이렇게 쓸 수 있어요</h3>
         <ul>
           <li>${UI("group")}<div><b>동기방</b><span>같은 시기에 입사한 동기들과 단체·1:1 대화</span></div></li>
-          <li>${UI("ask")}<div><b>선배에게 물어보기</b><span>선배 프로필을 골라 1:1로. 선배에게는 내 이름 대신 별명으로 보여요</span></div></li>
-          <li>${UI("anon")}<div><b>익명 질문방</b><span>이름 없이 묻고 선배들이 답해요</span></div></li>
+          <li>${UI("ask")}<div><b>1:1 질문하기</b><span>물어보고 싶은 사람을 골라 1:1로. 상대에게는 내 이름 대신 별명으로 보여요</span></div></li>
+          <li>${UI("anon")}<div><b>익명 질문방</b><span>이름 없이 묻고, 이름 없이 답해요</span></div></li>
         </ul>
         <p class="lv-note">${UI("lock")} 100일 게임, 경험 등록, 운영 대시보드는 로그인 없이 그대로 쓸 수 있어요.</p>
       </aside>
     </section>`;
   }
   function profileFields(p) {
-    const sr = p.role === "선배";
     return `<fieldset><legend>프로필 <small>동료들에게 보이는 정보예요</small></legend>
-      <div class="lv-row"><label>이름<input name="name" required maxlength="20" value="${esc(p.name || "")}" placeholder="홍길동"></label>
-        <div class="lv-radio" role="radiogroup" aria-label="구분"><span>구분</span>${["신입", "선배", "HRD"].map((r) => `<label><input type="radio" name="role" value="${r}" ${p.role === r ? "checked" : ""}><span>${r === "신입" ? "신입 · 인턴" : r === "HRD" ? "HRD 담당자" : "선배"}</span></label>`).join("")}</div></div>
-      <label class="lv-hrd" ${p.role === "HRD" && !(L.me && L.me.role === "HRD") ? "" : "hidden"}>HRD 인증 코드 <small>(인사팀에서 받은 6자리)</small><input name="hrdCode" inputmode="numeric" maxlength="12" autocomplete="off"></label>
+      <label>이름<input name="name" required maxlength="20" value="${esc(p.name || "")}" placeholder="홍길동"></label>
       <div class="lv-row"><label>부서<input name="dept" required maxlength="40" list="lvDepts" value="${esc(p.dept || "")}" placeholder="예: 인사팀 채용파트"></label>
         <label>직무<input name="job" maxlength="30" list="lvJobs" value="${esc(p.job || "")}" placeholder="예: 채용"></label></div>
       <div class="lv-row lv-row3"><label>직급<select name="rank">${RANKS.map((r) => `<option ${p.rank === r ? "selected" : ""}>${r}</option>`).join("")}</select></label>
         <label>입사 시기 <small>(동기방이 정해져요)</small><input name="joined" type="month" required value="${esc(p.joined || thisMonth())}" max="${thisMonth(1)}"></label>
         <label>연차 <small>(1년 미만은 0)</small><input name="yrs" type="number" min="0" max="40" value="${esc(p.yrs ?? 0)}"></label></div>
+      <label class="lv-check"><input type="checkbox" name="hrd" ${p.role === "HRD" ? "checked" : ""}><span>HRD 담당자예요 <small>(운영 대시보드에서 기수를 만들고 시나리오를 검토해요)</small></span></label>
+      <label class="lv-hrd" ${p.role === "HRD" && !(L.me && L.me.role === "HRD") ? "" : "hidden"}>HRD 인증 코드 <small>(인사팀에서 받은 6자리)</small><input name="hrdCode" inputmode="numeric" maxlength="12" autocomplete="off"></label>
       <div class="lv-sr">
-        <label>한 줄 소개 <small>(선배에게 물어보기 프로필에 보여요 · 선택)</small><input name="bio" maxlength="120" value="${esc(p.bio || "")}" placeholder="예: 면접 일정이 꼬였을 때 제일 먼저 찾는 사람"></label>
+        <label>한 줄 소개 <small>(1:1 질문하기 프로필에 보여요 · 선택)</small><input name="bio" maxlength="120" value="${esc(p.bio || "")}" placeholder="예: 면접 일정이 꼬였을 때 제일 먼저 찾는 사람"></label>
         <label>자신 있는 주제 <small>(쉼표로 구분, 5개까지 · 선택)</small><input name="tags" maxlength="80" value="${esc((p.tags || []).join(", "))}" placeholder="예: 면접 운영, 지원자 응대"></label>
       </div>
       <datalist id="lvDepts">${DEPTS.map((d) => `<option value="${d}">`).join("")}</datalist>
@@ -251,11 +248,11 @@
   const thisMonth = (add = 0) => { const d = new Date(); d.setMonth(d.getMonth() + add); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`; };
   const cohortTx = (j) => { const [y, m] = String(j || "").split("-").map(Number); return y ? `${y} ${m <= 6 ? "상반기" : "하반기"}` : ""; };
   const joinedTx = (j) => { const [y, m] = String(j || "").split("-").map(Number); return y ? `${y}년 ${m}월 입사` : ""; };
-  const readProfile = (f) => ({ hrdCode: f.hrdCode ? f.hrdCode.value : "", joined: f.joined.value, name: f.name.value, role: (f.querySelector("[name=role]:checked") || {}).value || "신입", dept: f.dept.value, job: f.job.value,
+  const readProfile = (f) => ({ hrdCode: f.hrdCode ? f.hrdCode.value : "", joined: f.joined.value, name: f.name.value, role: f.hrd && f.hrd.checked ? "HRD" : "멤버", dept: f.dept.value, job: f.job.value,
     rank: f.rank.value, yrs: f.yrs.value, bio: f.bio ? f.bio.value : "", tags: f.tags ? f.tags.value : "", bri: typeof myBri === "function" ? myBri() : null });
 
   function profileHTML(first) {
-    const p = L.me || ls.get(PENDING, {})?.profile || { role: "신입", rank: "사원", yrs: 0 };
+    const p = L.me || ls.get(PENDING, {})?.profile || { rank: "사원", yrs: 0 };
     return `<section class="lv-auth one"><div class="lv-card">
       <div class="lv-card-h">${bri({ head: true, wave: false })}<div><b>${first ? "프로필을 만들어 주세요" : "프로필 수정"}</b><small>${first ? "처음 한 번만 적으면 돼요" : "동료들에게 보이는 정보예요"}</small></div></div>
       <form class="lv-form" id="lvProfile">${profileFields(p)}
@@ -287,7 +284,7 @@
     el.innerHTML = auth && L.me
       ? `<button type="button" class="lv-user" aria-haspopup="menu" aria-expanded="false" title="내 계정">${meAv("av")}<span class="lv-user-tx"><b>${esc(L.me.name)}</b><small>${esc(L.me.dept)}</small></span><svg class="lv-chev" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 7.5l5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
         <div class="lv-menu" role="menu" hidden>
-          <div class="lv-menu-h">${meAv("av")}<div><b>${esc(L.me.name)} <small>${esc(L.me.rank)}</small></b><span>${esc(L.me.dept)} · ${esc(L.me.role)} · ${esc(joinedTx(L.me.joined))}</span><span class="lv-mail">${esc(L.me.email || (auth && auth.email) || "")}</span></div></div>
+          <div class="lv-menu-h">${meAv("av")}<div><b>${esc(L.me.name)} <small>${esc(L.me.rank)}</small></b><span>${esc(L.me.dept)}${isHrd() ? " · HRD 담당자" : ""} · ${esc(joinedTx(L.me.joined))}</span><span class="lv-mail">${esc(L.me.email || (auth && auth.email) || "")}</span></div></div>
           <button type="button" role="menuitem" data-t="edit">${UI("user")}내 프로필 수정</button>
           <hr>
           <button type="button" role="menuitem" data-t="out" class="lv-out"><svg class="ui" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3M10 17l5-5-5-5M15 12H4"/></svg>로그아웃</button>
@@ -306,7 +303,7 @@
     const others = L.users.filter((u) => u.uid !== L.me.uid).length;
     const unread = L.threads.filter((t) => t.kind === "mentor" && !t.mine && t.lastT && !t.lastMe).length;
     // 채팅 화면(동기방 · 1:1 대화)에서는 위 소개 상자를 빼고 채팅방을 화면 높이에 맞춘다
-    const chatView = (ch.id === "peer" && !isSr()) || (ch.id === "ask" && L.mtid && L.threads.some((t) => t.tid === L.mtid));
+    const chatView = ch.id === "peer" || (ch.id === "ask" && L.mtid && L.threads.some((t) => t.tid === L.mtid));
     return `${chatView ? "" : `
     <section class="cm-hero">
       <div class="cm-hero-copy">
@@ -322,8 +319,8 @@
     <div class="cm-tabs" id="chans" role="tablist" aria-label="채널">
       ${CHANNELS.map((c) => {
         const badge = c.id === "ask" ? (unread ? `<span class="cm-badge warn">받은 질문 ${unread}</span>` : `<span class="cm-badge on">${others}명</span>`)
-          : c.id === "anon" ? `<span class="cm-badge${wait ? " warn" : ""}">${wait ? `답변 대기 ${wait}` : anon.length}</span>` : `<span class="cm-badge">${isSr() ? "신입 전용" : `${L.users.filter((u) => u.role === "신입" && u.ckey === L.me.ckey).length}명`}</span>`;
-        return `<button data-c="${c.id}" role="tab" aria-selected="${c.id === ch.id}" aria-pressed="${c.id === ch.id}"><span class="cm-ic">${UI(c.id === "peer" ? "chat" : c.id)}</span><span class="cm-tx"><b>${c.n}</b><small>${c.id === "ask" ? "누구에게나 1:1로 · 받은 질문도 여기서" : c.id === "peer" && !isSr() ? `${esc(roomName())} 동기끼리` : c.d}</small></span>${badge}</button>`;
+          : c.id === "anon" ? `<span class="cm-badge${wait ? " warn" : ""}">${wait ? `답변 대기 ${wait}` : anon.length}</span>` : `<span class="cm-badge">${L.users.filter((u) => u.ckey === L.me.ckey).length}명</span>`;
+        return `<button data-c="${c.id}" role="tab" aria-selected="${c.id === ch.id}" aria-pressed="${c.id === ch.id}"><span class="cm-ic">${UI(c.id === "peer" ? "chat" : c.id)}</span><span class="cm-tx"><b>${c.n}</b><small>${c.id === "ask" ? "누구에게나 1:1로 · 받은 질문도 여기서" : c.id === "peer" ? `${esc(roomName())} 동기끼리` : c.d}</small></span>${badge}</button>`;
       }).join("")}
     </div>
     ${L.err ? `<p class="lv-err wide" role="alert">${esc(L.err)} <button type="button" class="lv-link" data-lretry>다시 시도</button></p>` : ""}
@@ -338,16 +335,14 @@
       const prev = msgs[i - 1], d = day(m.at), div = d !== lastDay ? `<div class="chat-day"><span>${esc(d)}</span></div>` : ""; lastDay = d;
       const cont = prev && (prev.uid || prev.me) === (m.uid || m.me) && prev.me === m.me && !div && m.at - prev.at < 5 * 60e3;
       const av = m.me ? "" : cont ? '<span class="cmsg-sp"></span>' : m.av;
-      return `${div}<div class="cmsg${m.me ? " me" : ""}${cont ? " cont" : ""}">${av}<div class="cmsg-col">${!m.me && !cont && group ? `<span class="cmsg-nm">${esc(m.by)}${m.tag ? ` <small>${esc(m.tag.replace(/^신입 · /, ""))}</small>` : ""}</span>` : ""}
+      return `${div}<div class="cmsg${m.me ? " me" : ""}${cont ? " cont" : ""}">${av}<div class="cmsg-col">${!m.me && !cont && group ? `<span class="cmsg-nm">${esc(m.by)}${m.tag ? ` <small>${esc(m.tag)}</small>` : ""}</span>` : ""}
         <div class="cmsg-row"><p class="cmsg-bub">${esc(m.t)}</p><span class="cmsg-meta">${m.unread ? `<b class="cmsg-unread" title="아직 안 읽은 사람 ${m.unread}명">${m.unread}</b>` : ""}<span class="cmsg-tm">${hm(new Date(m.at))}</span></span></div></div></div>`;
     }).join("") || `<div class="cm-empty">${UI("chat")}<p>첫 인사를 남겨 보세요!</p></div>`;
   }
 
   /* 동기방 */
   function peerHTML() {
-    if (isSr()) return `<div class="lv-panel">${UI("group")}<div><b>동기방은 신입·인턴끼리 이야기하는 공간이에요</b><p>${isHrd() ? "HRD 담당자는 <b>운영 대시보드</b>에서 기수를 만들고 초대 링크를 보낼 수 있어요. " : ""}선배는 <b>신입의 질문</b>에서 나를 골라 물어본 질문에 답하거나, 익명 질문방에서 답변을 남길 수 있어요.</p>
-      <div class="row"><button type="button" class="btn sm" data-c2="ask">신입의 질문 보기</button><button type="button" class="btn sm ghost" data-c2="anon">익명 질문방</button></div></div></div>`;
-    const peers = L.users.filter((u) => u.role === "신입" && u.uid !== L.me.uid && u.ckey === L.me.ckey);
+    const peers = L.users.filter((u) => u.uid !== L.me.uid && u.ckey === L.me.ckey);
     const dms = L.threads.filter((t) => t.kind === "peer");
     const room = L.room !== "group" && dms.some((t) => t.tid === L.room) ? L.room : "group";
     const cur = room === "group" ? null : L.th[room];
@@ -358,9 +353,9 @@
     </aside>`;
     let head, msgs;
     if (room === "group") {
-      head = `<div class="chat-head"><span class="cm-ic">${UI("group")}</span><div class="chat-title"><b>${esc(roomName())} 동기방</b><small>신입·인턴 ${peers.length + 1}명 · 편하게 이야기해요</small></div></div>`;
+      head = `<div class="chat-head"><span class="cm-ic">${UI("group")}</span><div class="chat-title"><b>${esc(roomName())} 동기방</b><small>${peers.length + 1}명 · 같은 시기에 입사한 동료들이에요</small></div></div>`;
       // 동기방: 보낸 사람과 나를 빼고, 그 메시지 이후로 아직 방을 열지 않은 동기 수
-      const mem = L.users.filter((u) => u.role === "신입" && u.ckey === L.me.ckey && u.uid !== L.me.uid), rd = L.peerReads || {};
+      const mem = L.users.filter((u) => u.ckey === L.me.ckey && u.uid !== L.me.uid), rd = L.peerReads || {};
       msgs = L.peer.map((m) => ({ ...m, unread: mem.filter((u) => u.uid !== m.uid && (rd[u.uid] || 0) < m.at).length, av: `<button type="button" class="cmsg-avbtn" data-lprof="${m.uid}" aria-label="${esc(m.by)} 프로필">${uAv(m, "av sm")}</button>` }));
     } else {
       const t = dms.find((x) => x.tid === room);
@@ -376,7 +371,7 @@
       <form class="lv-code" id="lvJoin"><input name="code" maxlength="12" placeholder="예: JMNYN1C" aria-label="기수 초대 코드" autocomplete="off"><button class="btn sm" type="submit">옮기기</button></form>` : ""}
       <div class="chat-mem-h sub">함께 볼 것</div>
       <a class="chat-mem-link" href="#game">🎮 100일 게임 이어 하기</a>
-      <button type="button" class="chat-mem-link" data-c2="ask">🙋 선배에게 1:1로 물어보기</button>
+      <button type="button" class="chat-mem-link" data-c2="ask">🙋 1:1로 질문하기</button>
     </aside>`;
     return `<div class="chat-room has-mem lv-fit">${side}
       <div class="chat-main">${head}
@@ -387,7 +382,7 @@
       </div>${mem}</div>`;
   }
 
-  /* 선배에게 물어보기 — 가입한 모든 사람에게 1:1로 (질문한 사람은 별명으로 보임) */
+  /* 1:1 질문하기 — 가입한 모든 사람에게 1:1로 (질문한 사람은 별명으로 보임) */
   const card = (u, me) => `<article class="mt-card${u.on || me ? "" : " off"}${me ? " lv-mecard2" : ""}">
       <div class="mt-card-top">${me ? meAv("av") : uAv(u, "av")}<span class="mt-dot${u.on || me ? " on" : ""}"></span>
         <div><b>${esc(u.name)}<small>${esc(u.rank)}</small>${me ? '<em class="lv-me">나</em>' : ""}</b><span>${esc(u.dept)} · ${yrsTx(u.yrs)}</span></div></div>
@@ -467,14 +462,14 @@
     const done = all.filter((p) => p.reps.length).length;
     const writing = L.awrite || S.anonWrite;
     return `<div class="cm-feed bd">
-      <header class="bd-head"><div><h3>익명 질문방</h3><p>이름 없이 묻고, 선배들이 답해요 · 질문 <b>${all.length}</b> · 답변 대기 <b class="w">${all.length - done}</b></p></div>
+      <header class="bd-head"><div><h3>익명 질문방</h3><p>이름 없이 묻고, 이름 없이 답해요 · 질문 <b>${all.length}</b> · 답변 대기 <b class="w">${all.length - done}</b></p></div>
         <button type="button" class="btn" data-lwrite>${UI("pen")} 질문하기</button></header>
       <form class="bd-write lv-form" id="lvAnonForm" ${writing ? "" : "hidden"}>
         <div class="bd-write-h"><b>익명으로 질문하기</b><small>이름 없이 올라가요 · 첫 문장이 제목이 돼요</small></div>
         ${dr.ref ? `<span class="cm-ref">${UI("card")} ${esc(dr.ref)}</span>` : ""}
         <div class="bd-cats" role="radiogroup" aria-label="말머리">${ANON_CATS.map((c, i) => `<label><input type="radio" name="acat" value="${c}" ${i === 0 ? "checked" : ""}><span>${c}</span></label>`).join("")}</div>
         <textarea id="ptext" rows="4" aria-label="질문 내용" placeholder="예: 입사 2주 차인데 연차를 써도 될까요? 병원 예약이 평일밖에 안 돼서요.">${esc(dr.t || "")}</textarea>
-        <div class="bd-write-f"><span>${UI("lock")} 다른 사람에게는 '익명 신입'으로만 보여요</span><button type="button" class="btn sm ghost" data-lwcancel>취소</button><button class="btn sm" type="submit">올리기</button></div>
+        <div class="bd-write-f"><span>${UI("lock")} 다른 사람에게는 '익명'으로만 보여요</span><button type="button" class="btn sm ghost" data-lwcancel>취소</button><button class="btn sm" type="submit">올리기</button></div>
       </form>
       <div class="bd-search" role="search">
         <label class="cm-sbox">${UI("search")}<input type="search" id="lvQ" value="${esc(L.aq)}" placeholder="궁금한 내용을 검색해 보세요 (예: 연차, 회식, 메일)" aria-label="익명 질문 검색" autocomplete="off"></label>
@@ -491,12 +486,12 @@
           return `<button type="button" class="bd-row lv-arow" data-lopen="${esc(p.id)}" data-s="${esc([p.t, p.cat, ...p.reps.map((x) => x.t + " " + x.by)].join(" ").toLowerCase())}">
             <span class="bd-cat">${esc(p.cat || anonCat(p))}</span>
             <span class="bd-main"><span class="bd-title"><span class="cm-text">${esc(anonTitle(p.t))}</span>${isToday(p.at) ? '<em class="bd-new">N</em>' : ""}${p.mine ? '<em class="bd-mine">내 글</em>' : ""}${p.survey ? '<em class="lv-ex" title="신입·인턴 설문과 현직자 인터뷰에서 나온 고민이에요">설문·인터뷰</em>' : ""}</span>
-              <span class="bd-sub">익명 신입 · ${esc(p.ex ? p.seedWhen || "" : when(p.at))}${p.ex ? "" : ` · 조회 ${p.views}`}</span></span>
+              <span class="bd-sub">익명 · ${esc(p.ex ? p.seedWhen || "" : when(p.at))}${p.ex ? "" : ` · 조회 ${p.views}`}</span></span>
             <span class="bd-ans ${r ? "done" : "wait"}">${r ? `${UI("chat")} ${r}` : "답변 대기"}</span></button>`; }).join("")
           || `<div class="cm-empty">${UI("chat")}<p>${L.af === "wait" ? "답변을 기다리는 질문이 없어요 🎉" : L.af === "today" ? "오늘 올라온 질문이 아직 없어요" : "아직 질문이 없어요"}</p></div>`}
         <div class="cm-empty" id="lvNone" hidden>${UI("search")}<p>찾는 질문이 없어요. <button type="button" class="bd-link" data-lwrite>익명으로 직접 물어보기</button></p></div>
       </div>
-      <p class="sample">'설문·인터뷰' 표시가 있는 질문은 신입·인턴 설문과 현직자 인터뷰에서 실제로 나온 고민이에요. 선배라면 답을 남겨 주세요.</p></div>`;
+      <p class="sample">'설문·인터뷰' 표시가 있는 질문은 신입·인턴 설문과 현직자 인터뷰에서 실제로 나온 고민이에요. 겪어 본 일이라면 답을 남겨 주세요.</p></div>`;
   }
   function anonDetailHTML(p) {
     return `<div class="cm-feed bd">
@@ -504,15 +499,15 @@
       <article class="bd-post">
         <div class="bd-post-h"><span class="bd-cat ch-anon">${esc(p.cat || anonCat(p))}</span><span class="bd-ans ${p.reps.length ? "done" : "wait"}">${p.reps.length ? `답변 ${p.reps.length}` : "답변 대기"}</span>${p.mine ? '<span class="bd-mine">내 글</span>' : ""}${p.survey ? '<span class="lv-ex">설문·인터뷰</span>' : ""}</div>
         <h2>${esc(anonTitle(p.t))}</h2>
-        <div class="bd-sub">익명 신입 · ${esc(p.ex ? p.seedWhen || "" : when(p.at))}${p.ex ? "" : ` · 조회 ${p.views}`}</div>
+        <div class="bd-sub">익명 · ${esc(p.ex ? p.seedWhen || "" : when(p.at))}${p.ex ? "" : ` · 조회 ${p.views}`}</div>
         ${p.ref ? `<span class="cm-ref">${UI("card")} ${esc(p.ref)}</span>` : ""}
         <p class="bd-body">${esc(p.t)}</p>
         <section class="bd-answers" aria-label="답변"><h4>답변 <b>${p.reps.length}</b></h4>
-          ${p.reps.map((r) => `<div class="bd-a${r.sr ? " sr" : ""}">${r.sr ? (r.au ? avatar(r.au, "av sm") : uAv(r, "av sm")) : avatar({ bri: { c: "#9aa3b5" } }, "av sm")}
-            <div><div class="bd-a-h"><b>${esc(r.by)}${r.mine ? " (나)" : ""}</b>${r.sr ? `<span class="bd-a-tag">${esc(r.tag)}</span>` : `<small>${esc(r.tag || "")}</small>`}${r.at ? `<small>${when(r.at)}</small>` : ""}</div><p>${esc(r.t)}</p></div></div>`).join("")
-            || `<div class="bd-a-empty">아직 답변이 없어요. 선배들이 곧 답해 줄 거예요 🙂</div>`}
+          ${p.reps.map((r) => `<div class="bd-a">${avatar({ bri: { c: r.au ? "#7c8db5" : "#9aa3b5" } }, "av sm")}
+            <div><div class="bd-a-h"><b>${esc(r.by)}${r.mine ? " (나)" : ""}</b>${r.at ? `<small>${when(r.at)}</small>` : ""}</div><p>${esc(r.t)}</p></div></div>`).join("")
+            || `<div class="bd-a-empty">아직 답변이 없어요. 곧 누군가 답해 줄 거예요 🙂</div>`}
         </section>
-        ${p.ex ? `<p class="lv-p small">예시 글에는 답글을 달 수 없어요.</p>` : `<form class="reply-form bd-reply" id="lvReply" data-p="${esc(p.id)}"><input type="text" aria-label="답글" maxlength="1000" placeholder="${isSr() ? "선배로서 답변하기 (이름과 부서가 보여요)" : p.mine ? "질문자로 덧붙이기" : "답글 달기 (익명)"}"><button class="btn sm" type="submit">등록</button></form>`}
+        ${p.ex ? `<p class="lv-p small">예시 글에는 답글을 달 수 없어요.</p>` : `<form class="reply-form bd-reply" id="lvReply" data-p="${esc(p.id)}"><input type="text" aria-label="답글" maxlength="1000" placeholder="${p.mine ? "질문자로 덧붙이기" : "답변 달기 (익명으로 보여요)"}"><button class="btn sm" type="submit">등록</button></form>`}
         ${p.mine ? `<div class="bd-prop"><button type="button" class="btn sm ghost" data-ldel="${esc(p.id)}">내 글 지우기</button></div>` : ""}
       </article></div>`;
   }
@@ -520,11 +515,25 @@
   /* ---------- 이벤트 ---------- */
   const busy = async (fn) => { L.busy = true; try { await fn(); } catch (e) { toast(e.message || "잠시 후 다시 시도해 주세요"); } finally { L.busy = false; } };
   async function openChannel(c) { S.channel = c; S.cmFilter = null; save(); L.err = ""; rerender(); await busy(() => Promise.all([loadChannel(false), Date.now() - (L.usersAt || 0) > 5e3 ? loadUsers() : null])); rerender(); }
+  // 비밀번호 보기/숨기기 (눈 아이콘)
+  const EYE = '<svg class="ui" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>';
+  const EYE_OFF = '<svg class="ui" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3l18 18M10.6 5.1A10.7 10.7 0 0 1 12 5c6.4 0 10 7 10 7a17.6 17.6 0 0 1-3.2 4.1M6.6 6.6C3.8 8.4 2 12 2 12s3.6 7 10 7a10 10 0 0 0 5.4-1.6M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>';
+  function pwToggles(root) {
+    root.querySelectorAll('.lv-form input[type=password]').forEach((i) => {
+      if (i.parentElement.classList.contains("lv-pw")) return;
+      const w = document.createElement("span"); w.className = "lv-pw"; i.replaceWith(w); w.appendChild(i);
+      const b = document.createElement("button"); b.type = "button"; b.className = "lv-pw-eye";
+      const set = (show) => { i.type = show ? "text" : "password"; b.innerHTML = show ? EYE_OFF : EYE; b.setAttribute("aria-label", show ? "비밀번호 숨기기" : "비밀번호 보기"); b.setAttribute("aria-pressed", String(show)); b.title = show ? "숨기기" : "보기"; };
+      b.addEventListener("click", () => { const pos = i.selectionStart; set(i.type === "password"); i.focus(); try { i.setSelectionRange(pos, pos); } catch {} });
+      set(false); w.appendChild(b);
+    });
+  }
   function liveBind() {
     const app = document.getElementById("app");
     const on = (sel, ev, fn) => app.querySelectorAll(sel).forEach((el) => el.addEventListener(ev, fn));
     // 로그인 · 가입
     on("[data-lstep]", "click", (e) => { L.step = e.currentTarget.dataset.lstep; L.err = ""; route(); });
+    pwToggles(app);
     const f1 = document.getElementById("lvLogin");
     if (f1) f1.addEventListener("submit", async (e) => { e.preventDefault(); L.email = f1.email.value.trim(); L.loading = true; L.err = ""; route();
       try { await login(L.email, f1.pw.value); L.loading = false; L.me = undefined; route(); }
@@ -581,7 +590,7 @@
     const fj = document.getElementById("lvJoin");
     if (fj) fj.addEventListener("submit", (e) => { e.preventDefault(); const code = fj.code.value.trim(); if (!code) return;
       ls.set(JOIN, { code }); busy(async () => { await joinPending(); await Promise.all([loadUsers(), loadChannel(false)]); }).then(rerender); });
-    // 선배에게 물어보기
+    // 1:1 질문하기
     on("[data-lmtf]", "click", (e) => { L.mtf = e.currentTarget.dataset.lmtf; route(); });
     const mq = document.getElementById("lvMq");
     if (mq) { mq.addEventListener("input", () => { L.mq = mq.value; clearTimeout(L.mqT); L.mqT = setTimeout(() => { rerender(); const i = document.getElementById("lvMq"); if (i) { i.focus(); i.setSelectionRange(i.value.length, i.value.length); } }, 200); }); }
@@ -590,7 +599,7 @@
       busy(async () => { const j = await api("dm.open", { kind: "mentor", to }); L.mtid = j.tid; await loadChannel(false); }).then(() => { rerender(); focusIn(); window.scrollTo(0, 0); }); });
     on("[data-lmt]", "click", async (e) => { L.mtid = e.currentTarget.dataset.lmt; rerender(); await busy(() => loadChannel(false)); rerender(); focusIn(); });
     on("[data-lmtback]", "click", () => { L.mtid = null; rerender(); });
-    on("[data-lreveal]", "click", () => { if (!confirm(`선배에게 내 이름(${L.me.name})과 부서를 공개할까요? 공개하면 되돌릴 수 없어요.`)) return;
+    on("[data-lreveal]", "click", () => { if (!confirm(`상대에게 내 이름(${L.me.name})과 부서를 공개할까요? 공개하면 되돌릴 수 없어요.`)) return;
       busy(async () => { await api("dm.reveal", { tid: L.mtid }); await loadChannel(false); }).then(rerender); });
     const fm = document.getElementById("lvMt");
     if (fm) fm.addEventListener("submit", (e) => { e.preventDefault(); const i = document.getElementById("chatText"), t = i.value.trim(); if (!t) return; i.value = "";
@@ -628,8 +637,8 @@
     const log = document.getElementById("chatLog"); if (log) log.scrollTop = log.scrollHeight;
   }
   function roleToggle(f) {
-    const set = () => { const v = (f.querySelector("[name=role]:checked") || {}).value; const h = f.querySelector(".lv-hrd"); if (h) h.hidden = v !== "HRD" || (L.me && L.me.role === "HRD"); };
-    f.querySelectorAll("[name=role]").forEach((r) => r.addEventListener("change", set));
+    const set = () => { const c = f.querySelector("[name=hrd]"), h = f.querySelector(".lv-hrd"); if (h) h.hidden = !(c && c.checked) || (L.me && L.me.role === "HRD"); };
+    f.querySelectorAll("[name=hrd]").forEach((r) => r.addEventListener("change", set));
   }
   const focusIn = () => setTimeout(() => { const i = document.getElementById("chatText"); if (i) { i.focus({ preventScroll: true }); i.setSelectionRange(i.value.length, i.value.length); } }, 0);
   function profPop(btn) {
@@ -639,7 +648,7 @@
     const el = document.createElement("div"); el.className = "prof-pop"; el.setAttribute("role", "dialog");
     const me = u.uid === L.me.uid;
     el.innerHTML = `<button type="button" class="prof-x" aria-label="닫기">✕</button>
-      <div class="prof-top">${uAv(u, "av")}<div><b>${esc(u.name)} <small>${esc(u.rank)}</small></b><small>${esc(u.dept)}${u.job ? " · " + esc(u.job) : ""} · ${u.role === "신입" ? esc(joinedTx(u.joined)) : yrsTx(u.yrs)}</small></div></div>
+      <div class="prof-top">${uAv(u, "av")}<div><b>${esc(u.name)} <small>${esc(u.rank)}</small></b><small>${esc(u.dept)}${u.job ? " · " + esc(u.job) : ""} · ${u.yrs ? yrsTx(u.yrs) : esc(joinedTx(u.joined))}</small></div></div>
       ${u.bio ? `<p class="prof-bio">${esc(u.bio)}</p>` : ""}
       ${me ? "" : `<button type="button" class="btn sm prof-go">💬 1:1 채팅하기</button>`}
       <span class="prof-meta">${u.on ? "지금 접속 중" : "자리 비움"}</span>`;
@@ -665,22 +674,22 @@
     if (m.type === "share") {
       const t = String(m.text || "").slice(0, 500);
       S.shared = true; S.channel = "peer"; save();
-      if (auth && L.me && !isSr()) api("peer.send", { t }).then(() => toast("동기방에 공유했어요"), (e) => toast(e.message));
+      if (auth && L.me) api("peer.send", { t }).then(() => toast("동기방에 공유했어요"), (e) => toast(e.message));
       else toast("소통 공간에 로그인하면 동기방에 공유할 수 있어요");
       setTimeout(() => { location.hash = "#community"; }, 600);
       return true;
     }
     return false;
   }
-  // 챗봇(브리) 자료: 실제 익명 질문방의 선배 답변
+  // 챗봇(브리) 자료: 실제 익명 질문방의 답변 (질문자가 덧붙인 글은 빼고)
   function kbPosts() {
-    return (L.anon || []).filter((p) => p.reps.some((r) => r.sr)).map((p) => ({ id: "live-" + p.id, ch: "anon", t: p.t, rep: p.reps.filter((r) => r.sr).map((r) => ({ by: r.by, tag: r.tag, t: r.t })) }));
+    return (L.anon || []).filter((p) => p.reps.some((r) => !r.au)).map((p) => ({ id: "live-" + p.id, ch: "anon", t: p.t, rep: p.reps.filter((r) => !r.au).map((r) => ({ by: "익명 동료", tag: "", t: r.t })) }));
   }
 
   /* ---------- 운영 대시보드: 기수 · 동기방 초대 링크 (HRD) ---------- */
   const inviteUrl = (code) => `${location.origin}${location.pathname}?join=${encodeURIComponent(code)}#community`;
   function cohortPanelHTML() {
-    const head = `<div class="hd-card-h"><div><h2>기수 · 동기방 초대 링크</h2><p>기수를 만들고 링크를 입문교육 안내 메일에 넣어 보내세요. 링크로 가입한 신입은 그 기수 동기방에 바로 들어가요.</p></div></div>`;
+    const head = `<div class="hd-card-h"><div><h2>기수 · 동기방 초대 링크</h2><p>기수를 만들고 링크를 입문교육 안내 메일에 넣어 보내세요. 링크로 가입한 사람은 그 기수 동기방에 바로 들어가요.</p></div></div>`;
     if (!auth || !L.me) return `<section class="hd-card lv-cohorts">${head}
       <div class="lv-cohort-empty">${UI("lock")}<p>HRD 담당자 계정으로 로그인하면 기수를 만들고 초대 링크를 보낼 수 있어요.</p><button type="button" class="btn sm" data-hlogin>로그인</button></div></section>`;
     if (!isHrd()) return "";
@@ -689,7 +698,7 @@
     return `<section class="hd-card lv-cohorts">${head}
       <form class="lv-cform lv-form" id="lvCohort"><input name="name" maxlength="30" required placeholder="예: 2026년 12월 입사 1기"><button class="btn" type="submit">${UI("pen")} 기수 만들기</button></form>
       <div class="lv-clist">${L.cohorts.map((c) => `<div class="lv-crow">
-          <div class="lv-cname"><b>${esc(c.name)}</b><small>${c.members.length ? `${c.members.length}명 · ${esc(c.members.slice(0, 4).join(", "))}${c.members.length > 4 ? " 외" : ""}` : "아직 들어온 신입이 없어요"}</small></div>
+          <div class="lv-cname"><b>${esc(c.name)}</b><small>${c.members.length ? `${c.members.length}명 · ${esc(c.members.slice(0, 4).join(", "))}${c.members.length > 4 ? " 외" : ""}` : "아직 들어온 사람이 없어요"}</small></div>
           <code class="lv-ccode" title="초대 코드">${esc(c.code)}</code>
           <input class="lv-clink" readonly value="${esc(inviteUrl(c.code))}" aria-label="${esc(c.name)} 초대 링크">
           <button type="button" class="btn sm" data-ccopy="${esc(c.code)}">링크 복사</button></div>`).join("") || `<div class="cm-empty">${UI("group")}<p>아직 만든 기수가 없어요. 위에서 첫 기수를 만들어 보세요.</p></div>`}</div>
@@ -744,6 +753,11 @@
   .lv-radio label span{border:1.5px solid var(--line,#e3e8f0);border-radius:999px;padding:8px 14px;cursor:pointer;font-weight:700}
   .lv-radio input:checked+span{border-color:var(--blue,#004aad);background:var(--blue-soft,#eef3fc);color:var(--blue,#004aad)}
   .lv-radio input:focus-visible+span{outline:2px solid var(--blue,#004aad);outline-offset:2px}
+  .lv-form label.lv-check{display:flex;align-items:flex-start;gap:8px;font-weight:600;cursor:pointer}.lv-check input{margin-top:2px;accent-color:var(--blue,#004aad)}
+  .lv-pw input::-ms-reveal,.lv-pw input::-ms-clear{display:none}
+  .lv-pw{position:relative;display:block}.lv-pw input{padding-right:44px!important}
+  .lv-pw-eye{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:34px;height:34px;display:grid;place-items:center;border:0;background:none;border-radius:8px;color:var(--ink-3,#6b7280);cursor:pointer}
+  .lv-pw-eye:hover{background:var(--bg-soft,#f5f7fb);color:var(--ink,#111)}.lv-pw-eye:focus-visible{outline:2px solid var(--blue,#004aad)}.lv-pw-eye .ui{width:19px;height:19px}
   .lv-agree{grid-template-columns:auto 1fr!important;align-items:start;font-weight:500!important;font-size:12.5px!important;line-height:1.55;background:var(--bg-soft,#f5f7fb);border-radius:12px;padding:10px 12px}
   .lv-agree input{margin-top:3px}
   .lv-wide{width:100%;justify-content:center}
